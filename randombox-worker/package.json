@@ -1,0 +1,24 @@
+{
+	"name": "randombox-worker",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest",
+		"cf-typegen": "wrangler types",
+		"postinstall": "prisma generate"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.8.19",
+		"typescript": "^5.5.2",
+		"vitest": "~3.2.0",
+		"wrangler": "^4.32.0"
+	},
+	"dependencies": {
+		"@prisma/extension-accelerate": "^2.0.2",
+		"hono": "^4.9.4",
+		"prisma": "^6.14.0"
+	}
+}
