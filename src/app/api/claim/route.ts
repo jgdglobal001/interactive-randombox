@@ -49,12 +49,19 @@ export async function POST(request: NextRequest) {
         console.log('Using mock API for MMS sending');
         mmsResult = await mockGiftShowAPI.sendMMS(cleanPhoneNumber, message);
       } else {
+        console.log('Using real GiftShow API for MMS sending');
+        console.log('GiftShow Config:', {
+          baseUrl: GIFTSHOW_CONFIG.BASE_URL,
+          authKey: GIFTSHOW_CONFIG.AUTH_KEY ? '[SET]' : '[NOT SET]',
+          authToken: GIFTSHOW_CONFIG.AUTH_TOKEN ? '[SET]' : '[NOT SET]',
+          cardId: GIFTSHOW_CONFIG.CARD_ID,
+          isDev: GIFTSHOW_CONFIG.IS_DEV
+        });
         mmsResult = await giftShowClient.sendMMS(cleanPhoneNumber, message);
       }
       console.log('MMS send result:', mmsResult);
     } catch (mmsError) {
       console.error('MMS sending failed:', mmsError);
-      // MMS 발송 실패 시에도 사용자에게는 성공으로 보이게 함 (디버깅 목적)
       mmsResult = {
         success: false,
         error: 'MMS 발송 실패',

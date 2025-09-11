@@ -164,7 +164,7 @@ export const GIFTSHOW_CONFIG = {
   CARD_ID: process.env.GIFTSHOW_CARD_ID || '202006010057417',
   IS_DEV: process.env.NODE_ENV !== 'production',
   // 개발 환경에서 실제 API 호출을 건너뛰고 모의 데이터를 사용할지 여부
-  USE_MOCK_API: process.env.GIFTSHOW_USE_MOCK_API === 'true' || process.env.NODE_ENV === 'development'
+  USE_MOCK_API: process.env.GIFTSHOW_USE_MOCK_API === 'true'
 };
 
 // 클라이언트 인스턴스 생성

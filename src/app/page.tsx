@@ -382,9 +382,19 @@ export default function HomePage() {
       if (['galaxy-folder', 'canon-multifunction', 'cuckoo-food'].includes(productId)) {
         scaleFactor *= 0.85;
       }
+      
+      // 메가커피도 모바일에서 축소
+      if (productId === 'megacoffee') {
+        scaleFactor *= 0.7;
+      }
     } else if (isTablet) {
       // 태블릿에서는 중간 정도 축소
       scaleFactor *= 0.9;
+      
+      // 메가커피도 태블릿에서 축소
+      if (productId === 'megacoffee') {
+        scaleFactor *= 0.8;
+      }
     }
 
     return {
@@ -678,16 +688,16 @@ export default function HomePage() {
                            product.id === 'cuckoo-food' ? '#fef3c7' :
                            product.id === 'canon-multifunction' ? '#d1fae5' :
                            product.id === 'shinsegae-gift' ? '#f3e8ff' :
-                           product.id === 'megacoffee' ? '#fce7f3' : 'white',
+                           product.id === 'megacoffee' ? 'transparent' : 'white',
                 border: `${Math.max(2 * finalContainerSize.scaleFactor, 1)}px solid ${
                   product.id === 'galaxy-folder' ? '#3b82f6' :
                   product.id === 'cuckoo-food' ? '#f59e0b' :
                   product.id === 'canon-multifunction' ? '#059669' :
                   product.id === 'shinsegae-gift' ? '#8b5cf6' :
-                  product.id === 'megacoffee' ? '#db2777' : '#e5e7eb'
+                  product.id === 'megacoffee' ? 'transparent' : '#e5e7eb'
                 }`,
                 borderRadius: `${Math.max(20 * finalContainerSize.scaleFactor, 12)}px`,
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                boxShadow: product.id === 'megacoffee' ? 'none' : '0 4px 12px rgba(0, 0, 0, 0.15)',
                 fontWeight: '600'
               }}
             >
@@ -879,47 +889,192 @@ export default function HomePage() {
       )}
 
       {(eventState === 'playing-reveal' || eventState === 'finished') && showPrize && prize && (
-        <div className="text-center bg-white bg-opacity-80 p-8 rounded-lg shadow-lg animate-fade-in z-20">
-          <h1 className="text-4xl font-extrabold text-green-600 mb-4">🎉 당첨을 축하드립니다! 🎉</h1>
-          <p className="text-2xl font-semibold mb-4">당첨 상품: {prize.name}</p>
+        <div className="text-center p-8 animate-fade-in z-20">
+          <div className="relative overflow-hidden">
+            {/* Confetti Animation */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="confetti"></div>
+              <div className="confetti"></div>
+              <div className="confetti"></div>
+              <div className="confetti"></div>
+              <div className="confetti"></div>
+              <div className="confetti"></div>
+              <div className="confetti"></div>
+              <div className="confetti"></div>
+              <div className="confetti"></div>
+            </div>
+            
+            {/* Celebration Background Effect - moved behind text */}
+            
+            {/* Main Congratulations Message */}
+            <div className="relative z-10">
+              <h1 
+                className="text-5xl md:text-6xl font-black mb-6 animate-bounce"
+                style={{
+                  fontFamily: '"Nunito", "Poppins", "Inter", sans-serif',
+                  fontWeight: '800',
+                  letterSpacing: '0.02em'
+                }}
+              >
+                <span className="inline-block animate-spin" style={{animationDuration: '3s', color: '#ffd700'}}>🎉</span>
+                <span 
+                  className="mx-2"
+                  style={{
+                    color: '#00008B',
+                    display: 'inline-block',
+                    zIndex: 9999,
+                    position: 'relative'
+                  }}
+                >
+                  <span className="wiggle-char-1" style={{display: 'inline-block'}}>당</span>
+                  <span className="wiggle-char-2" style={{display: 'inline-block'}}>첨</span>
+                  <span className="wiggle-char-3" style={{display: 'inline-block'}}>을</span>
+                  <span style={{display: 'inline-block'}}>&nbsp;</span>
+                  <span className="wiggle-char-4" style={{display: 'inline-block'}}>축</span>
+                  <span className="wiggle-char-5" style={{display: 'inline-block'}}>하</span>
+                  <span className="wiggle-char-1" style={{display: 'inline-block'}}>드</span>
+                  <span className="wiggle-char-2" style={{display: 'inline-block'}}>립</span>
+                  <span className="wiggle-char-3" style={{display: 'inline-block'}}>니</span>
+                  <span className="wiggle-char-4" style={{display: 'inline-block'}}>다</span>
+                  <span className="wiggle-char-5" style={{display: 'inline-block'}}>!</span>
+                </span>
+                <span className="inline-block animate-spin" style={{animationDuration: '3s', animationDirection: 'reverse', color: '#ffd700'}}>🎉</span>
+              </h1>
+              
+              {/* Prize Name with Enhanced Styling */}
+              <div className="mb-6">
+                <p 
+                  className="text-lg font-semibold mb-2"
+                  style={{
+                    fontFamily: '"Nunito", "Poppins", "Inter", sans-serif',
+                    color: '#1e40af',
+                    fontWeight: '700'
+                  }}
+                >
+                  🏆 당첨 상품 🏆
+                </p>
+                <p 
+                  className="text-3xl md:text-4xl font-black px-6 py-3 rounded-full inline-block"
+                  style={{
+                    fontFamily: '"Nunito", "Poppins", "Inter", sans-serif',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                    boxShadow: '0 8px 32px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)',
+                    transform: 'scale(1)',
+                    animation: 'prize-pulse 2s ease-in-out infinite'
+                  }}
+                >
+                  ✨ {prize.name} ✨
+                </p>
+              </div>
+            </div>
+          </div>
           {prize.imageUrl && (
-            <img src={prize.imageUrl} alt={prize.name} className="mx-auto w-48 h-48 object-contain mb-4" />
+            <div className="mb-6">
+              <img 
+                src={prize.imageUrl} 
+                alt={prize.name} 
+                className="mx-auto w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 object-contain prize-image-glow" 
+              />
+            </div>
           )}
-          <p className="text-xl mb-6">상품을 받으시겠습니까?</p>
-          <div className="flex flex-col items-center gap-4">
-            <input
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="휴대폰 번호를 입력하세요 (예: 01012345678)"
-              className="px-4 py-2 border rounded-md w-64 text-center"
-            />
-            <button
-              onClick={handleClaimPrize}
-              className="px-8 py-3 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition-colors"
+          
+          {/* Enhanced Question Text */}
+          <div className="mb-5 mt-[-40px]">
+            <p 
+              className="text-lg md:text-xl lg:text-2xl font-bold mb-2"
+              style={{
+                fontFamily: '"Nunito", "Poppins", "Inter", sans-serif',
+                color: '#00FF00',
+                textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                fontWeight: '700',
+                fontSize: 'clamp(1rem, 4vw, 1.5rem)'
+              }}
             >
-              당첨상품 받기!
-            </button>
-            <button
-              onClick={handleReset}
-              className="px-6 py-2 bg-gray-500 text-white font-bold rounded-md hover:bg-gray-600 transition-colors"
+              🎁 상품을 받으시겠습니까? 🎁
+            </p>
+            <p 
+              className="text-xs md:text-sm lg:text-base mb-2"
+              style={{
+                fontFamily: '"Nunito", "Poppins", "Inter", sans-serif',
+                color: '#FFF8DC',
+                fontWeight: '600',
+                fontSize: 'clamp(0.75rem, 3vw, 1rem)'
+              }}
             >
-              처음으로
-            </button>
+              휴대폰 번호를 입력하시면 상품을 발송해드립니다!
+            </p>
+          </div>
+          
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative">
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="휴대폰 번호를 입력하세요"
+                className="px-4 py-3 md:py-4 rounded-full w-64 md:w-80 lg:w-96 text-center text-base md:text-lg font-semibold border-2 bg-gradient-to-r from-blue-50 to-indigo-50 focus:outline-none focus:ring-4 transition-all duration-300"
+                style={{
+                  fontFamily: '"Nunito", "Poppins", "Inter", sans-serif',
+                  fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
+                  fontWeight: '600',
+                  color: '#1e40af',
+                  borderColor: '#FF00FF'
+                }}
+              />
+            </div>
+            
+            <div style={{ marginTop: '20px' }}>
+              <button
+                onClick={handleClaimPrize}
+                className="px-6 md:px-8 lg:px-10 py-2 md:py-3 lg:py-4 text-white font-black text-base md:text-lg lg:text-xl rounded-full transform hover:scale-110 transition-all duration-300 shadow-2xl animate-pulse scale-pulse"
+                style={{
+                  fontSize: 'clamp(0.9rem, 4vw, 1.2rem)',
+                  fontWeight: '900',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                  letterSpacing: '0.05em',
+                  color: '#ffffff',
+                  backgroundColor: '#2563eb',
+                  border: 'none',
+                  boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)'
+                }}
+              >
+                🎉 당첨상품 받기! 🎉
+              </button>
+            </div>
+            
           </div>
         </div>
       )}
 
       {eventState === 'claiming' && showPrize && (
-        <div className="text-center bg-white bg-opacity-80 p-6 rounded-lg shadow-lg animate-fade-in z-20">
-          <h1 className="text-3xl font-bold mb-4">당첨 상품이 발송되었습니다!</h1>
-          <p className="text-xl mb-6">휴대폰 메시지를 확인해주세요!</p>
-          <button
-            onClick={handleReset}
-            className="px-6 py-2 bg-gray-500 text-white font-bold rounded-md hover:bg-gray-600 transition-colors"
+        <div className="text-center bg-white bg-opacity-90 p-8 rounded-2xl shadow-2xl animate-fade-in z-20">
+          <h1 
+            className="text-2xl md:text-3xl lg:text-4xl font-black mb-6"
+            style={{
+              fontFamily: '"Nunito", "Poppins", "Inter", sans-serif',
+              color: '#4B0082',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+              fontSize: 'clamp(1.2rem, 5vw, 2rem)',
+              letterSpacing: '0.02em'
+            }}
           >
-            처음으로
-          </button>
+            🎉 당첨 상품이 발송되었습니다! 🎉
+          </h1>
+          <p 
+            className="text-lg md:text-xl lg:text-2xl mb-6"
+            style={{
+              fontFamily: '"Nunito", "Poppins", "Inter", sans-serif',
+              color: '#F0E68C',
+              fontWeight: '700',
+              textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+              fontSize: 'clamp(1rem, 4vw, 1.5rem)',
+              letterSpacing: '0.01em'
+            }}
+          >
+            📱 휴대폰 메시지를 확인해주세요! 📱
+          </p>
         </div>
       )}
     </main>

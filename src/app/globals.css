@@ -466,6 +466,51 @@ body {
   .sky-indigo-pink {
     filter: hue-rotate(30deg) saturate(1.5) brightness(1.2);
   }
+
+  /* 당첨 화면 전용 스타일 */
+  .celebration-container {
+    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255,215,0,0.3);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15), 0 0 100px rgba(255,215,0,0.2);
+  }
+
+  .prize-image-glow {
+    filter: drop-shadow(0 0 20px rgba(255,215,0,0.5)) drop-shadow(0 0 40px rgba(255,215,0,0.3));
+    animation: image-glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes image-glow {
+    0% {
+      filter: drop-shadow(0 0 20px rgba(255,215,0,0.5)) drop-shadow(0 0 40px rgba(255,215,0,0.3));
+    }
+    100% {
+      filter: drop-shadow(0 0 30px rgba(255,215,0,0.8)) drop-shadow(0 0 60px rgba(255,215,0,0.5));
+    }
+  }
+
+  .button-celebration {
+    background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%) !important;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .button-celebration:hover {
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.6) !important;
+  }
+
+  .input-celebration {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,250,252,0.8)) !important;
+    border: 2px solid rgba(16, 185, 129, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  .input-celebration:focus {
+    border-color: rgba(16, 185, 129, 0.6) !important;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2), 0 8px 32px rgba(16, 185, 129, 0.2) !important;
+  }
 }
 
 /* 상품 입장 애니메이션 - 박스 뚜껑으로 날아가서 안으로 떨어지기 */
@@ -507,4 +552,109 @@ body {
     visibility: hidden;
   }
 }
+
+/* 당첨 메시지 애니메이션 */
+@keyframes rainbow-glow {
+  0% {
+    filter: hue-rotate(0deg) drop-shadow(0 4px 8px rgba(255,215,0,0.6)) brightness(1.1);
+  }
+  25% {
+    filter: hue-rotate(90deg) drop-shadow(0 4px 8px rgba(255,107,107,0.6)) brightness(1.2);
+  }
+  50% {
+    filter: hue-rotate(180deg) drop-shadow(0 4px 8px rgba(78,205,196,0.6)) brightness(1.3);
+  }
+  75% {
+    filter: hue-rotate(270deg) drop-shadow(0 4px 8px rgba(69,183,209,0.6)) brightness(1.2);
+  }
+  100% {
+    filter: hue-rotate(360deg) drop-shadow(0 4px 8px rgba(255,215,0,0.6)) brightness(1.1);
+  }
+}
+
+@keyframes prize-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 12px 48px rgba(102, 126, 234, 0.6), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #ffd700;
+  animation: confetti-fall 3s linear infinite;
+}
+
+.confetti:nth-child(1) { left: 10%; animation-delay: 0s; background: #ff6b6b; }
+.confetti:nth-child(2) { left: 20%; animation-delay: 0.5s; background: #4ecdc4; }
+.confetti:nth-child(3) { left: 30%; animation-delay: 1s; background: #45b7d1; }
+.confetti:nth-child(4) { left: 40%; animation-delay: 1.5s; background: #96ceb4; }
+.confetti:nth-child(5) { left: 50%; animation-delay: 2s; background: #ffeaa7; }
+.confetti:nth-child(6) { left: 60%; animation-delay: 2.5s; background: #dda0dd; }
+.confetti:nth-child(7) { left: 70%; animation-delay: 3s; background: #98d8c8; }
+.confetti:nth-child(8) { left: 80%; animation-delay: 3.5s; background: #f7dc6f; }
+.confetti:nth-child(9) { left: 90%; animation-delay: 4s; background: #bb8fce; }
+
+/* 당첨 축하 메시지 무작위 흔들림 애니메이션 */
+@keyframes wiggle-random-1 {
+  0%, 100% { transform: translateX(0px); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-1px); }
+}
+
+@keyframes wiggle-random-2 {
+  0%, 100% { transform: translateX(0px); }
+  20% { transform: translateX(2px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(1px); }
+}
+
+@keyframes wiggle-random-3 {
+  0%, 100% { transform: translateX(0px); }
+  30% { transform: translateX(-1px); }
+  70% { transform: translateX(2px); }
+  90% { transform: translateX(-2px); }
+}
+
+@keyframes wiggle-random-4 {
+  0%, 100% { transform: translateX(0px); }
+  15% { transform: translateX(3px); }
+  45% { transform: translateX(-2px); }
+  85% { transform: translateX(1px); }
+}
+
+@keyframes wiggle-random-5 {
+  0%, 100% { transform: translateX(0px); }
+  35% { transform: translateX(-3px); }
+  65% { transform: translateX(2px); }
+  95% { transform: translateX(-1px); }
+}
+
+.wiggle-char-1 { animation: wiggle-random-1 1.5s ease-in-out infinite; }
+.wiggle-char-2 { animation: wiggle-random-2 1.8s ease-in-out infinite; }
+.wiggle-char-3 { animation: wiggle-random-3 1.3s ease-in-out infinite; }
+.wiggle-char-4 { animation: wiggle-random-4 1.7s ease-in-out infinite; }
+.wiggle-char-5 { animation: wiggle-random-5 1.4s ease-in-out infinite; }
 
