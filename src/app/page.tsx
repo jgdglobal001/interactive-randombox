@@ -148,6 +148,8 @@ export default function HomePage() {
     } else if (eventState === 'playing-closing') {
       setEventState('playing-shaking');
     } else if (eventState === 'playing-shaking') {
+      // This will be handled by the timeout in the effect
+    } else if (eventState === 'playing-reveal') {
       setEventState('finished');
     }
   }, [eventState]);
@@ -157,8 +159,12 @@ export default function HomePage() {
     idle: [190, 196], // 뚜껑이 열려있고 상품이 둥둥 떠다니는 초기 화면 (지속적인 움직임)
     'playing-entering': [190, 196], // 상품이 박스 안으로 들어가는 화면 (임시로 idle과 동일)
     'playing-closing': [197, 204], // 뚜껑이 닫히는 화면
-    'playing-shaking': [14, 190], // 박스가 흔들리고 뚜껑이 열리면서 폭죽 터지는 장면 (playing-reveal과 통합)
+    'playing-shaking': [14, 127], // 박스가 흔들리는 구간 (14-127프레임)
+    'playing-reveal': [127, 190], // 뚜껑이 열리면서 상품이 보이는 구간 (127-190프레임)
   };
+  
+  // 상품이 보여지는 시점을 추적하는 상태
+  const [showPrize, setShowPrize] = useState(false);
 
 
 
@@ -440,10 +446,33 @@ export default function HomePage() {
         lottie.playSegments(animationSegments['playing-closing'], false);
         break;
       case 'playing-shaking':
-        // 14-190 구간을 직접 재생 (속도를 느리게 설정)
-        console.log('14-190 구간 재생 시작');
-        lottie.setSpeed(1.5); // 속도를 매우 느리게 설정
+        // 14-127 구간 재생 후 자동으로 playing-reveal로 전환
+        console.log('14-127 구간 재생 시작');
+        lottie.setSpeed(1.5);
+        
+        // 14-127 구간 재생이 끝나면 playing-reveal 상태로 전환
+        const timer = setTimeout(() => {
+          setShowPrize(true); // 상품 보이기
+          setEventState('playing-reveal');
+        }, ((127 - 14) * (1000 / 24) / 1.5) * 0.9); // 조금 일찍 전환 (90% 지점)
+        
+        // 애니메이션 재생
         lottie.playSegments(animationSegments['playing-shaking'], false);
+        
+        return () => clearTimeout(timer);
+        
+      case 'playing-reveal':
+        // 127-190 구간 재생 (뚜껑이 열리는 애니메이션)
+        console.log('127-190 구간 재생 시작');
+        lottie.setSpeed(1.5);
+        lottie.playSegments(animationSegments['playing-reveal'], false);
+        
+        // 127-190 구간이 끝나면 finished 상태로 전환
+        const revealTimer = setTimeout(() => {
+          setEventState('finished');
+        }, ((190 - 127) * (1000 / 24) / 1.5));
+        
+        return () => clearTimeout(revealTimer);
         break;
       default:
         break;
@@ -520,6 +549,7 @@ export default function HomePage() {
     setPhoneNumber('');
     setEnteringProductIndex(-1);
     setEnteredProducts(new Set()); // 들어간 상품들 리셋
+    setShowPrize(false); // 상품 숨기기
   };
 
   return (
@@ -848,7 +878,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {eventState === 'finished' && prize && (
+      {(eventState === 'playing-reveal' || eventState === 'finished') && showPrize && prize && (
         <div className="text-center bg-white bg-opacity-80 p-8 rounded-lg shadow-lg animate-fade-in z-20">
           <h1 className="text-4xl font-extrabold text-green-600 mb-4">🎉 당첨을 축하드립니다! 🎉</h1>
           <p className="text-2xl font-semibold mb-4">당첨 상품: {prize.name}</p>
@@ -880,7 +910,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {eventState === 'claiming' && (
+      {eventState === 'claiming' && showPrize && (
         <div className="text-center bg-white bg-opacity-80 p-6 rounded-lg shadow-lg animate-fade-in z-20">
           <h1 className="text-3xl font-bold mb-4">당첨 상품이 발송되었습니다!</h1>
           <p className="text-xl mb-6">휴대폰 메시지를 확인해주세요!</p>
