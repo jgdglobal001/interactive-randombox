@@ -96,6 +96,30 @@ const products = [
 export default function HomePage() {
   const [code, setCode] = useState('');
   const [eventState, setEventState] = useState<EventState>('idle');
+  const [showRibbonAndText, setShowRibbonAndText] = useState(true); // 새 상태 추가: 리본과 문구 표시 여부
+
+  // 이벤트 상태 변경 시 리본/문구 숨김 로직 (useEffect로 구현)
+  useEffect(() => {
+    if (eventState === 'playing-closing' || eventState === 'playing-shaking') {
+      setShowRibbonAndText(false);
+    } else {
+      setShowRibbonAndText(true);
+    }
+  }, [eventState]);
+
+  // 리본과 문구 요소를 조건부 렌더링 (예: Ribbon과 Text 컴포넌트가 별도로 있다면)
+  // 만약 Lottie 내부 레이어로 구현되어 있다면, CSS 클래스 토글 사용
+  const ribbonRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ribbon = ribbonRef.current;
+    const text = textRef.current;
+    if (ribbon) ribbon.style.opacity = showRibbonAndText ? '1' : '0';
+    if (text) text.style.opacity = showRibbonAndText ? '1' : '0';
+    // Lottie segments 제한 (예: 전체 270프레임 중 190~196 숨김 구간)
+    // lottieRef.current?.setCurrentFrame(showRibbonAndText ? 270 : 190);
+  }, [showRibbonAndText]);
   const [prize, setPrize] = useState<{ name: string; imageUrl: string } | null>(null);
   const [participationCodeId, setParticipationCodeId] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -377,9 +401,9 @@ export default function HomePage() {
           // 애니메이션 완료 후 해당 상품을 entered 상태로 추가
           setTimeout(() => {
             setEnteredProducts(prev => new Set([...prev, i]));
-          }, 1500); // 애니메이션 시간과 맞춤 (1.5초)
+          }, 750); // 애니메이션 시간과 맞춤 (0.75초)
           
-          await new Promise(resolve => setTimeout(resolve, 1000)); // 각 상품 간격 1초
+          await new Promise(resolve => setTimeout(resolve, 500)); // 각 상품 간격 0.5초
         }
 
         // 모든 상품이 들어간 후 다음 단계로
@@ -418,7 +442,7 @@ export default function HomePage() {
       case 'playing-shaking':
         // 14-190 구간을 직접 재생 (속도를 느리게 설정)
         console.log('14-190 구간 재생 시작');
-        lottie.setSpeed(0.3); // 속도를 매우 느리게 설정
+        lottie.setSpeed(1.5); // 속도를 매우 느리게 설정
         lottie.playSegments(animationSegments['playing-shaking'], false);
         break;
       default:
@@ -429,7 +453,7 @@ export default function HomePage() {
   // Sky Indigo 백그라운드 애니메이션 속도 설정
   useEffect(() => {
     if (skyIndigoRef.current) {
-      skyIndigoRef.current.setSpeed(0.5); // 구름 속도를 매우 느리게
+      skyIndigoRef.current.setSpeed(2); // 구름 속도를 매우 느리게
     }
   }, []);
 
@@ -590,6 +614,7 @@ export default function HomePage() {
             <div
               className="product-image-container"
               style={{
+                position: 'relative',
                 width: `${product.imageSize.width * finalContainerSize.scaleFactor}px`,
                 height: `${product.imageSize.height * finalContainerSize.scaleFactor}px`,
                 display: 'flex',
@@ -600,12 +625,10 @@ export default function HomePage() {
               <Image
                 src={product.imageUrl}
                 alt={product.name}
-                width={product.imageSize.width}
-                height={product.imageSize.height}
+                fill={true}
+                sizes="(max-width: 768px) 200px, 240px"
                 style={{
-                  objectFit: 'contain',
-                  width: '100%',
-                  height: '100%'
+                  objectFit: 'contain'
                 }}
                 className="product-image"
               />
@@ -726,7 +749,7 @@ export default function HomePage() {
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                placeholder="참여 코드를 입력하세요 (테스트: TEST123)"
+                placeholder="참여 코드를 입력하세요"
                 className="w-full max-w-[350px] md:max-w-[320px] lg:max-w-[300px] pl-16 pr-6 py-20 text-center text-2xl font-semibold border-2 border-transparent rounded-full bg-gradient-to-r from-purple-100 via-pink-50 to-purple-100 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-purple-400 transition-all duration-500 shadow-2xl hover:shadow-purple-300/50 transform hover:scale-105 hover:shadow-3xl backdrop-blur-sm"
                 style={{
                   fontSize: 'clamp(1.1rem, 4.5vw, 1.6rem)', // 480px부터 더 빠르게 줄어듦
@@ -763,63 +786,65 @@ export default function HomePage() {
             </button>
           </div>
 
-          <div className="text-sm text-gray-600 text-center fade-in-up" style={{ marginTop: '10px !important', transform: 'translateY(-20px)', opacity: 0 }}>
-            <span
-              className="inline-block"
-              style={{
-                animation: 'pulse 2s infinite',
-                fontSize: 'clamp(0.9rem, 3.5vw, 1.2rem)' // 480px부터 더 빠르게 줄어듦
-              }}
-            >
-              💫
-            </span>
-            <span
-              className="font-medium"
-              style={{
-                color: '#fafad2',
-                fontWeight: '600',
-                fontSize: 'clamp(0.8rem, 3.3vw, 1.1rem)' // 480px부터 더 빠르게 줄어듦
-              }}
-            >
-              <span className="typewriter" style={{ animationDelay: '3.6s' }}>지</span>
-              <span className="typewriter" style={{ animationDelay: '3.65s' }}>금</span>
-              <span className="typewriter" style={{ animationDelay: '3.7s' }}>&nbsp;</span>
-              <span className="typewriter" style={{ animationDelay: '3.75s' }}>바</span>
-              <span className="typewriter" style={{ animationDelay: '3.8s' }}>로</span>
-              <span className="typewriter" style={{ animationDelay: '3.85s' }}>&nbsp;</span>
-              <span className="typewriter" style={{ animationDelay: '3.9s' }}>참</span>
-              <span className="typewriter" style={{ animationDelay: '3.95s' }}>여</span>
-              <span className="typewriter" style={{ animationDelay: '4.0s' }}>하</span>
-              <span className="typewriter" style={{ animationDelay: '4.05s' }}>여</span>
-              <span className="typewriter" style={{ animationDelay: '4.1s' }}>&nbsp;</span>
-              <span className="typewriter" style={{ animationDelay: '4.15s', color: '#34d399' }}>&ldquo;</span>
-              <span className="typewriter" style={{ animationDelay: '4.2s', color: '#34d399' }}>특</span>
-              <span className="typewriter" style={{ animationDelay: '4.25s', color: '#34d399' }}>별</span>
-              <span className="typewriter" style={{ animationDelay: '4.3s', color: '#34d399' }}>한</span>
-              <span className="typewriter" style={{ animationDelay: '4.35s', color: '#34d399' }}>&nbsp;</span>
-              <span className="typewriter" style={{ animationDelay: '4.4s', color: '#34d399' }}>선</span>
-              <span className="typewriter" style={{ animationDelay: '4.45s', color: '#34d399' }}>물</span>
-              <span className="typewriter" style={{ animationDelay: '4.5s', color: '#34d399' }}>&rdquo;</span>
-              <span className="typewriter" style={{ animationDelay: '4.55s' }}>&nbsp;</span>
-              <span className="typewriter" style={{ animationDelay: '4.6s' }}>을</span>
-              <span className="typewriter" style={{ animationDelay: '4.65s' }}>&nbsp;</span>
-              <span className="typewriter" style={{ animationDelay: '4.7s' }}>만</span>
-              <span className="typewriter" style={{ animationDelay: '4.75s' }}>나</span>
-              <span className="typewriter" style={{ animationDelay: '4.8s' }}>보</span>
-              <span className="typewriter" style={{ animationDelay: '4.85s' }}>세</span>
-              <span className="typewriter" style={{ animationDelay: '4.9s' }}>요</span>
-              <span className="typewriter" style={{ animationDelay: '4.95s' }}>!</span>
-            </span>
-            <span
-              className="inline-block"
-              style={{
-                animation: 'pulse 2s infinite',
-                fontSize: '1.2rem'
-              }}
-            >
-              💫
-            </span>
-          </div>
+          {showRibbonAndText ? (
+            <div className="text-sm text-gray-600 text-center fade-in-up" style={{ marginTop: '10px !important', transform: 'translateY(-20px)', opacity: 0 }}>
+              <span
+                className="inline-block"
+                style={{
+                  animation: 'pulse 2s infinite',
+                  fontSize: 'clamp(0.9rem, 3.5vw, 1.2rem)' // 480px부터 더 빠르게 줄어듦
+                }}
+              >
+                💫
+              </span>
+              <span
+                className="font-medium"
+                style={{
+                  color: '#fafad2',
+                  fontWeight: '600',
+                  fontSize: 'clamp(0.8rem, 3.3vw, 1.1rem)' // 480px부터 더 빠르게 줄어듦
+                }}
+              >
+                <span className="typewriter" style={{ animationDelay: '3.6s' }}>지</span>
+                <span className="typewriter" style={{ animationDelay: '3.65s' }}>금</span>
+                <span className="typewriter" style={{ animationDelay: '3.7s' }}>&nbsp;</span>
+                <span className="typewriter" style={{ animationDelay: '3.75s' }}>바</span>
+                <span className="typewriter" style={{ animationDelay: '3.8s' }}>로</span>
+                <span className="typewriter" style={{ animationDelay: '3.85s' }}>&nbsp;</span>
+                <span className="typewriter" style={{ animationDelay: '3.9s' }}>참</span>
+                <span className="typewriter" style={{ animationDelay: '3.95s' }}>여</span>
+                <span className="typewriter" style={{ animationDelay: '4.0s' }}>하</span>
+                <span className="typewriter" style={{ animationDelay: '4.05s' }}>여</span>
+                <span className="typewriter" style={{ animationDelay: '4.1s' }}>&nbsp;</span>
+                <span className="typewriter" style={{ animationDelay: '4.15s', color: '#34d399' }}>&ldquo;</span>
+                <span className="typewriter" style={{ animationDelay: '4.2s', color: '#34d399' }}>특</span>
+                <span className="typewriter" style={{ animationDelay: '4.25s', color: '#34d399' }}>별</span>
+                <span className="typewriter" style={{ animationDelay: '4.3s', color: '#34d399' }}>한</span>
+                <span className="typewriter" style={{ animationDelay: '4.35s', color: '#34d399' }}>&nbsp;</span>
+                <span className="typewriter" style={{ animationDelay: '4.4s', color: '#34d399' }}>선</span>
+                <span className="typewriter" style={{ animationDelay: '4.45s', color: '#34d399' }}>물</span>
+                <span className="typewriter" style={{ animationDelay: '4.5s', color: '#34d399' }}>&rdquo;</span>
+                <span className="typewriter" style={{ animationDelay: '4.55s' }}>&nbsp;</span>
+                <span className="typewriter" style={{ animationDelay: '4.6s' }}>을</span>
+                <span className="typewriter" style={{ animationDelay: '4.65s' }}>&nbsp;</span>
+                <span className="typewriter" style={{ animationDelay: '4.7s' }}>만</span>
+                <span className="typewriter" style={{ animationDelay: '4.75s' }}>나</span>
+                <span className="typewriter" style={{ animationDelay: '4.8s' }}>보</span>
+                <span className="typewriter" style={{ animationDelay: '4.85s' }}>세</span>
+                <span className="typewriter" style={{ animationDelay: '4.9s' }}>요</span>
+                <span className="typewriter" style={{ animationDelay: '4.95s' }}>!</span>
+              </span>
+              <span
+                className="inline-block"
+                style={{
+                  animation: 'pulse 2s infinite',
+                  fontSize: '1.2rem'
+                }}
+              >
+                💫
+              </span>
+            </div>
+          ) : null}
         </div>
       )}
 
