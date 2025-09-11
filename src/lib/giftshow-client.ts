@@ -135,6 +135,25 @@ export class GiftShowClient {
   }
 
   /**
+   * 기프트카드 발송 (실제 쿠폰 발송)
+   * @param phoneNumber 수신자 전화번호
+   * @param cardId 카드 ID
+   * @param amount 금액 (선택사항)
+   * @returns 발송 결과
+   */
+  async sendGiftCard(phoneNumber: string, cardId?: string, amount?: number): Promise<any> {
+    const cleanPhoneNumber = phoneNumber.replace(/-/g, '');
+    const targetCardId = cardId || this.cardId;
+
+    return this.makeRequest('/card/send', 'POST', '0006', {
+      phone_number: cleanPhoneNumber,
+      card_id: targetCardId,
+      amount: amount || 0,
+      message: '메가커피 교환권이 발송되었습니다.'
+    });
+  }
+
+  /**
    * 비즈머니 잔액 조회
    * @returns 잔액 정보
    */
@@ -156,14 +175,14 @@ export class GiftShowClient {
 
 // 설정 값들
 export const GIFTSHOW_CONFIG = {
-  BASE_URL: process.env.GIFTSHOW_BASE_URL || 'https://api.giftshow.co.kr', // 개발용 더미 URL로 변경 가능
-  AUTH_KEY: process.env.GIFTSHOW_AUTH_KEY || 'DEV42c191046f9549efadb3c7beef1b30b8',
-  AUTH_TOKEN: process.env.GIFTSHOW_AUTH_TOKEN || 'eai/tEM6hCfxnr8yRM1pxw==',
+  BASE_URL: process.env.GIFTSHOW_BASE_URL || 'https://api.giftshow.co.kr',
+  AUTH_KEY: process.env.GIFTSHOW_AUTH_KEY || '',
+  AUTH_TOKEN: process.env.GIFTSHOW_AUTH_TOKEN || '',
   ENCRYPTION_KEY: process.env.GIFTSHOW_ENCRYPTION_KEY || 'your-encryption-key-32-chars',
-  BANNER_ID: process.env.GIFTSHOW_BANNER_ID || '202006010058067',
-  CARD_ID: process.env.GIFTSHOW_CARD_ID || '202006010057417',
+  BANNER_ID: process.env.GIFTSHOW_BANNER_ID || '',
+  CARD_ID: process.env.GIFTSHOW_CARD_ID || '',
   IS_DEV: process.env.NODE_ENV !== 'production',
-  // 개발 환경에서 실제 API 호출을 건너뛰고 모의 데이터를 사용할지 여부
+  // 환경변수로 Mock API 사용 여부 결정
   USE_MOCK_API: process.env.GIFTSHOW_USE_MOCK_API === 'true'
 };
 

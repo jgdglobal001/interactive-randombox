@@ -525,19 +525,26 @@ export default function HomePage() {
   };
 
   const handleClaimPrize = async () => {
+    console.log('=== handleClaimPrize 시작 ===');
+    console.log('participationCodeId:', participationCodeId);
+    console.log('phoneNumber:', phoneNumber);
+    
     if (!participationCodeId || !phoneNumber) {
       alert('참여 코드와 휴대폰 번호가 필요합니다.');
       return;
     }
 
     try {
-      // TODO: 실제 Workers 백엔드 API URL로 변경해야 합니다.
+      console.log('API 호출 시작...');
       const response = await fetch('/api/claim', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ participationCodeId, phoneNumber }),
       });
+      console.log('API 응답 받음:', response.status);
+      
       const data: ClaimResponse = await response.json();
+      console.log('API 응답 데이터:', data);
 
       if (data.success) {
         alert(data.message || '상품이 성공적으로 발송되었습니다.');

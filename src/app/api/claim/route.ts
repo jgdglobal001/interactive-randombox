@@ -7,9 +7,11 @@ interface ClaimRequest {
 }
 
 export async function POST(request: NextRequest) {
+  console.log('=== API /claim 호출됨 ===');
   try {
     const body = await request.json() as ClaimRequest;
     const { participationCodeId, phoneNumber } = body;
+    console.log('받은 데이터:', { participationCodeId, phoneNumber });
 
     if (!participationCodeId || !phoneNumber) {
       return NextResponse.json(
@@ -34,50 +36,54 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 기프트 쇼 API를 통해 MMS 발송
-    // 실제로는 당첨된 상품에 따라 다른 메시지를 보내야 합니다
-    const message = `🎉 축하드립니다! [브랜드명] 이벤트에 당첨되셨습니다.
-상품 수령을 위해 본 메시지를 확인해주세요.
+    // 기프트 쇼 API를 통해 실제 쿠폰 발송
+    // 메가커피 교환권 쿠폰을 실제로 발송
+    const message = `🎉 메가커피 교환권 당첨을 축하드립니다!
 
-참여코드: ${participationCodeId}
-수령기한: 30일 이내`;
+아래 쿠폰을 매장에서 제시해주세요.
+쿠폰번호: ${participationCodeId}
+유효기간: 발급일로부터 30일
 
-    let mmsResult;
+※ 전국 메가커피 매장에서 사용 가능
+※ 1회 사용 후 소멸됩니다`;
+
+    // 실제 기프트카드 발송
+    console.log('=== 기프트카드 발송 시작 ===');
+    console.log('USE_MOCK_API 설정:', GIFTSHOW_CONFIG.USE_MOCK_API);
+    console.log('발송할 번호:', cleanPhoneNumber);
+    console.log('카드 ID:', GIFTSHOW_CONFIG.CARD_ID);
+    
+    let cardResult;
     try {
-      // 개발 환경에서는 모의 API 사용
-      if (GIFTSHOW_CONFIG.USE_MOCK_API) {
-        console.log('Using mock API for MMS sending');
-        mmsResult = await mockGiftShowAPI.sendMMS(cleanPhoneNumber, message);
-      } else {
-        console.log('Using real GiftShow API for MMS sending');
-        console.log('GiftShow Config:', {
-          baseUrl: GIFTSHOW_CONFIG.BASE_URL,
-          authKey: GIFTSHOW_CONFIG.AUTH_KEY ? '[SET]' : '[NOT SET]',
-          authToken: GIFTSHOW_CONFIG.AUTH_TOKEN ? '[SET]' : '[NOT SET]',
-          cardId: GIFTSHOW_CONFIG.CARD_ID,
-          isDev: GIFTSHOW_CONFIG.IS_DEV
-        });
-        mmsResult = await giftShowClient.sendMMS(cleanPhoneNumber, message);
+      // 실제 기프트카드 발송 (MMS가 아닌 카드 발송)
+      console.log('실제 GiftShow 기프트카드 발송 중...');
+      cardResult = await giftShowClient.sendGiftCard(cleanPhoneNumber);
+      console.log('기프트카드 발송 결과:', cardResult);
+      
+      // 발송 성공 시 추가로 안내 MMS도 발송
+      if (cardResult.success) {
+        console.log('기프트카드 발송 성공, 안내 MMS 발송 중...');
+        const mmsResult = await giftShowClient.sendMMS(cleanPhoneNumber, message);
+        console.log('안내 MMS 발송 결과:', mmsResult);
       }
-      console.log('MMS send result:', mmsResult);
-    } catch (mmsError) {
-      console.error('MMS sending failed:', mmsError);
-      mmsResult = {
+    } catch (cardError) {
+      console.error('기프트카드 발송 실패:', cardError);
+      cardResult = {
         success: false,
-        error: 'MMS 발송 실패',
-        details: mmsError instanceof Error ? mmsError.message : 'Unknown MMS error'
+        error: '기프트카드 발송 실패',
+        details: cardError instanceof Error ? cardError.message : 'Unknown card error'
       };
     }
 
-    // MMS 발송 실패 시에도 상품 수령 성공으로 처리 (실제 운영에서는 재시도 로직 필요)
-    if (!mmsResult.success) {
-      console.warn('MMS sending failed, but proceeding with claim:', mmsResult);
+    // 기프트카드 발송 실패 시에도 상품 수령 성공으로 처리 (실제 운영에서는 재시도 로직 필요)
+    if (!cardResult.success) {
+      console.warn('기프트카드 발송 실패, but proceeding with claim:', cardResult);
     }
 
     return NextResponse.json({
       success: true,
-      message: '상품이 성공적으로 발송되었습니다. 휴대폰 메시지를 확인해주세요!',
-      mmsResult // 디버깅용
+      message: '메가커피 교환권이 성공적으로 발송되었습니다. 휴대폰 메시지를 확인해주세요!',
+      cardResult // 디버깅용
     });
 
   } catch (error) {
