@@ -106,6 +106,15 @@ app.post('/participate', async (c) => {
         data: { stock: { decrement: 1 } },
       })
 
+      // 5. Winner 레코드 생성 (참여 시점에 생성)
+      const winner = await tx.winner.create({
+        data: {
+          participationCodeId: participationCode.id,
+          prizeId: prize.id,
+        },
+        include: { prize: true },
+      })
+
       return {
         success: true,
         prize: { id: prize.id, name: prize.name, imageUrl: prize.imageUrl },
@@ -148,10 +157,10 @@ app.post('/claim', async (c) => {
       // 참여 코드로 상품 정보 조회
       const participationCode = await tx.participationCode.findUnique({
         where: { id: participationCodeId },
-        include: { prize: true },
+        include: { winner: { include: { prize: true } } },
       })
 
-      if (!participationCode || !participationCode.prize) {
+      if (!participationCode || !participationCode.winner?.prize) {
         return { error: '유효하지 않은 참여 코드입니다.' }
       }
 
@@ -174,7 +183,7 @@ app.post('/claim', async (c) => {
       }) : await tx.winner.create({
         data: {
           participationCodeId: participationCodeId,
-          prizeId: participationCode.prize.id,
+          prizeId: participationCode.winner.prize.id,
           userPhoneNumber: phoneNumber,
         },
         include: { prize: true },
