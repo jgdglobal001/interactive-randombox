@@ -3,8 +3,8 @@
 
 datasource db {
   provider  = "postgresql"
-  url       = "postgresql://neondb_owner:npg_kTOG5yZtxDR8@ep-dawn-firefly-a1cnnrop-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-  directUrl = "postgresql://neondb_owner:npg_kTOG5yZtxDR8@ep-dawn-firefly-a1cnnrop.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+  url       = "postgresql://neondb_owner:npg_kTOG5yZtxDR8@ep-dawn-firefly-a1cnnrop-pooler.ap-southeast-1.aws.neon.tech/neondb"
+  directUrl = "postgresql://neondb_owner:npg_kTOG5yZtxDR8@ep-dawn-firefly-a1cnnrop.ap-southeast-1.aws.neon.tech/neondb"
 }
 
 generator client {
