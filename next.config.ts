@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     '*': ['.next/cache/**'],
   },
   webpack: (config, { isServer }) => {
+    return config;
   },
 };
 
