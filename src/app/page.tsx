@@ -22,6 +22,8 @@ type EventState = 'idle' | 'playing-entering' | 'playing-closing' | 'playing-sha
 // Lottie 애니메이션 데이터 임포트 (public 폴더에 있다고 가정)
 import introLottie from '../../public/lottie/intro.json';
 import skyIndigoLottie from '../../public/lottie/Sky Indigo.json';
+import confettiLottie from '../../public/lottie/confetti.json';
+import confetti2Lottie from '../../public/lottie/Confetti 2.json';
 import Image from 'next/image'; // Image 컴포넌트 임포트
 
 // 상품 데이터 정의 - 상품 단위 컨테이너 구조로 변경
@@ -128,8 +130,11 @@ export default function HomePage() {
   const [enteringProductIndex, setEnteringProductIndex] = useState(-1); // 상품 입장 애니메이션용
   const [enteredProducts, setEnteredProducts] = useState<Set<number>>(new Set()); // 이미 들어간 상품들 추적
   const [productPositions, setProductPositions] = useState<any>({}); // 상품 위치 상태
+  const [showConfetti, setShowConfetti] = useState(false); // 메가커피 이미지 시점(프레임 127)에만 터지게 설정
   const lottieRef = useRef<any>(null); // 메인 Lottie 애니메이션 인스턴스 참조
   const skyIndigoRef = useRef<any>(null); // Sky Indigo 백그라운드 애니메이션 참조
+  const confettiRef = useRef<any>(null); // 폭죽1 Lottie 참조
+  const confetti2Ref = useRef<any>(null); // 폭죽2 Lottie 참조
   const pingPongDirectionRef = useRef<number>(1); // idle 핑퐁 재생용 방향 상태
 
   // intro Lottie 완료 시 핑퐁 및 상태 전환을 위한 콜백
@@ -464,7 +469,7 @@ export default function HomePage() {
         const timer = setTimeout(() => {
           setShowPrize(true); // 상품 보이기
           setEventState('playing-reveal');
-        }, ((127 - 14) * (1000 / 24) / 1.5) * 0.9); // 조금 일찍 전환 (90% 지점)
+        }, ((127 - 14) * (1000 / 24) / 1.5)); // 100% 지점에서 전환
         
         // 애니메이션 재생
         lottie.playSegments(animationSegments['playing-shaking'], false);
@@ -474,6 +479,9 @@ export default function HomePage() {
       case 'playing-reveal':
         // 127-190 구간 재생 (뚜껑이 열리는 애니메이션)
         console.log('127-190 구간 재생 시작');
+        console.log('폭죽 시작!!!'); // 디버그 로그 추가
+        setShowConfetti(true); // 폭죽 애니메이션 시작
+        console.log('showConfetti 설정됨:', true); // 상태 확인 로그
         lottie.setSpeed(1.5);
         lottie.playSegments(animationSegments['playing-reveal'], false);
         
@@ -495,6 +503,52 @@ export default function HomePage() {
       skyIndigoRef.current.setSpeed(2); // 구름 속도를 매우 느리게
     }
   }, []);
+
+  // 폭죽 애니메이션 속도 설정 및 재생
+  useEffect(() => {
+    console.log('showConfetti changed:', showConfetti);
+    if (showConfetti) {
+      console.log('Playing confetti...');
+      // Wait for animation to load and then reset to beginning and play
+      setTimeout(() => {
+        console.log('Inside setTimeout for confetti - 500ms delay');
+        if (confettiRef.current) {
+          console.log('Resetting and playing confetti1');
+          confettiRef.current.goToAndStop(0);
+          confettiRef.current.setSpeed(1);
+          confettiRef.current.play();
+        } else {
+          console.log('confettiRef is still null - retrying...');
+          // 추가 재시도
+          setTimeout(() => {
+            if (confettiRef.current) {
+              console.log('Retry: Resetting and playing confetti1');
+              confettiRef.current.goToAndStop(0);
+              confettiRef.current.setSpeed(1);
+              confettiRef.current.play();
+            }
+          }, 200);
+        }
+        if (confetti2Ref.current) {
+          console.log('Resetting and playing confetti2');
+          confetti2Ref.current.goToAndStop(0);
+          confetti2Ref.current.setSpeed(1);
+          confetti2Ref.current.play();
+        } else {
+          console.log('confetti2Ref is still null - retrying...');
+          // 추가 재시도
+          setTimeout(() => {
+            if (confetti2Ref.current) {
+              console.log('Retry: Resetting and playing confetti2');
+              confetti2Ref.current.goToAndStop(0);
+              confetti2Ref.current.setSpeed(1);
+              confetti2Ref.current.play();
+            }
+          }, 200);
+        }
+      }, 500);
+    }
+  }, [showConfetti]);
 
   const handleParticipate = async () => {
     if (!code) {
@@ -591,6 +645,58 @@ export default function HomePage() {
           lottieRef={skyIndigoRef}
         />
       </div>
+
+      {/* 폭죽 애니메이션 - 가장 간단하게 */}
+      {showConfetti && (
+        <>
+          <div
+            className="fixed inset-0 pointer-events-none"
+            style={{
+              zIndex: 2147483647,
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh'
+            }}
+          >
+            <Lottie
+              animationData={confettiLottie}
+              loop={false}
+              autoplay={true}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%'
+              }}
+            />
+          </div>
+          <div
+            className="fixed inset-0 pointer-events-none"
+            style={{
+              zIndex: 2147483647,
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh'
+            }}
+          >
+            <Lottie
+              animationData={confetti2Lottie}
+              loop={false}
+              autoplay={true}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%'
+              }}
+            />
+          </div>
+        </>
+      )}
 
       {/* 기존 선물상자 Lottie 애니메이션 */}
       <div className="absolute inset-0 flex items-center justify-center lottie-container z-10" style={{ transform: 'translateY(80px)' }}>
@@ -897,20 +1003,7 @@ export default function HomePage() {
 
       {(eventState === 'playing-reveal' || eventState === 'finished') && showPrize && prize && (
         <div className="text-center p-8 animate-fade-in z-20">
-          <div className="relative overflow-hidden">
-            {/* Confetti Animation */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="confetti"></div>
-              <div className="confetti"></div>
-              <div className="confetti"></div>
-              <div className="confetti"></div>
-              <div className="confetti"></div>
-              <div className="confetti"></div>
-              <div className="confetti"></div>
-              <div className="confetti"></div>
-              <div className="confetti"></div>
-            </div>
-            
+          <div className="relative">
             {/* Celebration Background Effect - moved behind text */}
             
             {/* Main Congratulations Message */}
