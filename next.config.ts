@@ -1,10 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    outputFileTracingExcludes: {
-      '*': ['.next/cache/**'],
-    },
+  outputFileTracingExcludes: {
+    '*': ['.next/cache/**'],
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
