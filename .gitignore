@@ -17,6 +17,11 @@
 /.next/
 /out/
 
+# Next.js build cache
+.next/cache/
+.next/standalone/
+.next/static/chunks/webpack/
+
 # production
 /build
 
