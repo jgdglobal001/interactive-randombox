@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    outputFileTracingExcludes: {
+      '*': ['.next/cache/**'],
+    },
+  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.optimization.splitChunks = {

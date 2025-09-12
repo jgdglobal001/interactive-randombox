@@ -7,8 +7,6 @@ interface ParticipateRequest {
   code: string;
 }
 
-export const runtime = 'edge';
-
 export async function POST(request: NextRequest) {
   try {
     const { code }: ParticipateRequest = await request.json();
