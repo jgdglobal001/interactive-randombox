@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { giftShowClient, mockGiftShowAPI, GIFTSHOW_CONFIG } from '@/lib/giftshow-client';
 
+export const runtime = 'edge';
+
 interface ParticipateRequest {
   code: string;
 }

@@ -1,0 +1,3 @@
+name = "interactive-randombox"
+pages_build_output_dir = ".next"
+build_command = "npm run build"
