@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client/edge';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 interface ParticipateRequest {
   code: string;
 }
-
-export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   try {

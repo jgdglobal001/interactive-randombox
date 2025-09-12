@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client/edge';
+import { PrismaClient } from '@prisma/client';
 import { giftShowClient } from '@/lib/giftshow-client';
 
 const prisma = new PrismaClient();
@@ -8,8 +8,6 @@ interface ClaimRequest {
   participationCodeId: string;
   phoneNumber: string;
 }
-
-export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   try {
