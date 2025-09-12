@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import Lottie from 'lottie-react'
+import dynamic from 'next/dynamic'
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
 
 // API 응답 타입 정의
 interface ParticipateResponse {
