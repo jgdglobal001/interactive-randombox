@@ -9,6 +9,8 @@ interface ClaimRequest {
   phoneNumber: string;
 }
 
+export const runtime = 'edge';
+
 export async function POST(request: NextRequest) {
   try {
     const { participationCodeId, phoneNumber }: ClaimRequest = await request.json();

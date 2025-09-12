@@ -7,6 +7,8 @@ interface ParticipateRequest {
   code: string;
 }
 
+export const runtime = 'edge';
+
 export async function POST(request: NextRequest) {
   try {
     const { code }: ParticipateRequest = await request.json();
@@ -45,12 +47,11 @@ export async function POST(request: NextRequest) {
         data: { stock: { decrement: 1 } },
       });
 
-      const winner = await tx.winner.create({
+      await tx.winner.create({
         data: {
           participationCodeId: participationCode.id,
           prizeId: prize.id,
         },
-        include: { prize: true },
       });
 
       return {
