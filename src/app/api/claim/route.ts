@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client/edge';
 import { giftShowClient } from '@/lib/giftshow-client';
 
 const prisma = new PrismaClient();
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '참여 코드와 휴대폰 번호가 필요합니다.' }, { status: 400 });
     }
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       const participationCode = await tx.participationCode.findUnique({
         where: { id: participationCodeId },
         include: { winner: { include: { prize: true } } },
