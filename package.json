@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --port 3001",
     "build": "next build",
+    "postbuild": "Remove-Item -Recurse -Force .next/cache",
     "start": "next start",
     "lint": "eslint"
   },
