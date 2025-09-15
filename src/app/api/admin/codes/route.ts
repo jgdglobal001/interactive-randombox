@@ -100,6 +100,18 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/codes - 새로운 참여 코드 생성
 export async function POST(request: NextRequest) {
   try {
+    // 환경변수 기반 인증 체크
+    const authHeader = request.headers.get('authorization');
+    const expectedAuth = process.env.ADMIN_SECRET_KEY || 'admin2024!';
+    
+    if (authHeader !== `Bearer ${expectedAuth}`) {
+      console.log('POST 인증 실패: auth header =', authHeader);
+      return NextResponse.json(
+        { success: false, error: '로그인이 필요합니다.' } as ApiResponse,
+        { status: 401 }
+      );
+    }
+
     const body = await request.json() as CreateCodeRequest;
     const count = body.count || 1;
 

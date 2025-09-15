@@ -94,7 +94,10 @@ export default function AdminPage() {
     try {
       const res = await fetch('/api/admin/codes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer admin2024!`
+        },
         body: JSON.stringify({ count: 1 }),
       })
       const data: ApiResponse = await res.json()
