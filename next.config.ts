@@ -8,9 +8,6 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
   generateBuildId: () => 'no-source-maps',
   
-  // source-map 외부 패키지로 설정
-  serverExternalPackages: ['source-map', 'ws', 'bufferutil', 'utf-8-validate', '@prisma/client'],
-  
   // API Routes를 정적 생성에서 제외
   experimental: {
     // 웹팩 빌드 워커 비활성화
@@ -27,7 +24,6 @@ const nextConfig = {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       'source-map': require.resolve('source-map'),
-      'ws': require.resolve('ws'),
     };
     
     // Node.js 모듈 완전 비활성화 (Vercel 호환성)
@@ -39,7 +35,6 @@ const nextConfig = {
         tls: false,
         crypto: false,
         'source-map': require.resolve('source-map'),
-        'ws': require.resolve('ws'),
       };
     }
     
@@ -68,25 +63,6 @@ const nextConfig = {
         maxSize: 20971520, // 20MB
       },
     };
-    
-    // 서버 사이드 Prisma 설정
-    if (isServer) {
-      config.externals = config.externals || [];
-      config.externals.push({
-        '@prisma/client': 'commonjs @prisma/client',
-        'ws': 'commonjs ws',
-        'bufferutil': 'commonjs bufferutil',
-        'utf-8-validate': 'commonjs utf-8-validate',
-      });
-      
-      // 서버 전용 모듈 비활성화
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        'next/dist/compiled/ws': false,
-        'next/dist/compiled/bufferutil': false,
-        'next/dist/compiled/utf-8-validate': false,
-      };
-    }
     
     return config;
   },
