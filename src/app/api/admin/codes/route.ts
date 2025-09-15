@@ -9,6 +9,7 @@ interface ApiResponse {
   codes?: ParticipationCode[];
   message?: string;
   error?: string;
+  details?: string;
 }
 
 interface ParticipationCode {
@@ -32,6 +33,11 @@ function generateUniqueCode(): string {
 export async function GET(request: NextRequest) {
   try {
     console.log('Admin API 접근 시도...');
+    console.log('Environment check:', {
+      NODE_ENV: process.env.NODE_ENV,
+      DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'NOT_SET',
+      ADMIN_SECRET_KEY: process.env.ADMIN_SECRET_KEY ? 'SET' : 'NOT_SET'
+    });
     
     // 환경변수 기반 인증 체크
     const authHeader = request.headers.get('authorization');
@@ -46,6 +52,10 @@ export async function GET(request: NextRequest) {
     }
     
     console.log('데이터베이스 연결 시도...');
+    
+    // Prisma Client 연결 테스트
+    await prisma.$connect();
+    console.log('Prisma 연결 성공');
     
     const codes = await prisma.participationCode.findMany({
       orderBy: { createdAt: 'desc' },
@@ -73,11 +83,17 @@ export async function GET(request: NextRequest) {
     } as ApiResponse);
 
   } catch (error) {
-    console.error('Admin API 에러:', error);
+    console.error('Admin API 에러 상세:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
     return NextResponse.json(
-      { success: false, error: '코드 목록을 불러오는 데 실패했습니다.' } as ApiResponse,
+      { success: false, error: '코드 목록을 불러오는 데 실패했습니다.', details: error instanceof Error ? error.message : String(error) } as ApiResponse,
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
