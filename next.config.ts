@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   generateBuildId: () => 'no-source-maps',
   
   // source-map 외부 패키지로 설정
-  serverExternalPackages: ['source-map', 'ws'],
+  serverExternalPackages: ['source-map', 'ws', 'bufferutil', 'utf-8-validate'],
   
   // API Routes를 정적 생성에서 제외
   experimental: {
@@ -74,6 +74,9 @@ const nextConfig: NextConfig = {
     if (isServer) {
       config.externals.push({
         '@prisma/client': 'commonjs @prisma/client',
+        'ws': 'commonjs ws',
+        'bufferutil': 'commonjs bufferutil',
+        'utf-8-validate': 'commonjs utf-8-validate',
       });
     }
     
