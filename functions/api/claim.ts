@@ -1,5 +1,4 @@
 // Cloudflare Pages Function for claim API
-import { PrismaClient } from '@prisma/client';
 
 interface Env {
   DATABASE_URL?: string;
@@ -16,8 +15,6 @@ interface Context {
   waitUntil(promise: Promise<any>): void;
   passThroughOnException(): void;
 }
-
-const prisma = new PrismaClient();
 
 // 기프트쇼 API 호출 (모의 구현)
 async function callGiftShowAPI(phoneNumber: string, goodsCode: string, env: Env) {
@@ -87,6 +84,12 @@ export async function onRequestPost(context: Context): Promise<Response> {
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
+    
+    // Prisma Accelerate 클라이언트 생성
+    const { PrismaClient } = await import('@prisma/client/edge');
+    const { withAccelerate } = await import('@prisma/extension-accelerate');
+    
+    const prisma = new PrismaClient().$extends(withAccelerate());
 
     // 당첨자 정보 확인
     const winner = await prisma.winner.findUnique({
@@ -134,6 +137,9 @@ export async function onRequestPost(context: Context): Promise<Response> {
         giftshowTrId: giftShowResult.transactionId,
       }
     });
+    
+    // Prisma 연결 정리
+    await prisma.$disconnect();
 
     return new Response(
       JSON.stringify({ 

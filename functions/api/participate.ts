@@ -1,5 +1,4 @@
 // Cloudflare Pages Function for participate API
-import { PrismaClient } from '@prisma/client';
 
 interface Env {
   DATABASE_URL?: string;
@@ -12,8 +11,6 @@ interface Context {
   waitUntil(promise: Promise<any>): void;
   passThroughOnException(): void;
 }
-
-const prisma = new PrismaClient();
 
 // 상품 정보 상수
 const PRIZES = [
@@ -47,6 +44,12 @@ export async function onRequestPost(context: Context): Promise<Response> {
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
+    
+    // Prisma Accelerate 클라이언트 생성
+    const { PrismaClient } = await import('@prisma/client/edge');
+    const { withAccelerate } = await import('@prisma/extension-accelerate');
+    
+    const prisma = new PrismaClient().$extends(withAccelerate());
 
     // 참여 코드 확인
     const participationCode = await prisma.participationCode.findUnique({
@@ -71,7 +74,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
     const selectedPrize = selectRandomPrize();
 
     // 트랜잭션으로 처리
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // 참여 코드 사용 처리
       await tx.participationCode.update({
         where: { id: participationCode.id },
@@ -93,6 +96,9 @@ export async function onRequestPost(context: Context): Promise<Response> {
 
       return { winner, prize: selectedPrize };
     });
+    
+    // Prisma 연결 정리
+    await prisma.$disconnect();
 
     return new Response(
       JSON.stringify({
