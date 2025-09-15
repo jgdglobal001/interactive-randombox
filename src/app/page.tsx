@@ -823,23 +823,27 @@ export default function HomePage() {
                 marginTop: product.speechBubblePosition === 'bottom' ? `${Math.max(product.imageSize.height * finalContainerSize.scaleFactor * 0.04, 5)}px` : '0', // 이미지 높이의 4% (최소 10px)
                 marginBottom: product.speechBubblePosition === 'top' ? `${Math.max(product.imageSize.height * finalContainerSize.scaleFactor * 0.04, 5)}px` : '0', // 이미지 높이의 4% (최소 10px)
                 padding: `${Math.max(8 * finalContainerSize.scaleFactor, 6)}px ${Math.max(16 * finalContainerSize.scaleFactor, 12)}px`,
-                minWidth: `${Math.max(120 * finalContainerSize.scaleFactor, 80)}px`,
+                minWidth: product.id === 'megacoffee' ? 
+                  `${Math.max(140 * finalContainerSize.scaleFactor, 100)}px !important` :
+                  `${Math.max(120 * finalContainerSize.scaleFactor, 80)}px`,
                 fontSize: `${Math.max(0.875 * finalContainerSize.scaleFactor, 0.6)}rem`,
-                // 기존 말풍선 디자인 유지
-                background: product.id === 'galaxy-folder' ? '#dbeafe' :
-                           product.id === 'cuckoo-food' ? '#fef3c7' :
-                           product.id === 'canon-multifunction' ? '#d1fae5' :
-                           product.id === 'shinsegae-gift' ? '#f3e8ff' :
-                           product.id === 'megacoffee' ? '#fce7f3' : 'white',
-                border: `${Math.max(2 * finalContainerSize.scaleFactor, 1)}px solid ${
-                  product.id === 'galaxy-folder' ? '#3b82f6' :
-                  product.id === 'cuckoo-food' ? '#f59e0b' :
-                  product.id === 'canon-multifunction' ? '#059669' :
-                  product.id === 'shinsegae-gift' ? '#8b5cf6' :
-                  product.id === 'megacoffee' ? '#db2777' : '#e5e7eb'
-                }`,
+                // 기존 말풍선 디자인 유지 (배포 환경 호환성을 위해 !important 추가)
+                background: product.id === 'galaxy-folder' ? '#dbeafe !important' :
+                           product.id === 'cuckoo-food' ? '#fef3c7 !important' :
+                           product.id === 'canon-multifunction' ? '#d1fae5 !important' :
+                           product.id === 'shinsegae-gift' ? '#f3e8ff !important' :
+                           product.id === 'megacoffee' ? '#fce7f3 !important' : 'white',
+                border: `${Math.max(2 * finalContainerSize.scaleFactor, 1)}px solid ${{
+                  'galaxy-folder': '#3b82f6',
+                  'cuckoo-food': '#f59e0b',
+                  'canon-multifunction': '#059669',
+                  'shinsegae-gift': '#8b5cf6',
+                  'megacoffee': '#db2777'
+                }[product.id] || '#e5e7eb'} !important`,
                 borderRadius: `${Math.max(20 * finalContainerSize.scaleFactor, 12)}px`,
-                boxShadow: product.id === 'megacoffee' ? '0 4px 12px rgba(219, 39, 119, 0.15)' : '0 4px 12px rgba(0, 0, 0, 0.15)',
+                boxShadow: product.id === 'megacoffee' ? 
+                  '0 4px 12px rgba(219, 39, 119, 0.15) !important' : 
+                  '0 4px 12px rgba(0, 0, 0, 0.15)',
                 fontWeight: '600'
               }}
             >

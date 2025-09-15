@@ -384,6 +384,28 @@ body {
     font-weight: 600 !important;
     min-width: 140px;
   }
+  
+  /* 배포 환경 호환성을 위한 추가 선택자 */
+  .product-unit[class*="megacoffee-text"] .speech-bubble,
+  .megacoffee-text .speech-bubble {
+    background: #fce7f3 !important;
+    border: 2px solid #db2777 !important;
+    color: #831843 !important;
+    font-weight: 600 !important;
+    min-width: 140px !important;
+    box-shadow: 0 4px 12px rgba(219, 39, 119, 0.15) !important;
+  }
+  
+  /* 최고 우선순위 보장을 위한 더 구체적인 선택자 */
+  div.product-unit.megacoffee-text .speech-bubble,
+  div[class*="megacoffee-text"].product-unit .speech-bubble {
+    background: #fce7f3 !important;
+    border: 2px solid #db2777 !important;
+    color: #831843 !important;
+    font-weight: 600 !important;
+    min-width: 140px !important;
+    box-shadow: 0 4px 12px rgba(219, 39, 119, 0.15) !important;
+  }
   /* 메가커피 화살표 제거됨 */
 
     /* 각 상품별 애니메이션 정의 - 페이드인 + 적당한 불규칙한 움직임 효과 */
