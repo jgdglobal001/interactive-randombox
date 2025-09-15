@@ -4,6 +4,7 @@
 interface Env {
   ADMIN_SECRET_KEY?: string;
   DATABASE_URL?: string;
+  PRISMA_ACCELERATE_URL?: string;
 }
 
 // Cloudflare Pages Function 컨텍스트
@@ -43,7 +44,8 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
     console.log('1. Admin API 접근 시도...');
     console.log('2. 환경변수 확인:', {
       DATABASE_URL: context.env.DATABASE_URL ? 'SET' : 'NOT_SET',
-      ADMIN_SECRET_KEY: context.env.ADMIN_SECRET_KEY ? 'SET' : 'NOT_SET'
+      ADMIN_SECRET_KEY: context.env.ADMIN_SECRET_KEY ? 'SET' : 'NOT_SET',
+      PRISMA_ACCELERATE_URL: context.env.PRISMA_ACCELERATE_URL ? 'SET' : 'NOT_SET'
     });
     
     // 환경변수 기반 인증 체크
@@ -78,7 +80,20 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
     const { PrismaClient } = await import('@prisma/client/edge');
     const { withAccelerate } = await import('@prisma/extension-accelerate');
     
-    const prisma = new PrismaClient().$extends(withAccelerate());
+    // Prisma Accelerate URL이 있는 경우에만 사용
+    const prismaOptions: any = {
+      datasources: {
+        db: {
+          url: context.env.DATABASE_URL
+        }
+      }
+    };
+    
+    if (context.env.PRISMA_ACCELERATE_URL) {
+      prismaOptions.datasourceUrl = context.env.PRISMA_ACCELERATE_URL;
+    }
+    
+    const prisma = new PrismaClient(prismaOptions).$extends(withAccelerate());
     
     console.log('10. Prisma 클라이언트 생성 완료, 데이터베이스 연결 시도...');
     
@@ -149,13 +164,20 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
     const { PrismaClient } = await import('@prisma/client/edge');
     const { withAccelerate } = await import('@prisma/extension-accelerate');
     
-    const prisma = new PrismaClient({
+    // Prisma Accelerate URL이 있는 경우에만 사용
+    const prismaOptions: any = {
       datasources: {
         db: {
           url: context.env.DATABASE_URL
         }
       }
-    }).$extends(withAccelerate());
+    };
+    
+    if (context.env.PRISMA_ACCELERATE_URL) {
+      prismaOptions.datasourceUrl = context.env.PRISMA_ACCELERATE_URL;
+    }
+    
+    const prisma = new PrismaClient(prismaOptions).$extends(withAccelerate());
 
     const newCodes: ParticipationCode[] = [];
 

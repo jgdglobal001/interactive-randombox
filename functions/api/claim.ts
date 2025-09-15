@@ -2,6 +2,7 @@
 
 interface Env {
   DATABASE_URL?: string;
+  PRISMA_ACCELERATE_URL?: string;
   GIFTSHOW_BASE_URL?: string;
   GIFTSHOW_AUTH_KEY?: string;
   GIFTSHOW_AUTH_TOKEN?: string;
@@ -89,7 +90,20 @@ export async function onRequestPost(context: Context): Promise<Response> {
     const { PrismaClient } = await import('@prisma/client/edge');
     const { withAccelerate } = await import('@prisma/extension-accelerate');
     
-    const prisma = new PrismaClient().$extends(withAccelerate());
+    // Prisma Accelerate URL이 있는 경우에만 사용
+    const prismaOptions: any = {
+      datasources: {
+        db: {
+          url: context.env.DATABASE_URL
+        }
+      }
+    };
+    
+    if (context.env.PRISMA_ACCELERATE_URL) {
+      prismaOptions.datasourceUrl = context.env.PRISMA_ACCELERATE_URL;
+    }
+    
+    const prisma = new PrismaClient(prismaOptions).$extends(withAccelerate());
 
     // 당첨자 정보 확인
     const winner = await prisma.winner.findUnique({
