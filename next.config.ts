@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
     '*': ['.next/cache/**'],
   },
   webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push({
+        '@prisma/client': 'commonjs @prisma/client',
+      });
+    }
     return config;
   },
   async headers() {
@@ -27,7 +32,7 @@ const nextConfig: NextConfig = {
   // 이미지 최적화 설정
   images: {
     domains: [],
-    unoptimized: false,
+    unoptimized: true, // Cloudflare Pages에서 필수
   },
 };
 
