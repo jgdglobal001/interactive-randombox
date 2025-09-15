@@ -1,7 +1,7 @@
 const nextConfig = {
   // Cloudflare Pages 정적 내보내기 설정
   output: 'export',
-  distDir: 'out', // 절대 경로로 변경
+  distDir: './out',
   trailingSlash: true,
   
   // Vercel Node.js 20.x 호환성 설정
