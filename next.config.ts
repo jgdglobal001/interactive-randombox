@@ -5,6 +5,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig: NextConfig = {
+  // Vercel 배포 오류 해결을 위한 소스맵 비활성화
+  productionBrowserSourceMaps: false,
+  
   // API Routes를 정적 생성에서 제외
   experimental: {
     // 웹팩 빌드 워커 비활성화
