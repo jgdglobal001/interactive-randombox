@@ -1,10 +1,9 @@
-import type { NextConfig } from "next";
-
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // Vercel 배포 오류 해결을 위한 소스맵 비활성화
   productionBrowserSourceMaps: false,
   
@@ -20,7 +19,7 @@ const nextConfig: NextConfig = {
   },
   
   // 웹팩 설정 통합
-  webpack: (config: any, { isServer }: { isServer: boolean }) => {
+  webpack: (config, { isServer }) => {
     // 프로덕션 빌드에서 캐시 비활성화
     config.cache = false;
     
@@ -65,10 +64,6 @@ const nextConfig: NextConfig = {
     return config;
   },
   
-  outputFileTracingExcludes: {
-    '*': ['.next/cache/**', '.next/cache', 'node_modules/**', 'cache/**'],
-  },
-  
   async headers() {
     return [
       {
@@ -89,4 +84,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withBundleAnalyzer(nextConfig);
+module.exports = withBundleAnalyzer(nextConfig);
