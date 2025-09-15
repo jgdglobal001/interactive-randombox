@@ -5,6 +5,12 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig: NextConfig = {
+  // API Routes를 정적 생성에서 제외
+  experimental: {
+    // 웹팩 빌드 워커 비활성화
+    webpackBuildWorker: false,
+  },
+  
   // 캐시 비활성화 및 크기 제한 해결
   generateBuildId: async () => {
     return 'build-' + Date.now()
@@ -52,11 +58,6 @@ const nextConfig: NextConfig = {
     '*': ['.next/cache/**', '.next/cache', 'node_modules/**', 'cache/**'],
   },
   
-  // 실험적 기능으로 빌드 캐시 비활성화
-  experimental: {
-    // 웹팩 빌드 워커 비활성화
-    webpackBuildWorker: false,
-  },
   async headers() {
     return [
       {
