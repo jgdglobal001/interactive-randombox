@@ -1,5 +1,6 @@
 name = "interactive-randombox"
-pages_build_output_dir = ".next"
+# Cloudflare Pages에서 Next.js 자동 빌드 사용
+# Framework preset: Next.js로 설정해야 함
 
 # 환경변수는 Cloudflare 대시보드에서 설정
 # 또는 wrangler pages secret put 명령어 사용
