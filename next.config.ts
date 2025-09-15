@@ -5,6 +5,11 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig: NextConfig = {
+  // Cloudflare Pages 정적 내보내기 설정
+  output: 'export',
+  distDir: 'out',
+  trailingSlash: true,
+  
   // Vercel Node.js 20.x 호환성 설정
   productionBrowserSourceMaps: false,
   generateBuildId: () => 'no-source-maps',
@@ -16,8 +21,6 @@ const nextConfig: NextConfig = {
   experimental: {
     // 웹팩 빌드 워커 비활성화
     webpackBuildWorker: false,
-    // 서버 컴포넌트 외부 패키지 설정
-    serverComponentsExternalPackages: ['ws', 'bufferutil', 'utf-8-validate', '@prisma/client'],
   },
   
   // 웹팩 설정 통합
