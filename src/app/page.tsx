@@ -828,11 +828,13 @@ export default function HomePage() {
                   `${Math.max(120 * finalContainerSize.scaleFactor, 80)}px`,
                 fontSize: `${Math.max(0.875 * finalContainerSize.scaleFactor, 0.6)}rem`,
                 // 기존 말풍선 디자인 유지 (배포 환경 호환성을 위해 !important 추가)
-                background: product.id === 'galaxy-folder' ? '#dbeafe !important' :
-                           product.id === 'cuckoo-food' ? '#fef3c7 !important' :
-                           product.id === 'canon-multifunction' ? '#d1fae5 !important' :
-                           product.id === 'shinsegae-gift' ? '#f3e8ff !important' :
-                           product.id === 'megacoffee' ? '#fce7f3 !important' : 'white',
+                // 메가커피는 강제로 스타일 적용
+                backgroundColor: product.id === 'megacoffee' ? '#fce7f3' : (
+                  product.id === 'galaxy-folder' ? '#dbeafe' :
+                  product.id === 'cuckoo-food' ? '#fef3c7' :
+                  product.id === 'canon-multifunction' ? '#d1fae5' :
+                  product.id === 'shinsegae-gift' ? '#f3e8ff' : 'white'
+                ),
                 border: `${Math.max(2 * finalContainerSize.scaleFactor, 1)}px solid ${{
                   'galaxy-folder': '#3b82f6',
                   'cuckoo-food': '#f59e0b',
