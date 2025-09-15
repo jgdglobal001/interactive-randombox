@@ -35,9 +35,9 @@ model ParticipationCode {
 // 당첨자 정보
 model Winner {
   id                  String            @id @default(cuid())
-  userPhoneNumber     String?           // 쿠폰을 수신할 휴대폰 번호 (참여 시점에는 없음)
+  userPhoneNumber     String            // 쿠폰을 수신할 휴대폰 번호 (참여 시점에는 없음)
   sentAt              DateTime          @default(now())
-  giftshowTrId        String?           // 기프트쇼 API 발송 후 받은 거래 ID (수령 시점에 생성)
+  giftshowTrId        String            // 기프트쇼 API 발송 후 받은 거래 ID (수령 시점에 생성)
 
   prize               Prize             @relation(fields: [prizeId], references: [id])
   prizeId             String

@@ -160,6 +160,34 @@ export default function HomePage() {
     }
   }, [eventState]);
 
+  // 초기 애니메이션 설정 (원하는 프레임으로 바로 이동)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (lottieRef.current) {
+        const lottie = lottieRef.current;
+        console.log('Lottie ref found:', lottie);
+        // 즉시 190 프레임으로 이동하고 정지
+        lottie.goToAndStop(190, true);
+        
+        // 약간의 딜레이 후 190-196 구간만 무한 왕복 시작
+        setTimeout(() => {
+          if (lottie) {
+            console.log('Starting 190-196 ping-pong loop with speed control');
+            // 애니메이션 속도 설정 (0.5 = 절반 속도, 1.0 = 기본 속도, 2.0 = 2배 속도)
+            lottie.setSpeed(0.25); // 더 느리게 설정
+            // 190-196 구간만 왕복 재생 (direction: 1은 정방향)
+            lottie.setDirection(1); // 기본 정방향 설정
+            lottie.playSegments([190, 196], true); // 무한 반복
+          }
+        }, 300);
+      } else {
+        console.log('Lottie ref not found');
+      }
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [isClient]);
+
   // Lottie 애니메이션 프레임 구간
   const animationSegments = {
     idle: [190, 196], // 뚜껑이 열려있고 상품이 둥둥 떠다니는 초기 화면 (지속적인 움직임)
@@ -446,7 +474,7 @@ export default function HomePage() {
 
     if (eventState === 'idle') {
       // 190 → 196 → 190 핑퐁 루프 시작
-      lottie.setSpeed(0.2);
+      lottie.setSpeed(0.9); // 속도 0.9로 설정
       pingPongDirectionRef.current = 1;
       lottie.setDirection(pingPongDirectionRef.current);
       lottie.playSegments([190, 196], true);
