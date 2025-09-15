@@ -830,16 +830,16 @@ export default function HomePage() {
                            product.id === 'cuckoo-food' ? '#fef3c7' :
                            product.id === 'canon-multifunction' ? '#d1fae5' :
                            product.id === 'shinsegae-gift' ? '#f3e8ff' :
-                           product.id === 'megacoffee' ? 'transparent' : 'white',
+                           product.id === 'megacoffee' ? '#fce7f3' : 'white',
                 border: `${Math.max(2 * finalContainerSize.scaleFactor, 1)}px solid ${
                   product.id === 'galaxy-folder' ? '#3b82f6' :
                   product.id === 'cuckoo-food' ? '#f59e0b' :
                   product.id === 'canon-multifunction' ? '#059669' :
                   product.id === 'shinsegae-gift' ? '#8b5cf6' :
-                  product.id === 'megacoffee' ? 'transparent' : '#e5e7eb'
+                  product.id === 'megacoffee' ? '#db2777' : '#e5e7eb'
                 }`,
                 borderRadius: `${Math.max(20 * finalContainerSize.scaleFactor, 12)}px`,
-                boxShadow: product.id === 'megacoffee' ? 'none' : '0 4px 12px rgba(0, 0, 0, 0.15)',
+                boxShadow: product.id === 'megacoffee' ? '0 4px 12px rgba(219, 39, 119, 0.15)' : '0 4px 12px rgba(0, 0, 0, 0.15)',
                 fontWeight: '600'
               }}
             >
