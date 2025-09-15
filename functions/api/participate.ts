@@ -49,7 +49,13 @@ export async function onRequestPost(context: Context): Promise<Response> {
     const { PrismaClient } = await import('@prisma/client/edge');
     const { withAccelerate } = await import('@prisma/extension-accelerate');
     
-    const prisma = new PrismaClient().$extends(withAccelerate());
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: context.env.DATABASE_URL
+        }
+      }
+    }).$extends(withAccelerate());
 
     // 참여 코드 확인
     const participationCode = await prisma.participationCode.findUnique({
