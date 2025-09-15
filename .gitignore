@@ -22,6 +22,9 @@
 .next/cache/
 .next/standalone/
 .next/static/chunks/webpack/
+cache/
+node_modules/.cache/
+*.pack
 
 # production
 /build

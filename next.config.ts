@@ -5,21 +5,57 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig: NextConfig = {
-  // 캐시 설정
+  // 캐시 비활성화 및 크기 제한 해결
   generateBuildId: async () => {
     return 'build-' + Date.now()
   },
   
-  outputFileTracingExcludes: {
-    '*': ['.next/cache/**', '.next/cache', 'node_modules/**'],
-  },
-  webpack: (config, { isServer }) => {
+  // 웹팩 설정 통합
+  webpack: (config: any, { isServer }: { isServer: boolean }) => {
+    // 프로덕션 빌드에서 캐시 비활성화
+    config.cache = false;
+    
+    // 큰 청크 분할 설정
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true,
+          },
+          vendor: {
+            test: /[\\\\/]node_modules[\\\\/]/,
+            name: 'vendors',
+            priority: -10,
+            chunks: 'all',
+            maxSize: 20971520, // 20MB
+          },
+        },
+        maxSize: 20971520, // 20MB
+      },
+    };
+    
+    // 서버 사이드 Prisma 설정
     if (isServer) {
       config.externals.push({
         '@prisma/client': 'commonjs @prisma/client',
       });
     }
+    
     return config;
+  },
+  
+  outputFileTracingExcludes: {
+    '*': ['.next/cache/**', '.next/cache', 'node_modules/**', 'cache/**'],
+  },
+  
+  // 실험적 기능으로 빌드 캐시 비활성화
+  experimental: {
+    // 웹팩 빌드 워커 비활성화
+    webpackBuildWorker: false,
   },
   async headers() {
     return [
