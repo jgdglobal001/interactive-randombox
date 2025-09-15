@@ -100,20 +100,6 @@ const nextConfig: NextConfig = {
   outputFileTracingExcludes: {
     '*': ['.next/cache/**', '.next/cache', 'node_modules/**', 'cache/**'],
   },
-  
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Content-Security-Policy',
-            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline';",
-          },
-        ],
-      },
-    ];
-  },
   // 이미지 최적화 설정
   images: {
     domains: [],
