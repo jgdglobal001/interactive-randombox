@@ -10,12 +10,14 @@ const nextConfig: NextConfig = {
   generateBuildId: () => 'no-source-maps',
   
   // source-map 외부 패키지로 설정
-  serverExternalPackages: ['source-map', 'ws', 'bufferutil', 'utf-8-validate'],
+  serverExternalPackages: ['source-map', 'ws', 'bufferutil', 'utf-8-validate', '@prisma/client'],
   
   // API Routes를 정적 생성에서 제외
   experimental: {
     // 웹팩 빌드 워커 비활성화
     webpackBuildWorker: false,
+    // 서버 컴포넌트 외부 패키지 설정
+    serverComponentsExternalPackages: ['ws', 'bufferutil', 'utf-8-validate', '@prisma/client'],
   },
   
   // 웹팩 설정 통합
@@ -72,12 +74,21 @@ const nextConfig: NextConfig = {
     
     // 서버 사이드 Prisma 설정
     if (isServer) {
+      config.externals = config.externals || [];
       config.externals.push({
         '@prisma/client': 'commonjs @prisma/client',
         'ws': 'commonjs ws',
         'bufferutil': 'commonjs bufferutil',
         'utf-8-validate': 'commonjs utf-8-validate',
       });
+      
+      // 서버 전용 모듈 비활성화
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'next/dist/compiled/ws': false,
+        'next/dist/compiled/bufferutil': false,
+        'next/dist/compiled/utf-8-validate': false,
+      };
     }
     
     return config;
