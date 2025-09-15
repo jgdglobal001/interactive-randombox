@@ -1,4 +1,4 @@
-import { GiftShowCrypto } from '../lib/giftshow-crypto';
+import { GiftShowCrypto } from './giftshow-crypto';
 
 /**
  * 기프트 쇼 API 클라이언트

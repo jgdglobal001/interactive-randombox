@@ -89,13 +89,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
     const { PrismaClient } = await import('@prisma/client/edge');
     const { withAccelerate } = await import('@prisma/extension-accelerate');
     
-    const prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: context.env.DATABASE_URL
-        }
-      }
-    }).$extends(withAccelerate());
+    const prisma = new PrismaClient().$extends(withAccelerate());
 
     // 당첨자 정보 확인
     const winner = await prisma.winner.findUnique({

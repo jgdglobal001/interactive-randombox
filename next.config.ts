@@ -1,10 +1,4 @@
-import type { NextConfig } from "next";
-
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
-
-const nextConfig: NextConfig = {
+const nextConfig = {
   // Cloudflare Pages 정적 내보내기 설정
   output: 'export',
   distDir: 'out',
@@ -105,6 +99,7 @@ const nextConfig: NextConfig = {
     domains: [],
     unoptimized: true, // Cloudflare Pages에서 필수
   },
+  
+  // 폰트 최적화 설정
+  optimizeFonts: false,
 };
-
-export default withBundleAnalyzer(nextConfig);

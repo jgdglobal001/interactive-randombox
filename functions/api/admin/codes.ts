@@ -78,13 +78,7 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
     const { PrismaClient } = await import('@prisma/client/edge');
     const { withAccelerate } = await import('@prisma/extension-accelerate');
     
-    const prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: context.env.DATABASE_URL
-        }
-      }
-    }).$extends(withAccelerate());
+    const prisma = new PrismaClient().$extends(withAccelerate());
     
     console.log('10. Prisma 클라이언트 생성 완료, 데이터베이스 연결 시도...');
     
