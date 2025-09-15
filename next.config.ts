@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   generateBuildId: () => 'no-source-maps',
   
   // source-map 외부 패키지로 설정
-  serverExternalPackages: ['source-map'],
+  serverExternalPackages: ['source-map', 'ws'],
   
   // API Routes를 정적 생성에서 제외
   experimental: {
@@ -28,6 +28,7 @@ const nextConfig: NextConfig = {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       'source-map': require.resolve('source-map'),
+      'ws': require.resolve('ws'),
     };
     
     // Node.js 모듈 완전 비활성화 (Vercel 호환성)
@@ -39,6 +40,7 @@ const nextConfig: NextConfig = {
         tls: false,
         crypto: false,
         'source-map': require.resolve('source-map'),
+        'ws': require.resolve('ws'),
       };
     }
     
