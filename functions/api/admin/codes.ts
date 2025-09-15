@@ -1,5 +1,4 @@
 // Cloudflare Pages Function for admin codes API
-import { PrismaClient } from '@prisma/client';
 
 // Cloudflare Pages Function 환경 타입
 interface Env {
@@ -15,8 +14,6 @@ interface Context {
   waitUntil(promise: Promise<any>): void;
   passThroughOnException(): void;
 }
-
-const prisma = new PrismaClient();
 
 // API 응답 타입 정의
 interface ApiResponse {
@@ -42,21 +39,52 @@ function generateUniqueCode(): string {
 // GET - 참여 코드 목록 조회
 export const onRequestGet = async (context: Context): Promise<Response> => {
   try {
-    console.log('Admin API 접근 시도...');
+    console.log('=== Cloudflare Pages Function 시작 ===');
+    console.log('1. Admin API 접근 시도...');
+    console.log('2. 환경변수 확인:', {
+      DATABASE_URL: context.env.DATABASE_URL ? 'SET' : 'NOT_SET',
+      ADMIN_SECRET_KEY: context.env.ADMIN_SECRET_KEY ? 'SET' : 'NOT_SET'
+    });
     
     // 환경변수 기반 인증 체크
+    console.log('3. 인증 헤더 확인 중...');
     const authHeader = context.request.headers.get('authorization');
     const expectedAuth = context.env.ADMIN_SECRET_KEY || 'admin2024!';
+    console.log('4. Auth header:', authHeader ? 'EXISTS' : 'MISSING');
+    console.log('5. Expected auth:', expectedAuth ? 'EXISTS' : 'MISSING');
     
     if (authHeader !== `Bearer ${expectedAuth}`) {
-      console.log('인증 실패: auth header =', authHeader);
+      console.log('6. 인증 실패: auth header =', authHeader);
       return new Response(
         JSON.stringify({ success: false, error: '로그인이 필요합니다.' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
     
-    console.log('데이터베이스 연결 시도...');
+    console.log('7. 인증 성공 - Prisma 클라이언트 초기화...');
+    
+    // DATABASE_URL 확인
+    if (!context.env.DATABASE_URL) {
+      console.error('8. DATABASE_URL이 설정되지 않았습니다!');
+      return new Response(
+        JSON.stringify({ success: false, error: 'DATABASE_URL이 설정되지 않았습니다.' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    console.log('9. DATABASE_URL 확인됨, Prisma Client 생성...');
+    
+    // Cloudflare Pages에서 Prisma 클라이언트를 동적으로 생성
+    const { PrismaClient } = await import('@prisma/client');
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: context.env.DATABASE_URL
+        }
+      }
+    });
+    
+    console.log('10. Prisma 클라이언트 생성 완료, 데이터베이스 연결 시도...');
     
     const codes = await prisma.participationCode.findMany({
       orderBy: { createdAt: 'desc' },
@@ -69,22 +97,32 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
       },
     });
     
-    console.log('코드 조회 성공:', codes.length, '개');
+    console.log('11. 코드 조회 성공:', codes.length, '개');
 
     // 날짜를 문자열로 변환
+    console.log('12. 날짜 포맷팅 시작...');
     const formattedCodes = codes.map(code => ({
       ...code,
       createdAt: code.createdAt.toISOString(),
       usedAt: code.usedAt?.toISOString() || null,
     }));
+    console.log('13. 날짜 포맷팅 완료');
 
-    return new Response(
+    console.log('14. 응답 반환 준비...');
+    const response = new Response(
       JSON.stringify({
         success: true,
         codes: formattedCodes,
       }),
       { headers: { 'Content-Type': 'application/json' } }
     );
+    console.log('15. 응답 반환 성공');
+    
+    // Prisma 연결 정리
+    await prisma.$disconnect();
+    console.log('16. Prisma 연결 해제 완료');
+    
+    return response;
 
   } catch (error) {
     console.error('Admin API 에러:', error);
@@ -98,6 +136,8 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
 // POST - 새로운 참여 코드 생성
 export const onRequestPost = async (context: Context): Promise<Response> => {
   try {
+    console.log('=== POST /api/admin/codes 시작 ===');
+    
     const body = await context.request.json() as { count?: number };
     const count = body.count || 1;
 
@@ -108,11 +148,21 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
+    
+    // Prisma 클라이언트 동적 생성
+    const { PrismaClient } = await import('@prisma/client');
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: context.env.DATABASE_URL
+        }
+      }
+    });
 
     const newCodes: ParticipationCode[] = [];
 
     // 트랜잭션으로 여러 코드 생성
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       for (let i = 0; i < count; i++) {
         let attempts = 0;
         let uniqueCode = '';
@@ -156,6 +206,9 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
         });
       }
     });
+
+    // Prisma 연결 정리
+    await prisma.$disconnect();
 
     return new Response(
       JSON.stringify({
