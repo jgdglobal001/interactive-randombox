@@ -5,16 +5,17 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig: NextConfig = {
-  // Vercel 배포 오류 해결을 위한 소스맵 완전 비활성화
+  // Vercel Node.js 20.x 호환성 설정
   productionBrowserSourceMaps: false,
   generateBuildId: () => 'no-source-maps',
+  
+  // source-map 외부 패키지로 설정
+  serverExternalPackages: ['source-map'],
   
   // API Routes를 정적 생성에서 제외
   experimental: {
     // 웹팩 빌드 워커 비활성화
     webpackBuildWorker: false,
-    // 소스맵 관련 실험적 기능 비활성화
-    optimizeServerReact: false,
   },
   
   // 웹팩 설정 통합
