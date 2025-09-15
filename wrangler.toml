@@ -1,2 +1,10 @@
 name = "interactive-randombox"
 pages_build_output_dir = ".next"
+
+# 환경변수 설정
+[env.production.vars]
+ADMIN_SECRET_KEY = "admin2024!"
+
+# Functions 설정
+[build]
+command = "npm run build"

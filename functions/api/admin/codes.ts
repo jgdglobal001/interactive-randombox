@@ -1,5 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
+// Cloudflare Function for admin codes API
 import { PrismaClient } from '@prisma/client';
+
+// Cloudflare Pages Function 타입
+interface Env {
+  ADMIN_SECRET_KEY?: string;
+  DATABASE_URL?: string;
+}
+
+type PagesFunction = (context: {
+  request: Request;
+  env: Env;
+  params: Record<string, string>;
+}) => Promise<Response>;
 
 const prisma = new PrismaClient();
 
@@ -19,29 +31,25 @@ interface ParticipationCode {
   usedAt: string | null;
 }
 
-interface CreateCodeRequest {
-  count?: number;
-}
-
 // 고유한 참여 코드 생성 함수
 function generateUniqueCode(): string {
   return `EVENT-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
 }
 
-// GET /api/admin/codes - 참여 코드 목록 조회
-export async function GET(request: NextRequest) {
+// GET - 참여 코드 목록 조회
+export const onRequestGet: PagesFunction = async (context) => {
   try {
     console.log('Admin API 접근 시도...');
     
     // 환경변수 기반 인증 체크
-    const authHeader = request.headers.get('authorization');
-    const expectedAuth = process.env.ADMIN_SECRET_KEY || 'admin2024!';
+    const authHeader = context.request.headers.get('authorization');
+    const expectedAuth = context.env.ADMIN_SECRET_KEY || 'admin2024!';
     
     if (authHeader !== `Bearer ${expectedAuth}`) {
       console.log('인증 실패: auth header =', authHeader);
-      return NextResponse.json(
-        { success: false, error: '로그인이 필요합니다.' } as ApiResponse,
-        { status: 401 }
+      return new Response(
+        JSON.stringify({ success: false, error: '로그인이 필요합니다.' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
     
@@ -67,31 +75,34 @@ export async function GET(request: NextRequest) {
       usedAt: code.usedAt?.toISOString() || null,
     }));
 
-    return NextResponse.json({
-      success: true,
-      codes: formattedCodes,
-    } as ApiResponse);
+    return new Response(
+      JSON.stringify({
+        success: true,
+        codes: formattedCodes,
+      }),
+      { headers: { 'Content-Type': 'application/json' } }
+    );
 
   } catch (error) {
     console.error('Admin API 에러:', error);
-    return NextResponse.json(
-      { success: false, error: '코드 목록을 불러오는 데 실패했습니다.' } as ApiResponse,
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ success: false, error: '코드 목록을 불러오는 데 실패했습니다.' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
-}
+};
 
-// POST /api/admin/codes - 새로운 참여 코드 생성
-export async function POST(request: NextRequest) {
+// POST - 새로운 참여 코드 생성
+export const onRequestPost: PagesFunction = async (context) => {
   try {
-    const body = await request.json() as CreateCodeRequest;
+    const body = await context.request.json() as { count?: number };
     const count = body.count || 1;
 
     // 생성할 코드 수 제한 (최대 100개)
     if (count < 1 || count > 100) {
-      return NextResponse.json(
-        { success: false, error: '생성할 코드 수는 1개에서 100개 사이여야 합니다.' } as ApiResponse,
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ success: false, error: '생성할 코드 수는 1개에서 100개 사이여야 합니다.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
@@ -143,17 +154,20 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({
-      success: true,
-      codes: newCodes,
-      message: `${count}개의 참여 코드가 생성되었습니다.`,
-    } as ApiResponse);
+    return new Response(
+      JSON.stringify({
+        success: true,
+        codes: newCodes,
+        message: `${count}개의 참여 코드가 생성되었습니다.`,
+      }),
+      { headers: { 'Content-Type': 'application/json' } }
+    );
 
   } catch (error) {
     console.error('Failed to create participation codes:', error);
-    return NextResponse.json(
-      { success: false, error: '코드 생성에 실패했습니다.' } as ApiResponse,
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ success: false, error: '코드 생성에 실패했습니다.' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
-}
+};
