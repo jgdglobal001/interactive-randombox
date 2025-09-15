@@ -8,7 +8,7 @@
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "npm run pages:build && wrangler pages dev",
     "deploy": "npm run pages:build && wrangler pages deploy",
-    "postbuild": "echo Cache cleanup completed",
+    "postbuild": "echo Cache cleanup completed && (rmdir /s /q .next\\cache 2>nul || echo Cache already clean)",
     "start": "next start",
     "lint": "eslint"
   },

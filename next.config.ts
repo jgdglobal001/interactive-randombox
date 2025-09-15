@@ -5,8 +5,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig: NextConfig = {
+  // 캐시 설정
+  generateBuildId: async () => {
+    return 'build-' + Date.now()
+  },
+  
   outputFileTracingExcludes: {
-    '*': ['.next/cache/**'],
+    '*': ['.next/cache/**', '.next/cache', 'node_modules/**'],
   },
   webpack: (config, { isServer }) => {
     if (isServer) {
