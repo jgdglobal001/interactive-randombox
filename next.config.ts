@@ -5,18 +5,16 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig: NextConfig = {
-  // Vercel 배포 오류 해결을 위한 소스맵 비활성화
+  // Vercel 배포 오류 해결을 위한 소스맵 완전 비활성화
   productionBrowserSourceMaps: false,
+  generateBuildId: () => 'no-source-maps',
   
   // API Routes를 정적 생성에서 제외
   experimental: {
     // 웹팩 빌드 워커 비활성화
     webpackBuildWorker: false,
-  },
-  
-  // 캐시 비활성화 및 크기 제한 해결
-  generateBuildId: async () => {
-    return 'build-' + Date.now()
+    // 소스맵 관련 실험적 기능 비활성화
+    optimizeServerReact: false,
   },
   
   // 웹팩 설정 통합
@@ -24,13 +22,27 @@ const nextConfig: NextConfig = {
     // 프로덕션 빌드에서 캐시 비활성화
     config.cache = false;
     
-    // source-map 의존성 문제 해결
+    // source-map 의존성 문제 완전 해결
+    config.resolve = config.resolve || {};
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      'source-map': require.resolve('source-map'),
+    };
+    
+    // Node.js 모듈 완전 비활성화 (Vercel 호환성)
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
         'source-map': require.resolve('source-map'),
       };
     }
+    
+    // source map 생성 완전 비활성화
+    config.devtool = false;
     
     // 큰 청크 분할 설정
     config.optimization = {
