@@ -1,17 +1,20 @@
-// Cloudflare Function for admin codes API
+// Cloudflare Pages Function for admin codes API
 import { PrismaClient } from '@prisma/client';
 
-// Cloudflare Pages Function 타입
+// Cloudflare Pages Function 환경 타입
 interface Env {
   ADMIN_SECRET_KEY?: string;
   DATABASE_URL?: string;
 }
 
-type PagesFunction = (context: {
+// Cloudflare Pages Function 컨텍스트
+interface Context {
   request: Request;
   env: Env;
   params: Record<string, string>;
-}) => Promise<Response>;
+  waitUntil(promise: Promise<any>): void;
+  passThroughOnException(): void;
+}
 
 const prisma = new PrismaClient();
 
@@ -37,7 +40,7 @@ function generateUniqueCode(): string {
 }
 
 // GET - 참여 코드 목록 조회
-export const onRequestGet: PagesFunction = async (context) => {
+export const onRequestGet = async (context: Context): Promise<Response> => {
   try {
     console.log('Admin API 접근 시도...');
     
@@ -93,7 +96,7 @@ export const onRequestGet: PagesFunction = async (context) => {
 };
 
 // POST - 새로운 참여 코드 생성
-export const onRequestPost: PagesFunction = async (context) => {
+export const onRequestPost = async (context: Context): Promise<Response> => {
   try {
     const body = await context.request.json() as { count?: number };
     const count = body.count || 1;
