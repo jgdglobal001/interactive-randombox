@@ -24,6 +24,14 @@ const nextConfig: NextConfig = {
     // 프로덕션 빌드에서 캐시 비활성화
     config.cache = false;
     
+    // source-map 의존성 문제 해결
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        'source-map': require.resolve('source-map'),
+      };
+    }
+    
     // 큰 청크 분할 설정
     config.optimization = {
       ...config.optimization,
