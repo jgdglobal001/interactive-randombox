@@ -46,29 +46,19 @@ export async function onRequestPost(context: Context): Promise<Response> {
       );
     }
     
-    // Prisma Accelerate 클라이언트 생성
-    const { PrismaClient } = await import('@prisma/client/edge');
-    const { withAccelerate } = await import('@prisma/extension-accelerate');
-    
-    // Prisma Accelerate URL이 있는 경우에만 사용
-    const prismaOptions: any = {
-      datasources: {
-        db: {
-          url: context.env.DATABASE_URL
-        }
-      }
-    };
-    
-    if (context.env.PRISMA_ACCELERATE_URL) {
-      prismaOptions.datasourceUrl = context.env.PRISMA_ACCELERATE_URL;
-    }
-    
-    const prisma = new PrismaClient(prismaOptions).$extends(withAccelerate());
+    // Neon Serverless Driver 사용 (Prisma 미사용)
+    const { neon, neonConfig } = await import('@neondatabase/serverless');
+    neonConfig.webSocketConstructor = undefined;
+
+    const sql = neon(context.env.DATABASE_URL!);
 
     // 참여 코드 확인
-    const participationCode = await prisma.participationCode.findUnique({
-      where: { code: body.code }
-    });
+    const participationCodes = await sql`
+      select id, code, "isUsed", "createdAt", "usedAt"
+      from "ParticipationCode"
+      where code = ${body.code}
+    `;
+    const participationCode = participationCodes[0] || null;
 
     if (!participationCode) {
       return new Response(
@@ -87,32 +77,25 @@ export async function onRequestPost(context: Context): Promise<Response> {
     // 랜덤 상품 선택
     const selectedPrize = selectRandomPrize();
 
-    // 트랜잭션으로 처리
-    const result = await prisma.$transaction(async (tx: any) => {
-      // 참여 코드 사용 처리
-      await tx.participationCode.update({
-        where: { id: participationCode.id },
-        data: { 
-          isUsed: true,
-          usedAt: new Date()
-        }
-      });
+    // SQL로 트랜잭션 처리
+    // 1. 참여 코드 사용 처리
+    await sql`
+      update "ParticipationCode"
+      set "isUsed" = true, "usedAt" = now()
+      where id = ${participationCode.id}
+    `;
 
-      // 당첨자 정보 저장
-      const winner = await tx.winner.create({
-        data: {
-          participationCodeId: participationCode.id,
-          prizeId: selectedPrize.id,
-          userPhoneNumber: '', // 빈 문자열로 초기화
-          giftshowTrId: '', // 빈 문자열로 초기화
-        }
-      });
+    // 2. 당첨자 정보 저장
+    const winners = await sql`
+      insert into "Winner" ("participationCodeId", "prizeId", "userPhoneNumber", "giftshowTrId")
+      values (${participationCode.id}, ${selectedPrize.id}, '', '')
+      returning id
+    `;
+    const winner = winners[0];
 
-      return { winner, prize: selectedPrize };
-    });
-    
-    // Prisma 연결 정리
-    await prisma.$disconnect();
+    const result = { winner, prize: selectedPrize };
+
+    // Neon serverless 사용 - 별도 연결 정리 불필요
 
     return new Response(
       JSON.stringify({
