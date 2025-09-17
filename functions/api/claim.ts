@@ -6,7 +6,8 @@ interface Env {
   GIFTSHOW_BASE_URL?: string;
   GIFTSHOW_AUTH_KEY?: string;
   GIFTSHOW_AUTH_TOKEN?: string;
-  GIFTSHOW_USE_MOCK_API?: string;
+  GIFTSHOW_BANNER_ID?: string;
+  GIFTSHOW_CARD_ID?: string;
 }
 
 interface Context {
@@ -17,52 +18,56 @@ interface Context {
   passThroughOnException(): void;
 }
 
-// 기프트쇼 API 호출 (모의 구현)
+// 실제 기프트쇼 API 호출 (상용환경)
 async function callGiftShowAPI(phoneNumber: string, goodsCode: string, env: Env) {
-  const useMockAPI = env.GIFTSHOW_USE_MOCK_API === 'true';
-  
-  if (useMockAPI) {
-    // 모의 API 응답
-    return {
-      success: true,
-      transactionId: `MOCK_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
-      message: '상품이 성공적으로 발송되었습니다.'
-    };
-  }
-
-  // 실제 기프트쇼 API 호출
+  // 실제 기프트쇼 API 설정
   const baseUrl = env.GIFTSHOW_BASE_URL || 'https://api.giftshow.co.kr';
-  const authKey = env.GIFTSHOW_AUTH_KEY;
-  const authToken = env.GIFTSHOW_AUTH_TOKEN;
+  const authKey = env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f';
+  const authToken = env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==';
+  const cardId = env.GIFTSHOW_CARD_ID || '202509120308350';
+
+  console.log('기프트쇼 API 호출 시작:', {
+    phoneNumber: phoneNumber.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2'),
+    cardId,
+    authKey: authKey.substring(0, 8) + '...'
+  });
 
   try {
-    const response = await fetch(`${baseUrl}/send`, {
+    // 실제 기프트쇼 API 엔드포인트 및 헤더 구조
+    const response = await fetch(`${baseUrl}/card/send`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`,
-        'X-API-Key': authKey || '',
+        'Accept': 'application/json',
+        'custom_auth_code': authKey,
+        'custom_auth_token': authToken,
+        'api_code': '0006', // 카드 발송 API 코드
+        'dev_flag': 'N' // 상용환경
       },
       body: JSON.stringify({
-        phoneNumber,
-        goodsCode,
-        timestamp: Date.now()
+        phone_number: phoneNumber.replace(/-/g, ''), // 하이픈 제거
+        card_id: cardId,
+        amount: 0,
+        message: '메가커피 교환권이 발송되었습니다.'
       })
     });
 
     if (!response.ok) {
-      throw new Error(`API 호출 실패: ${response.status}`);
+      throw new Error(`API 호출 실패: ${response.status} ${response.statusText}`);
     }
 
-    const result = await response.json() as {
-      transactionId: string;
-      message: string;
-    };
-    return {
-      success: true,
-      transactionId: result.transactionId,
-      message: result.message
-    };
+    const result = await response.json();
+    console.log('기프트쇼 API 응답:', result);
+
+    if (result.success || result.result === 'success') {
+      return {
+        success: true,
+        transactionId: result.transactionId || result.transaction_id || `GS_${Date.now()}`,
+        message: result.message || '메가커피 교환권이 성공적으로 발송되었습니다.'
+      };
+    } else {
+      throw new Error(result.message || result.error || 'API 응답 오류');
+    }
   } catch (error) {
     console.error('기프트쇼 API 호출 에러:', error);
     return {

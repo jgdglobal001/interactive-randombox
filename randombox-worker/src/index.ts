@@ -109,14 +109,48 @@ app.post('/participate', async (c) => {
   }
 })
 
-// 기프트쇼 API 연동 모의 함수
-// 실제 API 키와 엔드포인트는 환경 변수 또는 Workers Secrets으로 관리해야 합니다.
+// 실제 기프트쇼 API 연동 함수 (상용환경)
 async function callGiftShowAPI(phoneNumber: string, prizeCode: string) {
   console.log(`기프트쇼 API 호출: ${phoneNumber}에게 ${prizeCode} 상품 발송 시도...`)
-  // 실제 API 연동 로직...
-  // 성공했다고 가정하고, 모의 거래 ID 반환
-  await new Promise(resolve => setTimeout(resolve, 500)); // 0.5초 딜레이
-  return { success: true, transactionId: `GIFT_${Date.now()}` }
+
+  // 실제 기프트쇼 API 설정
+  const authKey = 'REAL10f8dc85d32c4ff4b2594851a845c15f';
+  const authToken = 'VUUiyDeKaWdeJYjlyGIuwQ==';
+  const cardId = '202509120308350';
+  const baseUrl = 'https://api.giftshow.co.kr';
+
+  try {
+    const response = await fetch(`${baseUrl}/card/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'custom_auth_code': authKey,
+        'custom_auth_token': authToken,
+        'api_code': '0006',
+        'dev_flag': 'N'
+      },
+      body: JSON.stringify({
+        phone_number: phoneNumber.replace(/-/g, ''),
+        card_id: cardId,
+        amount: 0,
+        message: '메가커피 교환권이 발송되었습니다.'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API 호출 실패: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return {
+      success: result.success || result.result === 'success',
+      transactionId: result.transactionId || result.transaction_id || `GS_${Date.now()}`
+    };
+  } catch (error) {
+    console.error('기프트쇼 API 에러:', error);
+    return { success: false, transactionId: null };
+  }
 }
 
 // 당첨 상품 수령 API

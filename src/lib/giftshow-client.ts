@@ -173,56 +173,24 @@ export class GiftShowClient {
   }
 }
 
-// 설정 값들
+// 설정 값들 (실제 상용환경)
 export const GIFTSHOW_CONFIG = {
   BASE_URL: process.env.GIFTSHOW_BASE_URL || 'https://api.giftshow.co.kr',
-  AUTH_KEY: process.env.GIFTSHOW_AUTH_KEY || '',
-  AUTH_TOKEN: process.env.GIFTSHOW_AUTH_TOKEN || '',
-  ENCRYPTION_KEY: process.env.GIFTSHOW_ENCRYPTION_KEY || 'your-encryption-key-32-chars',
-  BANNER_ID: process.env.GIFTSHOW_BANNER_ID || '',
-  CARD_ID: process.env.GIFTSHOW_CARD_ID || '',
-  IS_DEV: process.env.NODE_ENV !== 'production',
-  // 환경변수로 Mock API 사용 여부 결정
-  USE_MOCK_API: process.env.GIFTSHOW_USE_MOCK_API === 'true'
+  AUTH_KEY: process.env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f',
+  AUTH_TOKEN: process.env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==',
+  BANNER_ID: process.env.GIFTSHOW_BANNER_ID || '202509110360567',
+  CARD_ID: process.env.GIFTSHOW_CARD_ID || '202509120308350',
+  IS_DEV: false, // 상용환경으로 고정
+  USE_MOCK_API: false // Mock API 사용 안함
 };
 
-// 클라이언트 인스턴스 생성
+// 클라이언트 인스턴스 생성 (실제 상용환경)
 export const giftShowClient = new GiftShowClient({
   baseUrl: GIFTSHOW_CONFIG.BASE_URL,
   authKey: GIFTSHOW_CONFIG.AUTH_KEY,
   authToken: GIFTSHOW_CONFIG.AUTH_TOKEN,
-  encryptionKey: GIFTSHOW_CONFIG.ENCRYPTION_KEY,
+  encryptionKey: '', // 암호화 키는 필요시 추가
   bannerId: GIFTSHOW_CONFIG.BANNER_ID,
   cardId: GIFTSHOW_CONFIG.CARD_ID,
-  isDev: GIFTSHOW_CONFIG.IS_DEV
+  isDev: false // 상용환경
 });
-
-// 모의 데이터 함수들 (개발 환경용)
-export const mockGiftShowAPI = {
-  getCardInfo: async () => ({
-    success: true,
-    data: {
-      card_id: GIFTSHOW_CONFIG.CARD_ID,
-      card_name: '테스트 기프트 카드',
-      balance: 10000,
-      status: 'active'
-    }
-  }),
-
-  sendMMS: async (phoneNumber: string, message: string) => ({
-    success: true,
-    message_id: `MOCK_${Date.now()}`,
-    phone_number: phoneNumber,
-    status: 'sent'
-  }),
-
-  getBannerInfo: async () => ({
-    success: true,
-    data: {
-      banner_id: GIFTSHOW_CONFIG.BANNER_ID,
-      banner_name: '테스트 배너',
-      image_url: '/images/test-banner.png',
-      status: 'active'
-    }
-  })
-};
