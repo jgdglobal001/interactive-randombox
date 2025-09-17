@@ -79,13 +79,12 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
     // Cloudflare Pages Edge Runtime에서 Neon Serverless Driver 사용
     const { PrismaClient } = await import('@prisma/client/edge');
     const { PrismaNeon } = await import('@prisma/adapter-neon');
-    const { Pool, neonConfig } = await import('@neondatabase/serverless');
+    const { neonConfig } = await import('@neondatabase/serverless');
 
     // WebSocket 비활성화 (Cloudflare Pages에서 필요)
     neonConfig.webSocketConstructor = undefined;
 
-    const pool = new Pool({ connectionString: context.env.DATABASE_URL });
-    const adapter = new PrismaNeon(pool);
+    const adapter = new PrismaNeon({ connectionString: context.env.DATABASE_URL });
     const prisma = new PrismaClient({ adapter });
     
     console.log('10. Prisma 클라이언트 생성 완료, 데이터베이스 연결 시도...');
@@ -156,13 +155,12 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
     // Prisma 클라이언트 동적 생성
     const { PrismaClient } = await import('@prisma/client/edge');
     const { PrismaNeon } = await import('@prisma/adapter-neon');
-    const { Pool, neonConfig } = await import('@neondatabase/serverless');
+    const { neonConfig } = await import('@neondatabase/serverless');
 
     // WebSocket 비활성화 (Cloudflare Pages에서 필요)
     neonConfig.webSocketConstructor = undefined;
 
-    const pool = new Pool({ connectionString: context.env.DATABASE_URL });
-    const adapter = new PrismaNeon(pool);
+    const adapter = new PrismaNeon({ connectionString: context.env.DATABASE_URL });
     const prisma = new PrismaClient({ adapter });
 
     const newCodes: ParticipationCode[] = [];
