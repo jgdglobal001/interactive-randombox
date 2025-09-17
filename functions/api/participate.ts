@@ -38,10 +38,9 @@ async function ensurePrizesExist(sql: any) {
 
     if (existing.length === 0) {
       // 상품이 없으면 생성
-      const prizeId = generateCuid();
       await sql`
-        insert into "Prize" (id, name, description, "imageUrl")
-        values (${prize.id}, ${prize.name}, ${prize.name}, '')
+        insert into "Prize" (id, name, stock, probability, "giftshowGoodsCode", "imageUrl")
+        values (${prize.id}, ${prize.name}, 1000, 1.0, 'MEGA_COFFEE_001', '')
       `;
     }
   }
