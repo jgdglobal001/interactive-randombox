@@ -149,7 +149,12 @@ async function callGiftShowAPI(phoneNumber: string, prizeCode: string) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    const result = await response.json();
+    const result = await response.json() as {
+      result_code?: string | number;
+      tr_id?: string;
+      transaction_id?: string;
+      result_message?: string;
+    };
     console.log('기프트쇼 API 응답:', result);
 
     if (result.result_code === '1' || result.result_code === 1) {

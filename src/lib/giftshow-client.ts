@@ -1,4 +1,4 @@
-import { GiftShowCrypto } from './giftshow-crypto';
+// import { GiftShowCrypto } from './giftshow-crypto'; // 현재 사용하지 않음
 
 /**
  * 기프트 쇼 API 클라이언트
