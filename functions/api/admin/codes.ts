@@ -77,7 +77,7 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
     console.log('9. DATABASE_URL 확인됨, Prisma 클라이언트 생성...');
 
     // Cloudflare Pages Edge Runtime에서 Neon Serverless Driver 사용
-    const { PrismaClient } = await import('@prisma/client/edge');
+    const { PrismaClient } = await import('@prisma/client');
     const { PrismaNeon } = await import('@prisma/adapter-neon');
     const { neonConfig } = await import('@neondatabase/serverless');
 
@@ -153,7 +153,7 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
     }
     
     // Prisma 클라이언트 동적 생성
-    const { PrismaClient } = await import('@prisma/client/edge');
+    const { PrismaClient } = await import('@prisma/client');
     const { PrismaNeon } = await import('@prisma/adapter-neon');
     const { neonConfig } = await import('@neondatabase/serverless');
 
