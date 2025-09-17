@@ -74,26 +74,18 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
       );
     }
     
-    console.log('9. DATABASE_URL 확인됨, Prisma Accelerate 클라이언트 생성...');
-    
-    // Cloudflare Pages에서 Prisma Accelerate 사용
+    console.log('9. DATABASE_URL 확인됨, Prisma 클라이언트 생성...');
+
+    // Cloudflare Pages에서 직접 PostgreSQL 연결
     const { PrismaClient } = await import('@prisma/client/edge');
-    const { withAccelerate } = await import('@prisma/extension-accelerate');
-    
-    // Prisma Accelerate URL이 있는 경우에만 사용
-    const prismaOptions: any = {
+
+    const prisma = new PrismaClient({
       datasources: {
         db: {
           url: context.env.DATABASE_URL
         }
       }
-    };
-    
-    if (context.env.PRISMA_ACCELERATE_URL) {
-      prismaOptions.datasourceUrl = context.env.PRISMA_ACCELERATE_URL;
-    }
-    
-    const prisma = new PrismaClient(prismaOptions).$extends(withAccelerate());
+    });
     
     console.log('10. Prisma 클라이언트 생성 완료, 데이터베이스 연결 시도...');
     
@@ -160,24 +152,16 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
       );
     }
     
-    // Prisma Accelerate 클라이언트 동적 생성
+    // Prisma 클라이언트 동적 생성
     const { PrismaClient } = await import('@prisma/client/edge');
-    const { withAccelerate } = await import('@prisma/extension-accelerate');
-    
-    // Prisma Accelerate URL이 있는 경우에만 사용
-    const prismaOptions: any = {
+
+    const prisma = new PrismaClient({
       datasources: {
         db: {
           url: context.env.DATABASE_URL
         }
       }
-    };
-    
-    if (context.env.PRISMA_ACCELERATE_URL) {
-      prismaOptions.datasourceUrl = context.env.PRISMA_ACCELERATE_URL;
-    }
-    
-    const prisma = new PrismaClient(prismaOptions).$extends(withAccelerate());
+    });
 
     const newCodes: ParticipationCode[] = [];
 
