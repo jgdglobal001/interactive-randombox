@@ -1,0 +1,1689 @@
+문서정보
+◎ 문서개요
+이 문서는 기프티쇼 서비스에서 제공하는 API입니다. 다양한 애플리케이션, 웹 서비스에서 ‘기프티쇼’ 를 컨텐츠로 활용하기 위한 연동 가이드를 제공합니다.
+◎ 주의사항 (5가지)
+1.  ‘기프티쇼 비즈 API’는 ‘B2B거래’만을 진행하고 있으며, 판매정책에 위배되는 사항이 발견되면
+즉시 거래가 중단되며, 법적인 책임을 질 수 있습니다.(*약관 참고)
+정책구분
+내용
+설명
+유효기간
+30 일
+API 를 통해서 발행 되는 쿠폰의 유효기간은 30 일 입니다.(예외 있음)
+기간연장
+불가
+수신 고객의 '기간연장, 환불'이 불가 합니다. 
+할인정책
+등급적용
+구매사는 6% (상품권 1%) 할인을 제공 받을 수 있습니다. (프로모션, 이벤트 혜택 제외)
+‘기프티쇼 비즈 API’를 이용하여 발행되는 쿠폰은 일반고객이 신용카드, 계좌이체, 가상계좌
+등의 현금과 같은 결제수단을 활용해 구매 할 수 없습니다.(재판매금지)
+판매유형
+허용
+설명
+경품,사은품
+O
+가입고객, 이벤트참여 고객, 구매고객 대상 증정을 위해서만 발행 가능합니다.
+포인트구매
+O
+리워드로 제공된 포인트로 '기프티쇼'를 교환 하는 형태로 발행 가능 합니다. 
+현금 판매
+X
+PG(폰빌, 핸드폰결제, 신용카드, 계좌이체, 가상계좌)활용 재판매 불가
+2.  MMS발송의 경우 기프티쇼 비즈 API를 통해 ‘핸드폰번호(개인정보)’가 전달 됨으로 ‘개인정보 처리위탁’에 관련된 사항을 귀사의 서비스 약관에 적용 하셔야 합니다.
+3.  쿠폰의 발행 방법은 3가지로 각 항목별 주의 사항을 준수 해야 합니다. 
+판매유형
+허용
+설명
+MMS 발송
+O
+기프티쇼 비즈에서 MMS 로 직접 발행, 발송 (*휴대폰 번호)
+이미지제공
+O
+API 를 통해 '쿠폰이미지'를 직접 받아서, 구현하는 서비스를 통해 고객에게 전달
+PIN 제공
+O
+1.API 를 통해 'PIN'을 받아, 구현하는 서비스를 통해 바코드, 이미지 생성 전달
+2.판매 페이지에 '상품공급자'와 '발행사업자'를 명시필수
+e.g.상품공급자 : 주식회사 케이티알파 / 발행사업자 : (가입법인명시)
+3.상품의 기본적인 주의사항, 유효기간 명시가 필수 적입니다. P. 3/33
+4.  위의 이미지 제공, PIN 제공방식의 경우 최종 소비자에게 모바일 쿠폰 발행시
+인지세와 관련된 안내를 명시해야 합니다.
+-   5만원 이상의 일반 상품 (상품권과 같은 현금성 상품 제외)
+-   명시 내용 “인지세 삼성 세무서장 후납승인 2019년 100007555호”
+5.  API 요청 시 headers는 Content-Type: application/x-www-form-urlencoded 으로 하여 Return 방식은 application/json으로만 제공합니다. Api상 요청은 단건으로 요청하셔야 하며 multi part로 요청할 경우 과부하로 인하여 api 사용이 중지될 수 있습니다.
+◎ 기타 문의사항
+이 문서의 내용에 오류가 있다면 메일 부탁드립니다. 
+-    서비스담당 : 기쇼비즈팀 강주종 jj.kang@kt.com
+변경내역
+버전
+일자
+이력사항
+작성자
+0.0.1
+2019-04-03
+초안작성
+김준기
+0.0.2
+2019-04-05
+dev_flag헤더값 추가, 현재 비즈머니 잔액 API 추가
+김준기
+0.0.3
+0.0.4
+2019-06-01
+Request Parameter 수정
+손해석
+0.0.5
+2019-07-12
+Response 수정
+손해석
+0.0.6
+2019-08-09
+쿠폰발송요청 수정
+손해석
+0.0.7
+2019-09-19
+쿠폰발송요청 및 오류코드 수정 추가
+손해석
+0.0.8
+2019-10-21
+쿠폰발송요청 및 오류코드 수정 추가
+손해석
+0.0.9
+2019-11-27
+쿠폰발송요청 이미지발송 수정 추가
+손해석
+0.0.95
+2022-03-04
+회사명 변경
+하종호
+1.00
+2022-07-00
+문의 사항 업데이트
+하종호
+1.02
+2023-01-01
+회원 등급 업데이트
+하종호
+1.03
+2023-11-27
+잔액관리형 상품 잔액 정보 추가
+강주종
+1.04      2024-12-02             발송실패 취소 API 추가
+강주종P. 4/33
+◎ Q&A (자주 묻는 질문)
+1. ‘API 연동’을 하고 싶습니다. 간단한 안내 부탁드립니다.
+기프티쇼 비즈 API 연동 기능은 기프티쇼 비즈의 상품을 api로 연동하여 귀사에서 운영하는 app/web등의 서비 스에서 모바일 쿠폰을 구매하실 수 있도록 연동하는 기능입니다. 해당 API 연동 기능은 기프티쇼 비즈 계정을 기반으로 진행되는 연동으로 해당 계정이 보유한 비즈머니 내에서 결제가 진행되며, 연동 시 별도의 추가 비용 은 발생하지 않습니다. (API로 구매를 하면 기프티쇼 비즈 계정에서 금액이 차감되는 방식)
+API 서비스는 기프티쇼 비즈 계정을 기반으로 진행되므로 기본적으로 기프티쇼 비즈에 가입해주셔야 하며 추가 로 API 연동 서비스에 가입을 해주셔야 합니다. API 연동 서비스 가입 시에는 구축하시고자 하는 서비스에 대한 간략한 소개를 파일로 첨부해주시면 됩니다. 승인 이후 개발KEY와 상용KEY를 발급받을 수 있는데 현재 개발 KEY는 사용이 불가하므로 상용KEY를 발급받아 테스트를 진행해주시면 됩니다. 결제는 기본적으로 서비스에 가 입한 기프티쇼 비즈 계정이 보유한 비즈머니에서 차감이 되게 되며, 주문/발송 이후 바로 취소하시면 상용 KEY 로도 테스트가 가능하십니다.
+추가로 기프티쇼 비즈에서 판매하는 모바일 쿠폰은 할인이 제공되는 대신 유효기간이 30일로 고정되어 연장/환 불이 불가한 B2B전용 쿠폰만을 취급하고 있습니다. 이에 최종 소비자가 직접 돈을 내고 구입하는 플랫폼에서는 비즈 API 연동이 어렵습니다. (서비스 내 무상포인트(프로모션, 이벤트 등)로 구매하는 플랫폼은 연동 가능, 소비 자가 돈을 내고 구매하는 플랫폼은 연동 불가)
+2. 연동 가능한 서비스 방식은 구체적으로 어떤게 있을까요?
+서비스 내 이벤트, 프로모션 등을 통해 획득한 포인트로 쿠폰을 구매하거나, 친구 초대 미션 등 해당 미션 수행 시 보상으로 쿠폰을 지급하고자 할 때, 자체 설문 진행 후 참여자에게 쿠폰을 지급하고자 할 때, 이벤트 진행 후 특정 조건 만족 시 쿠폰을 지급하고자 할 때, 리워드 서비스에 적용하고자 할 때와 같이 다양한 서비스에서 연동이 가능합니다.
+3. 연동을 위해 필요한 절차는 어떻게 되나요?
+기프티쇼 비즈 > 주문발송 > API 연동 발송 > API 서비스 가입 후 > 서비스 관리 > 상용KEY 발급 요청을 진행 해주시면 됩니다.
+4. 상용KEY 승인 심사는 어떻게 진행되나요?
+상용KEY 요청 시 서비스 기획안(컨셉 자료도 가능) 및 쿠폰 활용 방안을 문서 형식의 제약 없이 첨부 파일로 올려주시면 영업일 기준 2~3일내 확인 후 승인조치해드립니다.
+해당 자료에는 서비스 소개, 쿠폰 활용 목적, 쿠폰을 구매하는 재원이 확인되어야 합니다.P. 5/33
+5. 개발 환경(dev) 테스트중인데 인증키 오류가 발생합니다. 어떻게 해야하나요?
+현재 기프티쇼 비즈 API 상 개발환경은 지원하지 않고 있습니다.
+아래 페이지에서 상용KEY발급 신청해주시면 서비스 기획안(컨셉) 등 검토 후 승인해드리고 있습니다
+▶ 주문발송 > API연동발송 서비스관리 > 하단 "상용KEY발급"
+상용KEY 발급 후 테스트를 진행해주시기 바랍니다.
+6. 상품 코드, 상품 리스트는 어떻게 확인해야 하나요?
+API연동 서비스는 별도의 전체 상품리스트를 제공해드리고 있지 않습니다. 전체 상품을 호출하시고 DB에 저장 하신 후 원하시는 상품 정보만 확인 또는 전시하시면 됩니다.
+특정 상품의 상품 코드를 확인하고자 하시면 비즈SHOP에서 특정 상품의 상세 화면에서 해당 이미지를 다른 이 미지로 저장하시면 상품 코드 확인 가능합니다.
+7. 상품 검색 방법
+현재 API 상 카테고리 별 검색은 지원하지 않고 있습니다. 이에 API로 모든 상품을 호출하고, 해당 값을 DB에 저장 후 원하는 상품을 검색해서 사용해야 합니다. 이 DB에 저장한 값은 매일 또는 주 2~3회 새벽에 배치를 돌려 상품 정보를 업데이트 하시길 권유드립니다.
+8. 상품의 상품코드가 변경되거나 해당 상품이 품절될 경우 어떻게 확인해야할까요?
+변경된 상품 정보만 별도로 제공되고 있지 않아 비즈 상품의 경우 매일 새벽에 업데이트가 진행되오니 매일 또 는 주 2~3회 새벽 2~4시경 전체 상품 정보를 불러와 업데이트 하기길 권유드립니다.
+9. 일부 상품권이 비즈SHOP과 달리 API연동에서 확인되지 않습니다.
+기프티쇼 비즈SHOP과 API연동상품은 내부 정책(부정 거래 등)으로 판매하는 상품이 일부 상이합니다.
+10.쿠폰을 발송하였는데 문자가 오지 않습니다. 오류인가요?
+API를 통해 쿠폰을 발송하는 형태는 핀번호 수신, MMS 발송, 바코드 이미지 수신 형태로 발송 가능합니다. 쿠폰발송요청 시 gubun 값 (Y : 핀번호 수신, N : MMS, I : 바코드이미지 수신)을 확인해주시고 발송해주세요. 
+11.쿠폰 발송 시 개인 배너/카드 이미지로 발송하고 싶습니다.
+API 연동 발송 상 배너/카드 이미지 변경 방법입니다.
+1.   마이비즈 > 문자메시지 관리 > 배너/카드 이미지 변경 (배너/카드 둘 다 변경 필수)
+2.   주문발송 > api연동발송 > 서비스 관리 > 연동발송 관리에서 배너/카드 아이디 확인 (하단 문자메시지에 이미지가 변경되었는지 확인 > 미반영 시 리프레쉬 버튼 클릭)
+3. 발송 시 배너/카드 아이디 파라미터 추가하여 발송P. 6/33
+12.개인정보의 처리업무 위수탁
+MMS발송의 경우 기프티쇼 비즈 api를 통해 ‘수신자번호’가 전달되기 때문에 ‘개인정보 처리 위탁’에 관한 내용 을 서비스 상 명시해야 합니다.
+목적은 ‘voc처리를 위한 고객센터에서의 조회’, ‘mms발송을 위한 업무’ 2가지 목적이며 실제 개인정보처리 지침 에 넣어주실 내용은 아래 2가지 입니다.
+(1)  개인정보 처리 위탁을 받는자: 주식회사 케이티알파
+(2)  개인정보 처리 위탁을 하는 업무의 내용: 기프티쇼 발송과 고객센터에서의 조회, 재전송 관련 업무 일체
+13.B2B거래와 B2C거래의 차이점
+모바일상품권을 거래함에 있어 B2B,  B2C거래를 구분하는 원칙은 ‘실제 소비자가 본인의 돈을 내고 구매했는가’의 차이입니다. B2C거래는 신유형상품권 표준약관에 근거하며, B2B거래는 가입 시 동의한 약관에 근거하여 거래가 진행됩니다.
+각 거래 별 차이점은 아래와 같으니 참고 부탁 드립니다.
+유효기간
+유효기간 종료 후 환불/기간연장
+할인
+B2C 거래
+상품별 상이
+O
+X
+B2B 거래
+상품별 상이
+X
+O (등급할인)P. 7/33
+목차
+1.       상품 리스트 ................................................................................................................................... 9
+2       상품 상세 정보 ............................................................................................................................. 13
+3       브랜드 정보 조회........................................................................................................................... 17
+4       브랜드 상세 정보........................................................................................................................... 19
+5       쿠폰 상세 정보 ............................................................................................................................. 21
+6       쿠폰 취소.................................................................................................................................... 24
+7       쿠폰 재전송 ................................................................................................................................. 25
+8       쿠폰발송요청 ................................................................................................................................ 26
+9       현재 비즈머니 잔액 정보.................................................................................................................. 29
+10     발송실패 취소 .............................................................................................................................. 30
+부록 1. 에러 코드 ............................................................................................................................. 31P. 8/33
+연동방식
+◎ 통신방식
+https 규약된 URL로 통신하며(TLS 1.2이상만 지원), Return방식은 application/json으로만 제공합니다.
+◎ API관련 사항
+1.  파라미터 관련 사항
+-   custom_auth_code : 사이트 내 발급받은 인증Key (계정마다 Unique)
+-   custom_auth_token : 사이트 내 발급받은 Token Key(user_id(회원ID)를 인증키로 암호화 하 여 셋팅됨)
+   상용승인 완료 되면 자동 발급 됩니다.
+   현재 개발 환경 (인증key, 토큰key)은 지원하지 않습니다.
+-   api_code : 규약된 api_code로 parameter에 설정하여 보낸다.
+-   dev_yn : 테스트계, 운영계 구분 설정 값(테스트 : Y, 운영 : N)
+   운영(N)으로만 설정해서 테스트 해야 합니다.
+2.  암호화 설정
+-   암호화 알고리즘: AES256/ECB/PKCS5Padding 사용, 암호화 데이터는 Base64 Encoding한다. (기프티쇼 비즈에서 암호화하며, 고객사는 암호화 필요 없음)
+3.  유의사항
+-   SSL 웹구간 암호화 TLS 1.2이상 지원
+-   날짜관련 데이터는 “-“를 넣지 않는다. (yyyyMMdd)
+-   필수항목에 대해서는 반드시 전송해야 합니다.P. 9/33
+1. 상품 리스트
+개요
+상품 리스트 API는 상품의 ‘이미지’, ‘이름’, ‘설명’등의 정보를 제공하여, 전체 상품을 확인할 수 있습니다. 또한 카테고리, 브랜드 등의 분류 정보를 제공하여 카테고리, 브랜드별 페이지를 구성할 수 있습니다.
+권장사항
+호출되는 이미지는 새벽시간대에 배치로 전체 리스트를 저장 하시는 것을 권장 합니다. 상품 정보는 새벽시간대에 정기적으로 배치를 통해 현행화하시기를 권장 합니다.
+주의사항
+고객이 페이지를 호출 시에 당사 리스트를 조회 하여 제공하는 경우 속도에 영향이 있습니다.
+1.1   API CODE : 0101
+1.2 HTTP METHOD : POST
+1.3   URL
+구분
+연동 URL
+상용
+https://bizapi.giftishow.com/bizApi/goods
+1.4   Request Parameter
+Parameter명
+필수여부
+요청 형식
+타입
+설명
+api_code
+필수
+파라미터
+String
+API 코드
+custom_auth_code
+필수
+파라미터
+String
+API 인증 키
+custom_auth_token
+필수
+파라미터
+String
+API 인증 토큰
+dev_yn
+필수
+파라미터
+String
+테스트여부 설정 값 (N 입력)
+start
+필수
+파라미터
+String
+목록   시작페이지(미입력시   1페이지 표시)
+size
+필수
+파라미터
+String
+목록 표시 개수(미입력시 20개)
+1.5   ResponseP. 10/33
+{
+}
+"code": "0000",
+" message": null,
+"result": {
+"listNum": 8,
+"goodsList": [
+“rmIdBuyCntFlagCd": "N",
+“discountRate": 6,
+“mdCode": "M000100615",
+“endDate": "2999-12-30T15:00:00.000+0000",
+”affliateId": "ELEVEN",
+”discountPrice": 750,
+"mmsGoodsImg": "https://biz.giftishow.com/Resource/goods/G00000280811/G00000280811_250.jpg”, ”srchKeyword": "광동)비타500, 비타민, 건강음료, 세븐일레븐",
+”limitDay": 30,
+”content": "내용”
+"goodsImgB": "https://biz.giftishow.com/Resource/goods/G00000280811/G00000280811.jpg",
+"goodsTypeNm": "일반상품(물품교환형)",
+"exhGenderCd": "WOMAN",
+"exhAgeCd": "10",
+"validPrdDay": "20190814",
+"goodsComName": "세븐일레븐",
+"goodsName": "광동)비타500 100ml 병",
+"mmsReserveFlag": "Y",
+"popular": 1,
+"goodsStateCd": "SALE",
+"brandCode": "BR00046",
+"goodsNo": 21445,
+"brandName": "세븐일레븐",
+"mmsBarcdCreateYn": "Y",
+"salePrice": 800,
+"brandIconImg": "https://biz.giftishow.com/Resource/brand/BR_20140528_171011_3.jpg",
+"goodsComId": "S000002705",
+"rmCntFlag": "N",
+"saleDateFlagCd": "PERIOD_SALE",
+"contentAddDesc": "",
+"goodsCode": "G00000280811",
+"goodsTypeDtlNm": "편의점",
+"category1Seq": 4,
+"goodsImgS": "https://biz.giftishow.com/Resource/goods/G00000280811/G00000280811_250.jpg", "affiliate": "세븐일레븐/바이더웨이",
+"validPrdTypeCd": "01", "saleDateFlag": "N",
+"realPrice": 800, ]
+} }P. 11/33
+출력되는 결과의 데이터 포맷은 JSON이며 형식은 아래와 같습니다
+Response명
+타입
+길이
+설명
+code
+String
+4
+결과코드 (코드목록 참조)
+message
+String
+50
+결과메시지 (코드목록 참조)
+listNum
+String
+10
+리스트갯수회원번호
+goodsCode
+String
+20
+상품 아이디
+goodsNo
+String
+10
+상품 번호
+goodsName
+String
+200
+상품명
+brandCode
+String
+20
+브랜드 코드
+brandName
+String
+200
+브랜드 명
+content
+String
+4000
+상품설명
+contentAddDesc
+String
+4000
+상품추가설명
+discountRate
+String
+10
+최종판매할인률
+goodstypeNm
+String
+20
+상품유형명
+goodsImgS
+String
+300
+상품이미지 소(250X250)
+goodsImgB
+String
+300
+상품이미지 대(500X500)
+goodsDescImgWeb
+String
+300
+상품 설명 이미지
+brandIconImg
+String
+300
+브랜드 아이콘 이미지
+mmsGoodsImg
+String
+300
+상품 MMS 이미지
+discountPrice
+String
+10
+최종 구매 가격 (원단위 절삭)
+realPrice
+String
+10
+공급사 할인 반영 가격
+salePrice
+String
+10
+권장 소비자 가격 (할인 반영 전)
+srchKeyword
+String
+2000
+상품검색어
+validPrdTypeCd
+String
+2
+유효기간 유형(01-일수//02-일자)
+limitday
+String
+5
+유효기간(일수)P. 12/33
+validPrdDay
+String
+8
+유효기간(일자)
+endDate
+String
+8
+판매종료일
+goodsComId
+String
+20
+상품공급사ID
+goodsComName
+String
+30
+상품공급사명
+affiliateId
+String
+5
+교환처ID
+affiliate
+String
+30
+교환처명
+exhGenderCd
+String
+20
+전시성별코드
+exhAgeCd
+String
+20
+전시연령코드
+mmsReserveFlag
+String
+1
+예약발송노출여부
+goodsStateCd
+String
+20
+상품상태코드 (판매중: SALE, 판매중지: SUS)
+mmsBarcdCreateYn
+String
+50
+공급사 MMS 바코드 생성여부
+rmCntFlag
+String
+1
+총판매수량설정여부
+saleDateFlagCd
+String
+20
+판매일시 설정코드
+goodsTypeDtlNm
+String
+8
+상세상품유형명
+category1Seq
+String
+10
+전시카테고리1
+saleDateFlag
+String
+1
+판매일시설정여부
+rmIdBuyCntFlagCd
+String
+20
+ID당구매가능수량설정코드P. 13/33
+2   상품 상세 정보
+개요
+개별 상품의 정보를 조회 할 수 있습니다.
+권장사항
+고객이 상품리스트 중 단일 상품에 대해 상세페이지를 안내할 경우 호출하여 고객에게 제공 합니다.
+2.1   API CODE : 0111
+2.2 HTTP METHOD : POST
+2.3   URL
+구분
+연동 URL
+상용
+https://bizapi.giftishow.com/bizApi/goods/{goods_code}
+2.4   Request Parameter
+Parameter명
+필수여부
+요청 형식
+타입
+설명
+api_code
+필수
+파라미터
+String
+API 코드
+custom_auth_code
+필수
+파라미터
+String
+API 인증 키
+custom_auth_token
+필수
+파라미터
+String
+API 인증 토큰
+goods_code
+필수
+URL
+String
+상품 코드
+dev_yn
+필수
+파라미터
+String
+테스트여부 설정 값 (N 입력)
+2.5   ResponseP. 14/33
+{
+"code": "0000",
+"message": null,
+"result": {
+"goodsDetail": {
+"rmIdBuyCntFlagCd": "N",
+"discountRate": 6,
+"goldPrice": 750,
+"mdCode": "M000100615",
+"vipDiscountRate": 9,
+"discountPrice": 750,
+"mmsGoodsImg":"https://biz.giftishow.com/Resource/goods/G00000280811/G00000280811_250.jpg", "limitDay": 30,
+"content": "해당 쿠폰은 일부 점포에서는 취급하지 않는 상품일 수 있습니다.",
+"goodsDescImgWeb" : 
+"goodsImgB": "https://biz.giftishow.com/Resource/goods/G00000280811/G00000280811.jpg", "goodsTypeNm": "일반상품(물품교환형)",
+"categoryName1": "편의점/마트",
+"vipPrice": 730,
+"goodsName": "광동)비타500 100ml 병",
+"mmsReserveFlag": "Y",
+"goodsStateCd": "SALE",
+"brandCode": "BR00046",
+"goldDiscountRate": 6,
+"goodsNo": 21445,
+"platinumPrice": 710,
+"brandName": "세븐일레븐",
+"salePrice": 800,
+"brandIconImg": "https://biz.giftishow.com/Resource/brand/BR_20140528_171011_3.jpg",
+"rmCntFlag": "N",
+"goodsTypeCd": "GNR",
+"platinumDiscountRate": 11,
+"saleDateFlagCd": "PERIOD_SALE",
+"contentAddDesc": "",
+"categorySeq1": 4,
+"goodsCode": "G00000280811",
+"goodsTypeDtlNm": "편의점",
+"goodsImgS": "https://biz.giftishow.com/Resource/goods/G00000280811/G00000280811_250.jpg", "affiliate": "세븐일레븐/바이더웨이",
+"saleDateFlag": "N", "realPrice": 800,
+}
+}
+}P. 15/33
+출력되는 결과의 데이터 포맷은 JSON이며 형식은 아래와 같습니다
+Response명
+타입
+길이
+설명
+code
+String
+4
+결과코드 (코드목록 참조)
+message
+String
+50
+결과메시지 (코드목록 참조)
+goodsNo
+String
+10
+상품 번호
+goodsCode
+String
+20
+상품 아이디
+goodsName
+String
+200
+상품명
+brandCode
+String
+20
+브랜드 코드
+brandName
+String
+200
+브랜드 명
+content
+String
+4000
+상품설명
+contentAddDesc
+String
+4000
+상품추가설명
+goodsTypeCd
+String
+10
+상품유형코드
+goodstypeNm
+String
+20
+상품유형명
+goodsImgS
+String
+300
+상품이미지 소(250X250)
+goodsImgB
+String
+300
+상품이미지 대(500X500)
+goodsDescImgWeb
+String
+300
+상품 설명 이미지
+brandIconImg
+String
+300
+브랜드 아이콘 이미지
+mmsGoodsImg
+String
+300
+상품 MMS 이미지
+realPrice
+String
+10
+공급사 할인 반영 가격
+salePrice
+String
+10
+권장 소비자 가격 (할인 반영 전)
+categoryName1
+String
+20
+전시카테고리명1
+rmIdBuyCntFlagCd
+String
+20
+ID당구매가능수량설정코드
+discountRate
+String
+10
+최종판매할인률
+goldPrice
+String
+10
+골드가격
+discountPrice
+String
+10
+최종 구매 가격 (원단위절삭)P. 16/33
+vipPrice
+String
+10
+VIP가격
+platinumPrice
+String
+10
+플래티넘 가격
+vipDiscountRate
+String
+10
+VIP 할인률
+platinumDiscountRate
+String
+10
+플래티넘 할인률
+goldDiscountRate
+String
+10
+골드 할인률
+goodsStateCd
+String
+20
+상품상태코드 (판매중: SALE, 판매중지: SUS)
+rmCntFlag
+String
+1
+총판매수량설정여부
+goodsTypeDtlNm
+String
+8
+상세상품유형명
+saleDateFlagCd
+String
+20
+판매일시 설정코드
+saleDateFlag
+String
+1
+판매일시설정여부
+mmsReserveFlag
+String
+1
+예약발송노출여부
+categorySeq1
+String
+10
+전시카테고리1
+limitday
+String
+8
+유효기간(일자)
+affiliate
+String
+30
+교환처명P. 17/33
+3   브랜드 정보 조회
+개요
+상품의 브랜드를 이미지화하여 분류 할 수 있도록 기능을 제공 합니다.
+3.1   API CODE : 0102
+3.2 HTTP METHOD : POST
+3.3   URL
+구분
+연동 URL
+상용
+https://bizapi.giftishow.com/bizApi/brands
+3.4   Request Parameter
+Parameter명
+필수여부
+요청 형식
+타입
+설명
+api_code
+필수
+파라미터
+String
+API 코드
+custom_auth_code
+필수
+파라미터
+String
+API 인증 키
+custom_auth_token
+필수
+파라미터
+String
+API 인증 토큰
+dev_yn
+필수
+파라미터
+String
+테스트여부 설정 값 (N 입력)
+3.5   Response
+{
+"code": "0000",                                                                                                              
+"message": null,                                                                                                             "result": {                                                                                                          
+"listNum": 134,                                                                                                              "brandList": [                                                                                {                                                                                                                            
+"brandName": "BHC",                                                                                               
+"brandSeq": 612,                                                                                             
+"category1Name": "피자/버거/치킨",                                                                           
+"sort": 1,                                                                                                    
+"content": "",                                                                                                           "brandBannerImg": "https://biz.giftishow.com/Resource/brand/BR_20140807_103157_1.jpg",
+"mmsThumImg": "https://biz.giftishow.com/Resource/brand/BR_20140807_103157_4.jpg",    
+"category2Seq": 0,                                                                                                    
+"brandIConImg": "https://biz.giftishow.com/Resource/brand/BR_20140807_104934_3.jpg", 
+"category1Seq": 5,                                                                    
+"brandCode": "BR00109",
+"category2Name": "편의점/마트",
+}                                                                                                                            ]                          
+}                                                                                                                            
+}
+출력되는 결과의 데이터 포맷은 JSON이며 형식은 아래와 같습니다P. 18/33
+Response명
+타입
+길이
+설명
+code
+String
+4
+결과코드 (코드목록 참조)
+message
+String
+50
+결과메시지 (코드목록 참조)
+listNum
+String
+10
+리스트 개수
+brandSeq
+String
+10
+브랜드 일련번호
+brandCode
+String
+50
+브랜드 코드
+brandName
+String
+50
+브랜드 명
+brandBannerImg
+String
+100
+웹배너 이미지
+brandIconImg
+String
+1
+브랜드아이콘 이미지
+mmsThumImg
+String
+1
+브랜드썸네일 이미지
+content
+String
+4000
+브랜드 설명
+category1Name
+String
+200
+카테고리1 명
+category1Seq
+String
+10
+카테고리1 일련번호
+category2Name
+String
+200
+카테고리2 명
+category2Seq
+String
+10
+카테고리2 일련번호
+sort
+String
+10
+정렬P. 19/33
+4   브랜드 상세 정보
+개요
+단일 브랜드의 정보를 제공합니다.
+4.1   API CODE : 0112
+4.2 HTTP METHOD : POST
+4.3   URL
+구분
+연동 URL
+상용
+https://bizapi.giftishow.com/bizApi/brands/{brand_code}
+4.4   Request Parameter
+Parameter명
+필수여부
+요청 형식
+타입
+설명
+api_code
+필수
+파라미터
+String
+API 코드
+custom_auth_code
+필수
+파라미터
+String
+API 인증 키
+custom_auth_token
+필수
+파라미터
+String
+API 인증 토큰
+dev_yn
+필수
+파라미터
+String
+테스트여부 설정 값 (N 입력)
+brand_code
+필수
+URL
+String
+브랜드 코드
+4.5   Response
+{
+"code": "0000",
+"message": null,
+"result": {
+"brandDetail": {
+"brandName": "도미노피자",
+"brandSeq": 592,
+"category1Name": "피자/버거/치킨",
+"sort": 4,
+"content": "",
+"brandBannerImg": "https://biz.giftishow.com/Resource/brand/BR_20140729_173930_1.jpg", "mmsThumImg": "https://biz.giftishow.com/Resource/brand/20170821_143358479.jpg",
+"category2Seq": 0,
+"brandIConImg": "https://biz.giftishow.com/Resource/brand/20170821_143401538.jpg", "category1Seq": 5,
+"brandCode": "BR00026",
+"category2Name": "편의점/마트" }
+}
+}
+출력되는 결과의 데이터 포맷은 JSON이며 형식은 아래와 같습니다P. 20/33
+Response명
+타입
+길이
+설명
+code
+String
+4
+결과코드 (코드목록 참조)
+message
+String
+50
+결과메시지 (코드목록 참조)
+brandSeq
+String
+10
+브랜드 일련번호
+brandCode
+String
+50
+브랜드 코드
+brandName
+String
+50
+브랜드 명
+brandBannerImg
+String
+100
+웹배너 이미지
+brandIconImg
+String
+1
+브랜드아이콘 이미지
+mmsThumImg
+String
+1
+브랜드썸네일 이미지
+content
+String
+4000
+브랜드 설명
+category1Name
+String
+200
+카테고리1 명
+category1Seq
+String
+10
+카테고리1 일련번호
+category2Name
+String
+200
+카테고리2 명
+category2Seq
+String
+10
+카테고리2 일련번호
+sort
+String
+10
+정렬P. 21/33
+5   쿠폰 상세 정보
+개요
+발송에 사용된 TR_ID(고유값)을 활용하여 쿠폰 상세정보를 조회합니다.
+5.1   API CODE : 0201
+5.2 HTTP METHOD : POST
+5.3   URL
+구분
+연동 URL
+상용
+https://bizapi.giftishow.com/bizApi/coupons
+5.4   Request Parameter
+Parameter명
+필수여부
+요청 형식
+타입
+설명
+api_code
+필수
+파라미터
+String
+API 코드
+custom_auth_code
+필수
+파라미터
+String
+API 인증 키
+custom_auth_token
+필수
+파라미터
+String
+API 인증 토큰
+dev_yn
+필수
+파라미터
+String
+테스트여부 설정 값   (N 입력)
+tr_id
+필수
+파라미터
+String
+거래아이디 (TR_ID)
+5.5   ResponseP. 22/33
+"code": "0000",
+"message": null,
+"result": [
+{
+"couponInfoList": [
+{
+"goodsCd": "G00000271016",
+"pinStatusCd": "07",
+"goodsNm": "크라운)마이쮸(딸기)800",
+"sellPriceAmt": "800",
+"remailAmt": "해당없음"
+"senderTelNo": "15880108",
+"cnsmPriceAmt": "800",
+"sendRstCd": null,
+"pinStatusNm": "구매취소(폐기)",
+"mmsBrandThumImg": "20190423_171201873.jpg", "brandNm": "GS25",
+"sendRstMsg": null,
+"correcDtm": "20201202",
+"recverTelNo": "01012345678",
+"validPrdEndDt": "20210101235959",
+"sendBasicCd": "2020120200010847976801", "sendStatusCd": "발송완료"
+}
+],
+"resCode": "0000", "resMsg": "정상처리"
+} ]
+}
+출력되는 결과의 데이터 포맷은 JSON이며 형식은 아래와 같습니다
+Response명
+타입
+길이
+설명
+resCode
+String
+4
+결과코드 (코드목록 참조)
+resMsg
+String
+50
+결과메시지 (코드목록 참조)
+brandNm
+String
+100
+브랜드명
+cnsmPriceAmt
+String
+20
+정상판매단가
+correcDtm
+String
+8
+변경일자
+goodsCd
+String
+12
+상품코드
+goodsNm
+String
+100
+상품명
+mmsBrandThumImg
+String
+300
+브랜드 썸네일이미지P. 23/33
+recverTelNo
+String
+11
+수신자번호
+sellPriceAmt
+String
+20
+실판매단가
+remainAmt
+String
+10
+잔액 정보
+sendBasicCd
+String
+30
+기본번호
+sendRstCd
+String
+10
+거래번호
+sendRstMsg
+String
+10
+발송상태코드
+sendStatusCd
+String
+10
+발송상태명
+senderTelNo
+String
+11
+발신자번호
+validPrdEndDt
+String
+14
+유효기간만료일
+pinStatusCd
+String
+핀상태 코드
+pinStatusNm
+String
+핀상태 코드 이름
+※ 핀상태 코드/이름
+핀상태
+코드
+핀상태
+코드
+발행
+01
+잔액기간만료
+11
+교환(사용완료)
+02
+기간만료취소
+12
+반품
+03
+환전
+13
+관리폐기
+04
+환급
+14
+환불
+05
+잔액환급
+15
+재발행
+06
+잔액기간만료취소
+16
+구매취소(폐기)
+07
+등록
+21
+기간만료
+08
+등록취소
+22
+바우처(비활성)
+09
+선점
+23
+잔액환불
+10
+임시발급상태
+24P. 24/33
+6   쿠폰 취소
+개요
+오발송 등의 사유로 쿠폰을 취소 해야할 경우 사용 합니다.
+권고사항
+1개의 쿠폰을 취소하여 응답을 받은 뒤 2번째 쿠폰의 취소요청을 보내주셔야 합니다.
+주의사항
+응답을 받지 못하여 ‘타임아웃’된 경우 재시도하여 결과값을 받고 저장합니다.
+최초에 성공하였으나 응답만을 받지 못해 재시도 결과 ‘이미 취소된 쿠폰’으로 안내 받을 수 있습니다. 특정 시점에 미사용 쿠폰을 일괄 취소하는 경우 api 부정사용으로 이용이 중단될 수 있습니다.
+6.1   API CODE : 0202
+6.2 HTTP METHOD : POST
+6.3   URL
+구분
+연동 URL
+상용
+https://bizapi.giftishow.com/bizApi/cancel
+6.4   Request Parameter
+Parameter명
+필수여부
+요청 형식
+타입
+설명
+api_code
+필수
+파라미터
+String
+API 코드
+custom_auth_code
+필수
+파라미터
+String
+API 인증 키
+custom_auth_token
+필수
+파라미터
+String
+API 인증 토큰
+dev_yn
+필수
+파라미터
+String
+테스트여부 설정 값 (N 입력)
+tr_id
+필수
+파라미터
+String
+거래아이디 (TR_ID)
+user_id
+필수
+파라미터
+String 
+회원 ID
+6.5   Response
+{
+"code": "0000",
+"message": "정상처리 되었습니다." }
+출력되는 결과의 데이터 포맷은 JSON이며 형식은 아래와 같습니다
+Response명
+타입
+길이
+설명
+code
+String
+4
+결과코드 (코드목록 참조)
+message
+String
+50
+결과메시지 (코드목록 참조)P. 25/33
+7   쿠폰 재전송
+개요
+MMS를 삭제한 수신 고객의 쿠폰을 재전송 할 수 있습니다.
+주의사항
+고객의 요청에 따라 사용을 해야 합니다.(*일괄 전송 불가/법적인 책임을 물 수 있습니다)
+7.1   API CODE : 0203
+7.2 HTTP METHOD : POST
+7.3   URL
+구분
+연동 URL
+상용
+https://bizapi.giftishow.com/bizApi/resend
+7.4   Request Parameter
+Parameter명
+필수여부
+요청 형식
+타입
+설명
+api_code
+필수
+파라미터
+String
+API 코드
+custom_auth_code
+필수
+파라미터
+String
+API 인증 키
+custom_auth_token
+필수
+파라미터
+String
+API 인증 토큰
+dev_yn
+필수
+파라미터
+String
+테스트여부 설정 값 (N 입력)
+tr_id
+필수
+파라미터
+String
+거래아이디 (TR_ID)
+sms_flag
+옵션
+파라미터
+String
+Y : SMS / N : MMS (default : N)
+user_id
+필수
+파라미터
+String 
+회원 ID
+7.5   Response
+{
+"code": "0000", "message": null, "result": null
+}
+출력되는 결과의 데이터 포맷은 JSON이며 형식은 아래와 같습니다
+Response명
+타입
+길이
+설명
+code
+String
+4
+결과코드 (코드목록 참조)
+message
+String
+50
+결과메시지 (코드목록 참조)P. 26/33
+8   쿠폰발송요청
+TR_ID는 고유값이어야 합니다.
+ (필수사항) 자리수 : 25자 이하입니다.
+ (권고사항) service_20190814_12345678 형식으로 생성 부탁드립니다.
+주의사항
+mms_title 은 10자가 넘으면 안됩니다.
+응답결과를 받지 못하는 경우(타임아웃 15초), 동일 TR_ID로 ‘쿠폰취소요청’을 보내주셔야 합니다. 사유는 기프티쇼 비즈 플랫폼에서는 발행이 되어 있을 가능성이 높습니다. (*비즈머니 차감)
+서비스가 보유한 리워드포인트의 교환 시, 리워드포인트의 차감성공 후 발송요청을 보내주셔야 합니다.
+기타
+‘gubun’의 옵션은 3가지 타입의 발송 기능을 제공 합니다.
+ 구분자 (Y : 핀번호 수신, N : MMS, I : 바코드이미지 수신)
+8.1   API CODE : 0204
+8.2 HTTP METHOD : POST
+8.3   URL
+구분
+연동 URL
+상용
+https://bizapi.giftishow.com/bizApi/send
+8.4   Request Parameter
+Parameter명
+필수여부
+요청 형식
+타입
+설명
+api_code
+필수
+파라미터
+String
+API 코드
+custom_auth_code
+필수
+파라미터
+String
+API 인증 키
+custom_auth_token
+필수
+파라미터
+String
+API 인증 토큰
+dev_yn
+필수
+파라미터
+String
+테스트여부 설정 값 (N 입력)
+goods_code
+필수
+파라미터
+String
+상품코드
+order_no
+옵션
+파라미터
+String
+주문번호
+mms_msg
+필수
+파라미터
+String
+MMS메시지
+mms_title
+필수
+파라미터
+String
+MMS제목
+callback_no
+필수
+파라미터
+String
+‘-‘를 제외한 발신번호
+phone_no
+필수
+파라미터
+String
+‘-‘를 제외한 수신번호
+tr_id
+필수
+파라미터
+String
+거래아이디 (Unique한 ID)
+고객사와 기프티쇼비즈간 대사값 (사용자생성 TR_ID)P. 27/33
+template_id
+옵션
+파라미터
+String
+카드 아이디
+banner_id
+옵션
+파라미터
+String
+배너 아이디
+user_id
+필수
+파라미터
+String
+회원 ID
+gubun
+필수
+파라미터
+String
+MMS발송 구분자
+- Y: 핀번호수신
+- N: MMS
+- I: 바코드이미지수신
+8.5   Response
+MMS (gubun – N) 
+{
+“code”: “0000”, “message”: null, “result”: { “code”: “0000”, “message”: null, “result”: {
+“orderNo”: “20190716000323” }
+}
+}
+핀수신 (gubun – Y) 
+{
+“code”: “0000”,
+“message”: null,
+“result”: {
+“code”: “0000”,
+“message”: null,
+“result”: {
+“orderNo”: “20190812000000”,
+“pinNo”: “900343630367”
+}
+}
+}
+핀수신 (gubun – I) 
+{
+“code”: “0000”,
+“message”: null,
+“result”: {
+“code”: “0000”,
+“message”: null,
+“result”: {
+“orderNo”: “20190812000000”,
+“pinNo”: “900343630367”,
+"couponImgUrl": "http://t.giftishow.co.kr/mms_90012345678_01.jpg" }
+} }
+출력되는 결과의 데이터 포맷은 JSON이며 형식은 아래와 같습니다P. 28/33
+Response명
+타입
+길이
+설명
+code
+String
+4
+결과코드 (코드목록 참조)
+message
+String
+50
+결과메시지 (코드목록 참조)
+pinNo
+String
+20
+쿠폰번호 (gubun  ‘Y’ 입력 표시)
+orderNo
+String
+20
+주문번호P. 29/33
+9   현재 비즈머니 잔액 정보
+개요
+비즈머니가 잔액이 없을 경우 발송이 되지 않습니다. 서비스의 백오피스에서 조회 할 수 있도록 구현 가능합 니다. 또한 발송, 취소 등의 거래 정보를 저장할 때 비즈머니 잔액과의 정합성을 비교 할 수 있도록 구현하 시면 됩니다.
+9.1   API CODE : 0301
+9.2 HTTP METHOD : POST
+9.3   URL
+구분
+연동 URL
+상용
+https://bizapi.giftishow.com/bizApi/bizmoney
+9.4   Request Parameter
+Parameter명
+필수여부
+요청 형식
+타입
+설명
+api_code
+필수
+파라미터
+String
+API 코드
+custom_auth_code
+필수
+파라미터
+String
+API 인증 키
+custom_auth_token
+필수
+파라미터
+String
+API 인증 토큰
+dev_yn
+필수
+파라미터
+String
+테스트여부 설정 값   (N 입력)ㅍ
+user_id
+필수
+파라미터
+String
+회원 아이디
+9.5   Response
+{
+“code”: “0000”, “message”: “" “balance” : “250000”
+}
+출력되는 결과의 데이터 포맷은 JSON이며 형식은 아래와 같습니다
+Response명
+타입
+길이
+설명
+code
+String
+4
+결과코드 (코드목록 참조)
+message
+String
+50
+결과메시지 (코드목록 참조)
+balance
+String
+20
+현재 비즈머니 잔액P. 30/33
+10 발송실패 취소
+개요
+비즈머니는 차감되고, 핀은 발행되지 않는 “발송 실패” 케이스는 쿠폰 취소 API로 취소가 불가합니다. 발송 실패 시에는 해당 API를 호출하여 취소를 하셔야 합니다.
+10.1 API CODE : 0205
+10.2 HTTP METHOD : POST
+10.3 URL
+구분
+연동 URL
+상용
+https://bizapi.giftishow.com/bizApi/sendFail/cancel
+10.4 Request Parameter
+Parameter명
+필수여부
+요청 형식
+타입
+설명
+api_code
+필수
+파라미터
+String
+API 코드
+custom_auth_code
+필수
+파라미터
+String
+API 인증 키
+custom_auth_token
+필수
+파라미터
+String
+API 인증 토큰
+dev_yn
+필수
+파라미터
+String
+테스트여부 설정 값   (N 입력)
+user_id
+필수
+파라미터
+String
+회원 아이디
+tr_id
+필수
+파라미터
+String
+거래아이디 (TR_ID)
+10.5 Response
+{
+"code": "0000",
+"message": null,
+"result": {
+"code": "0000", "message": null, "result": null
+}
+}
+출력되는 결과의 데이터 포맷은 JSON이며 형식은 아래와 같습니다
+Response명
+타입
+길이
+설명
+code
+String
+4
+결과코드 (코드목록 참조)
+message
+String
+50
+결과메시지 (코드목록 참조)P. 31/33
+부록 1. 에러 코드
+# # http ststus code 와 별개로 아래와 같은 에러코드가 전달 될 수 있습니다.
+code
+message
+description
+200
+Success
+요청 처리 성공
+204
+No content
+요청을 처리 하였으나 전송할 결과 없음
+400
+Bad Request
+요청형식 틀림
+401
+Unathorized
+권한 없음
+(자원에 대한 ACL 에 기인한 권한 없음)
+403
+Forbidden
+해당 리소스에 접근하는 것이 허락되지 않음
+405
+Method note allowd
+메서드 허용 안됨(GET, POST, PUT, DELETE)
+414
+Request-URI too long
+요청한 URI 가 너무 김
+500
+Internal Server Error
+내부 서부 오류
+503
+Service Unavailable
+외부 서비스가 현재 멈춘 상태 이거나 또는 이용할 수 없는 서비스
+# COMMON 관련
+code
+message
+description
+0000
+정상처리
+E0002
+API 코드가 존재하지 않습니다
+E0007
+API 코드가 일치하지 않습니다
+E0008
+유효한 인증 키가 아닙니다
+E0009
+유효한 인증 토큰이 아닙니다
+E0010
+비즈머니 잔액이 부족합니다
+E0011
+인증키가 없습니다
+E0012
+토큰키가 없습니다
+E0013
+테스트 YN 값이 없습니다.P. 32/33
+E9999
+오류가 발생했습니다.
+ERR0000
+알수 없는 에러 입니다.
+ERR0005
+DBMS 에러 입니다.
+ERR0008
+SQL 에러 입니다.
+ERR0100
+현재 DEV 서비스를 이용할 수 없습니다
+ERR0201
+필수 파라미터가 누락되었습니다.
+ERR0208
+상품 주문 관련 오류
+ERR0209
+상품 주문 메시지 관련 오류
+ERR0212
+MMS 재발송 대상 미조회
+ERR0213
+MMS 재발송 대상 미조회
+ERR0217
+MMS 번호 번호 변경 불가
+ERR0214
+TR ID 가 없습니다.
+ERR0215
+TR ID 가 중복되었습니다.
+ERR0300
+회원정보 조회 실패
+ERR0301
+API 가입정보 없음
+ERR0401
+요청한 제품이 없습니다
+ERR0800
+비즈포인트 조회 오류
+ERR0803
+비즈포인트 차감 오류
+ERR0804
+비즈포인트 적립 오류
+ERR0805
+쿠폰취소 실패
+ERR0806
+제목이 20 자를 초과했습니다.
+ERR0807
+TR_ID 가 25byte 를 초과했습니다.
+ERR0808
+이미 취소된 쿠폰
+ERR0817
+수신전화번호 오류
+ERR0999
+쿠폰발송오류P. 33/33
+PAG0001
+페이징 관련 오류
+PAG0002
+페이징 관련 오류
+# 쿠폰 관련
+code
+message
+description
+COUPON.0001
+유효한 제목이 아닙니다 (title)
+COUPON.0002
+유효한 메시지가 아닙니다. (msg)
+COUPON.0003
+거래 아이디(tr_id)의 허용길이를 초과하였습니다.
+COUPON.0004
+유효한 거래 아이디(TR_ID)가 아닙니다.
+COUPON.0005
+전화번호(phone_no)가 존재하지 않습니다.
+COUPON.0006
+취소 불가능한 쿠폰입니다.
+COUPON.0007
+교환된 상품으로 취소가 불가능합니다.
+COUPON.0008
+이미 취소된 쿠폰입니다.
+COUPON.0009
+쿠폰 재전송에 실패하였습니다.
+COUPON.0010
+유효한 발신번호(callback_no)가 존재하지 않습니다.
+COUPON.0011
+유효한 상품아이디(goods_code)가 존재하지 않습니다.
+COUPON.0012
+예약일자가 올바르지 않습니다.(ex.20190831)
+COUPON.0013
+예약시간이 올바르지 않습니다.(ex.12)
+COUPON.0014
+예약일자는 5분후 ~ 90일까지 가능합니다.
+COUPON.0015
+중복된 거래아이디(tr_id)로 호출하였습니다.
