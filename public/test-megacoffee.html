@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메가커피 상품 검색</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        .product { 
+            border: 1px solid #ddd; 
+            margin: 15px 0; 
+            padding: 15px; 
+            border-radius: 8px; 
+            background: #fafafa; 
+        }
+        .ice-americano { 
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb); 
+            border: 2px solid #2196f3; 
+            box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2); 
+        }
+        .highlight { 
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2); 
+            border: 2px solid #ff9800; 
+        }
+        button { 
+            padding: 12px 24px; 
+            margin: 10px 5px; 
+            background: linear-gradient(135deg, #2196f3, #1976d2); 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            transition: all 0.3s; 
+        }
+        button:hover { 
+            background: linear-gradient(135deg, #1976d2, #1565c0); 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3); 
+        }
+        button:disabled { 
+            background: #ccc; 
+            cursor: not-allowed; 
+            transform: none; 
+        }
+        .loading { 
+            color: #666; 
+            font-style: italic; 
+            text-align: center; 
+            padding: 20px; 
+        }
+        .error { 
+            color: #d32f2f; 
+            background: #ffebee; 
+            padding: 15px; 
+            border-radius: 5px; 
+            border-left: 4px solid #d32f2f; 
+        }
+        .success { 
+            color: #388e3c; 
+            background: #e8f5e8; 
+            padding: 15px; 
+            border-radius: 5px; 
+            border-left: 4px solid #388e3c; 
+        }
+        .product-code { 
+            font-weight: bold; 
+            color: #1976d2; 
+            font-size: 1.2em; 
+            margin-bottom: 10px; 
+            padding: 8px; 
+            background: #e3f2fd; 
+            border-radius: 4px; 
+            display: inline-block; 
+        }
+        .product-name { 
+            font-size: 1.1em; 
+            font-weight: 600; 
+            color: #333; 
+            margin-bottom: 8px; 
+        }
+        .price-info { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+            gap: 10px; 
+            margin: 10px 0; 
+        }
+        .price-item { 
+            background: white; 
+            padding: 8px; 
+            border-radius: 4px; 
+            text-align: center; 
+        }
+        .stats { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            margin: 20px 0; 
+        }
+        .stat-card { 
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef); 
+            padding: 15px; 
+            border-radius: 8px; 
+            text-align: center; 
+            border: 1px solid #dee2e6; 
+        }
+        .stat-number { 
+            font-size: 2em; 
+            font-weight: bold; 
+            color: #1976d2; 
+        }
+        .stat-label { 
+            color: #666; 
+            margin-top: 5px; 
+        }
+        img { 
+            max-width: 80px; 
+            height: auto; 
+            border-radius: 4px; 
+            margin-top: 10px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 메가커피 상품 검색</h1>
+        <p>기프트쇼 API를 통해 메가커피 아이스 아메리카노 상품을 찾습니다.</p>
+        
+        <button onclick="searchMegaCoffeeProducts()" id="searchBtn">메가커피 상품 검색</button>
+        <button onclick="searchMultiplePages()" id="multiSearchBtn">여러 페이지 검색</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        let isSearching = false;
+
+        async function searchMegaCoffeeProducts() {
+            if (isSearching) return;
+            
+            const resultsDiv = document.getElementById('results');
+            const searchBtn = document.getElementById('searchBtn');
+            
+            isSearching = true;
+            searchBtn.disabled = true;
+            searchBtn.textContent = '검색 중...';
+            
+            resultsDiv.innerHTML = '<div class="loading">🔄 메가커피 상품 검색 중...</div>';
+
+            try {
+                // 서버 API 호출
+                const response = await fetch('/api/banner?action=list-products');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('서버 API 응답:', result);
+
+                if (result.success && result.megaCoffeeProducts) {
+                    displayResults(result);
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">❌ 오류: ${result.error || '상품 조회 실패'}</div>`;
+                }
+
+            } catch (error) {
+                console.error('검색 에러:', error);
+                resultsDiv.innerHTML = `<div class="error">❌ 검색 중 오류 발생: ${error.message}<br><br>
+                    <strong>해결 방법:</strong><br>
+                    1. 로컬 서버가 실행 중인지 확인하세요<br>
+                    2. npm run dev 명령어로 서버를 시작하세요<br>
+                    3. 또는 Vercel/Netlify 등에 배포해서 테스트하세요</div>`;
+            } finally {
+                isSearching = false;
+                searchBtn.disabled = false;
+                searchBtn.textContent = '메가커피 상품 검색';
+            }
+        }
+
+        function displayResults(result) {
+            const products = result.megaCoffeeProducts;
+            
+            // 아이스 아메리카노 찾기
+            const icedAmericano = products.filter(product =>
+                (product.goodsName?.includes('아이스') && product.goodsName?.includes('아메리카노')) ||
+                (product.goodsName?.includes('ICE') && product.goodsName?.includes('AMERICANO')) ||
+                product.goodsName?.includes('아이스아메리카노') ||
+                product.goodsName?.toLowerCase().includes('iced americano')
+            );
+
+            // 일반 아메리카노
+            const americano = products.filter(product =>
+                product.goodsName?.includes('아메리카노') ||
+                product.goodsName?.includes('AMERICANO')
+            );
+
+            let html = `
+                <div class="success">
+                    <h2>✅ 검색 완료!</h2>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number">${result.totalProducts}</div>
+                        <div class="stat-label">전체 상품</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${products.length}</div>
+                        <div class="stat-label">메가커피 상품</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${icedAmericano.length}</div>
+                        <div class="stat-label">아이스 아메리카노</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${americano.length}</div>
+                        <div class="stat-label">아메리카노 전체</div>
+                    </div>
+                </div>
+            `;
+
+            if (icedAmericano.length > 0) {
+                html += '<h3>🧊 아이스 아메리카노 상품 (최우선 추천)</h3>';
+                icedAmericano.forEach(product => {
+                    html += createProductCard(product, 'ice-americano');
+                });
+            }
+
+            if (americano.length > 0) {
+                html += '<h3>☕ 아메리카노 전체 상품</h3>';
+                americano.forEach(product => {
+                    const isIced = icedAmericano.some(iced => iced.goodsCode === product.goodsCode);
+                    if (!isIced) {
+                        html += createProductCard(product, 'highlight');
+                    }
+                });
+            }
+
+            if (products.length > americano.length) {
+                html += '<h3>🏪 기타 메가커피 상품</h3>';
+                products.forEach(product => {
+                    const isAmericano = americano.some(am => am.goodsCode === product.goodsCode);
+                    if (!isAmericano) {
+                        html += createProductCard(product, '');
+                    }
+                });
+            }
+
+            document.getElementById('results').innerHTML = html;
+        }
+
+        function createProductCard(product, className) {
+            return `
+                <div class="product ${className}">
+                    <div class="product-code">📋 상품코드: ${product.goodsCode}</div>
+                    <div class="product-name">📦 ${product.goodsName}</div>
+                    <div><strong>🏢 브랜드:</strong> ${product.brandName}</div>
+                    <div class="price-info">
+                        <div class="price-item">
+                            <strong>💰 할인가</strong><br>
+                            ${product.discountPrice}원
+                        </div>
+                        <div class="price-item">
+                            <strong>🏷️ 정가</strong><br>
+                            ${product.salePrice}원
+                        </div>
+                        <div class="price-item">
+                            <strong>💵 실제가</strong><br>
+                            ${product.realPrice}원
+                        </div>
+                        <div class="price-item">
+                            <strong>⏰ 유효기간</strong><br>
+                            ${product.limitDay}일
+                        </div>
+                    </div>
+                    <div><strong>📂 카테고리:</strong> ${product.categoryName1 || 'N/A'}</div>
+                    <div><strong>🏪 교환처:</strong> ${product.affiliate || 'N/A'}</div>
+                    ${product.goodsImgS ? `<img src="${product.goodsImgS}" alt="${product.goodsName}">` : ''}
+                </div>
+            `;
+        }
+
+        async function searchMultiplePages() {
+            alert('여러 페이지 검색은 서버에서 구현해야 합니다. 현재는 첫 페이지만 검색합니다.');
+            await searchMegaCoffeeProducts();
+        }
+
+        // 페이지 로드 시 자동 검색 (선택사항)
+        // window.onload = () => searchMegaCoffeeProducts();
+    </script>
+</body>
+</html>

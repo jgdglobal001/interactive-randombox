@@ -19,9 +19,9 @@ export default {
     try {
       const authKey = env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f';
       const authToken = env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==';
-      const cardId = env.GIFTSHOW_CARD_ID || '202509120308350';
+      const megaCoffeeGoodsCode = env.GIFTSHOW_GOODS_CODE || 'G00001621744'; // 메가커피 아메리카노 상품 코드
 
-      console.log('상품 정보 조회 시작:', { cardId });
+      console.log('상품 정보 조회 시작:', { goodsCode: megaCoffeeGoodsCode });
 
       // 기프트쇼 상품 상세 정보 조회 API 호출
       const requestData = {
@@ -31,7 +31,7 @@ export default {
         dev_yn: 'N'
       };
 
-      const response = await fetch(`https://bizapi.giftishow.com/bizApi/goods/${cardId}`, {
+      const response = await fetch(`https://bizapi.giftishow.com/bizApi/goods/${megaCoffeeGoodsCode}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

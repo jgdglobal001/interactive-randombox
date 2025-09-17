@@ -116,33 +116,39 @@ async function callGiftShowAPI(phoneNumber: string, prizeCode: string) {
   // 실제 기프트쇼 API 설정 (문서 기준)
   const authKey = 'REAL10f8dc85d32c4ff4b2594851a845c15f';
   const authToken = 'VUUiyDeKaWdeJYjlyGIuwQ==';
-  const cardId = '202509120308350';
+  const megaCoffeeGoodsCode = 'G00001621744'; // 메가커피 아메리카노 상품 코드
 
   try {
     // 기프트쇼 API 문서에 따른 정확한 엔드포인트
     const apiUrl = 'https://bizapi.giftishow.com/bizApi/send';
 
+    // 기프트쇼 API 문서 규격에 맞는 요청 데이터
+    // TR_ID는 20자 이하로 제한
+    const timestamp = Date.now().toString().slice(-8); // 마지막 8자리만 사용
+    const randomStr = Math.random().toString(36).substr(2, 6); // 6자리 랜덤
+    const trId = `rb_${timestamp}_${randomStr}`; // rb_12345678_abc123 (20자 이하)
+
     const requestData = {
+      api_code: '0204', // 쿠폰발송요청 API 코드
       custom_auth_code: authKey,
       custom_auth_token: authToken,
-      api_code: 'send',
-      dev_flag: 'N',
-      phone_number: phoneNumber.replace(/-/g, ''),
-      goods_code: cardId,
-      callback_no: phoneNumber.replace(/-/g, ''),
-      send_message: '메가커피 교환권이 발송되었습니다.',
-      user_template_no: '',
-      supplement: ''
+      dev_yn: 'N', // 테스트여부 설정 값 (N 입력)
+      goods_code: megaCoffeeGoodsCode, // 메가커피 아메리카노 상품코드
+      mms_msg: '메가커피 교환권이 발송되었습니다.', // MMS메시지
+      mms_title: '메가커피', // MMS제목 (10자 이하)
+      callback_no: phoneNumber.replace(/-/g, ''), // 발신번호
+      phone_no: phoneNumber.replace(/-/g, ''), // 수신번호
+      tr_id: trId, // 거래아이디 (Unique한 ID)
+      user_id: 'randombox_user', // 회원 ID
+      gubun: 'N' // MMS발송 구분자 (N: MMS)
     };
 
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'User-Agent': 'RandomBox/1.0'
+        'Content-Type': 'application/x-www-form-urlencoded', // 문서 명시: application/x-www-form-urlencoded
       },
-      body: JSON.stringify(requestData)
+      body: new URLSearchParams(requestData).toString() // form-urlencoded 형식으로 전송
     });
 
     if (!response.ok) {
@@ -150,20 +156,27 @@ async function callGiftShowAPI(phoneNumber: string, prizeCode: string) {
     }
 
     const result = await response.json() as {
-      result_code?: string | number;
-      tr_id?: string;
-      transaction_id?: string;
-      result_message?: string;
+      code?: string;
+      message?: string;
+      result?: {
+        code?: string;
+        message?: string;
+        result?: {
+          orderNo?: string;
+          pinNo?: string;
+        };
+      };
     };
     console.log('기프트쇼 API 응답:', result);
 
-    if (result.result_code === '1' || result.result_code === 1) {
+    // 기프트쇼 API 응답 형식에 따른 성공/실패 판단 (문서 기준: code "0000"이 성공)
+    if (result.code === '0000') {
       return {
         success: true,
-        transactionId: result.tr_id || result.transaction_id || `GS_${Date.now()}`
+        transactionId: result.result?.result?.orderNo || trId
       };
     } else {
-      throw new Error(`API 오류 [${result.result_code}]: ${result.result_message}`);
+      throw new Error(`API 오류 [${result.code}]: ${result.message || 'Unknown error'}`);
     }
   } catch (error) {
     console.error('기프트쇼 API 에러:', error);

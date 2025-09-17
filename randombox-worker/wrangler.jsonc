@@ -18,7 +18,10 @@
 		"enabled": true
 	},
 	"vars": {
-		"DATABASE_URL": "" // 이 값은 배포 시 Cloudflare Secrets 또는 환경 변수에서 가져옵니다.
+		"DATABASE_URL": "", // 이 값은 배포 시 Cloudflare Secrets 또는 환경 변수에서 가져옵니다.
+		"GIFTSHOW_AUTH_KEY": "REAL10f8dc85d32c4ff4b2594851a845c15f",
+		"GIFTSHOW_AUTH_TOKEN": "VUUiyDeKaWdeJYjlyGIuwQ==",
+		"GIFTSHOW_GOODS_CODE": "G00001621744"
 	}
 	/**
 	 * Smart Placement

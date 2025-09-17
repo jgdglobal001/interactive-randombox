@@ -175,11 +175,12 @@ export class GiftShowClient {
 
 // 설정 값들 (실제 상용환경)
 export const GIFTSHOW_CONFIG = {
-  BASE_URL: process.env.GIFTSHOW_BASE_URL || 'https://api.giftshow.co.kr',
+  BASE_URL: process.env.GIFTSHOW_BASE_URL || 'https://bizapi.giftishow.com',
   AUTH_KEY: process.env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f',
   AUTH_TOKEN: process.env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==',
   BANNER_ID: process.env.GIFTSHOW_BANNER_ID || '202509110360567',
   CARD_ID: process.env.GIFTSHOW_CARD_ID || '202509120308350',
+  GOODS_CODE: process.env.GIFTSHOW_GOODS_CODE || 'G00001621744', // 메가커피 아메리카노 상품 코드
   IS_DEV: false, // 상용환경으로 고정
   USE_MOCK_API: false // Mock API 사용 안함
 };

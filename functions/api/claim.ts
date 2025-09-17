@@ -24,11 +24,12 @@ async function callGiftShowAPI(phoneNumber: string, goodsCode: string, env: Env)
   // 실제 기프트쇼 API 설정 (문서 기준)
   const authKey = env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f';
   const authToken = env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==';
-  const cardId = env.GIFTSHOW_CARD_ID || '202509120308350';
+  // 메가커피 아메리카노 상품 코드 (환경변수 우선, 없으면 기본값 사용)
+  const megaCoffeeGoodsCode = 'G00001621744'; // 메가커피 아메리카노 상품 코드 고정
 
   console.log('기프트쇼 API 호출 시작:', {
     phoneNumber: phoneNumber.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2'),
-    cardId,
+    goodsCode: megaCoffeeGoodsCode,
     authKey: authKey.substring(0, 8) + '...'
   });
 
@@ -37,15 +38,17 @@ async function callGiftShowAPI(phoneNumber: string, goodsCode: string, env: Env)
     // SSL 1.2, AES256/ECB/PKCS5Padding, Base64 Encoding 사용
     const apiUrl = 'https://bizapi.giftishow.com/bizApi/send'; // 문서의 정확한 엔드포인트
 
-    // 고유한 TR_ID 생성 (25자 이하)
-    const trId = `randombox_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+    // 고유한 TR_ID 생성 (20자 이하로 제한)
+    const timestamp = Date.now().toString().slice(-8); // 마지막 8자리만 사용
+    const randomStr = Math.random().toString(36).substr(2, 6); // 6자리 랜덤
+    const trId = `rb_${timestamp}_${randomStr}`; // rb_12345678_abc123 (20자 이하)
 
     const requestData = {
       api_code: '0204', // 쿠폰발송요청 API 코드
       custom_auth_code: authKey,
       custom_auth_token: authToken,
       dev_yn: 'N', // 테스트여부 설정 값 (N 입력)
-      goods_code: cardId, // 상품코드
+      goods_code: megaCoffeeGoodsCode, // 메가커피 아메리카노 상품코드
       mms_msg: '메가커피 교환권이 발송되었습니다.', // MMS메시지
       mms_title: '메가커피', // MMS제목 (10자 이하)
       callback_no: phoneNumber.replace(/-/g, ''), // 발신번호
@@ -128,7 +131,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
     // 기프트쇼 API 호출 (메가커피 교환권 발송)
     const giftShowResult = await callGiftShowAPI(
       body.phoneNumber,
-      context.env.GIFTSHOW_CARD_ID || '202509120308350', // 실제 메가커피 상품 코드
+      'G00001621744', // 메가커피 아메리카노 상품 코드 고정
       context.env
     );
 

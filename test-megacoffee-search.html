@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메가커피 상품 검색</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .product { border: 1px solid #ccc; margin: 10px 0; padding: 10px; }
+        .highlight { background-color: yellow; }
+        button { padding: 10px 20px; margin: 10px 0; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>메가커피 상품 검색</h1>
+    <button onclick="searchMegaCoffeeProducts()">메가커피 상품 검색</button>
+    <div id="results"></div>
+
+    <script>
+        async function searchMegaCoffeeProducts() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>검색 중...</p>';
+
+            try {
+                // 기프트쇼 상품 리스트 API 직접 호출
+                const authKey = 'REAL10f8dc85d32c4ff4b2594851a845c15f';
+                const authToken = 'VUUiyDeKaWdeJYjlyGIuwQ==';
+
+                const requestData = new URLSearchParams({
+                    api_code: '0101',
+                    custom_auth_code: authKey,
+                    custom_auth_token: authToken,
+                    dev_yn: 'N',
+                    start: '1',
+                    size: '100'
+                });
+
+                console.log('요청 데이터:', requestData.toString());
+
+                const response = await fetch('https://bizapi.giftishow.com/bizApi/goods', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: requestData.toString()
+                });
+
+                const result = await response.json();
+                console.log('기프트쇼 API 응답:', result);
+
+                if (result.code === '0000' && result.result?.goodsList) {
+                    const products = result.result.goodsList;
+                    
+                    // 메가커피 관련 상품 필터링
+                    const megaCoffeeProducts = products.filter(product => 
+                        product.brandName?.includes('메가커피') || 
+                        product.goodsName?.includes('메가커피') ||
+                        product.brandName?.includes('MEGA') ||
+                        product.goodsName?.includes('MEGA')
+                    );
+
+                    // 아이스 아메리카노 찾기
+                    const icedAmericano = megaCoffeeProducts.filter(product =>
+                        (product.goodsName?.includes('아이스') && product.goodsName?.includes('아메리카노')) ||
+                        (product.goodsName?.includes('ICE') && product.goodsName?.includes('AMERICANO')) ||
+                        product.goodsName?.includes('아이스아메리카노')
+                    );
+
+                    // 일반 아메리카노
+                    const americano = megaCoffeeProducts.filter(product =>
+                        product.goodsName?.includes('아메리카노') ||
+                        product.goodsName?.includes('AMERICANO')
+                    );
+
+                    let html = `
+                        <h2>검색 결과</h2>
+                        <p>전체 상품: ${products.length}개</p>
+                        <p>메가커피 관련 상품: ${megaCoffeeProducts.length}개</p>
+                        <p>아이스 아메리카노: ${icedAmericano.length}개</p>
+                        <p>아메리카노 전체: ${americano.length}개</p>
+                    `;
+
+                    if (icedAmericano.length > 0) {
+                        html += '<h3>🧊 아이스 아메리카노 상품</h3>';
+                        icedAmericano.forEach(product => {
+                            html += `
+                                <div class="product highlight">
+                                    <strong>상품코드:</strong> ${product.goodsCode}<br>
+                                    <strong>상품명:</strong> ${product.goodsName}<br>
+                                    <strong>브랜드:</strong> ${product.brandName}<br>
+                                    <strong>할인가:</strong> ${product.discountPrice}원<br>
+                                    <strong>정가:</strong> ${product.salePrice}원<br>
+                                    <strong>유효기간:</strong> ${product.limitDay}일<br>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    if (americano.length > 0) {
+                        html += '<h3>☕ 아메리카노 전체 상품</h3>';
+                        americano.forEach(product => {
+                            html += `
+                                <div class="product">
+                                    <strong>상품코드:</strong> ${product.goodsCode}<br>
+                                    <strong>상품명:</strong> ${product.goodsName}<br>
+                                    <strong>브랜드:</strong> ${product.brandName}<br>
+                                    <strong>할인가:</strong> ${product.discountPrice}원<br>
+                                    <strong>정가:</strong> ${product.salePrice}원<br>
+                                    <strong>유효기간:</strong> ${product.limitDay}일<br>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    if (megaCoffeeProducts.length > 0) {
+                        html += '<h3>🏪 메가커피 전체 상품</h3>';
+                        megaCoffeeProducts.forEach(product => {
+                            html += `
+                                <div class="product">
+                                    <strong>상품코드:</strong> ${product.goodsCode}<br>
+                                    <strong>상품명:</strong> ${product.goodsName}<br>
+                                    <strong>브랜드:</strong> ${product.brandName}<br>
+                                    <strong>할인가:</strong> ${product.discountPrice}원<br>
+                                    <strong>정가:</strong> ${product.salePrice}원<br>
+                                    <strong>유효기간:</strong> ${product.limitDay}일<br>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = `<p>오류: ${result.message || '상품 조회 실패'}</p>`;
+                }
+
+            } catch (error) {
+                console.error('검색 에러:', error);
+                resultsDiv.innerHTML = `<p>검색 중 오류 발생: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
