@@ -1,0 +1,621 @@
+2025-09-17T03:12:59.08012Z	Cloning repository...
+2025-09-17T03:12:59.837137Z	From https://github.com/jgdglobal001/interactive-randombox
+2025-09-17T03:12:59.837626Z	 * branch            26cfc2f021e3ff43fe2c82159b1688f194698ecd -> FETCH_HEAD
+2025-09-17T03:12:59.837727Z	
+2025-09-17T03:12:59.881087Z	HEAD is now at 26cfc2f PostgreSQL Driver Adapter 사용으로 Edge Runtime 호환성 확보
+2025-09-17T03:12:59.881873Z	
+2025-09-17T03:12:59.963445Z	
+2025-09-17T03:12:59.964123Z	Using v2 root directory strategy
+2025-09-17T03:12:59.986128Z	Success: Finished cloning repository files
+2025-09-17T03:13:01.8586Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-09-17T03:13:01.859215Z	
+2025-09-17T03:13:01.860618Z	Found wrangler.toml file. Reading build configuration...
+2025-09-17T03:13:01.867694Z	pages_build_output_dir: out
+2025-09-17T03:13:01.867898Z	Build environment variables: (none found)
+2025-09-17T03:13:02.987668Z	Successfully read wrangler.toml file.
+2025-09-17T03:13:03.068Z	Detected the following tools from environment: nodejs@20.19.2, npm@10.9.2
+2025-09-17T03:13:03.068809Z	Installing nodejs 20.19.2
+2025-09-17T03:13:04.298876Z	Trying to update node-build... ok
+2025-09-17T03:13:04.401636Z	To follow progress, use 'tail -f /tmp/node-build.20250917031304.490.log' or pass --verbose
+2025-09-17T03:13:04.499634Z	Downloading node-v20.19.2-linux-x64.tar.gz...
+2025-09-17T03:13:04.749279Z	-> https://nodejs.org/dist/v20.19.2/node-v20.19.2-linux-x64.tar.gz
+2025-09-17T03:13:07.135432Z	
+2025-09-17T03:13:07.135773Z	WARNING: node-v20.19.2-linux-x64 is in LTS Maintenance mode and nearing its end of life.
+2025-09-17T03:13:07.13593Z	It only receives *critical* security updates, *critical* bug fixes and documentation updates.
+2025-09-17T03:13:07.136026Z	
+2025-09-17T03:13:07.13623Z	Installing node-v20.19.2-linux-x64...
+2025-09-17T03:13:07.542504Z	Installed node-v20.19.2-linux-x64 to /opt/buildhome/.asdf/installs/nodejs/20.19.2
+2025-09-17T03:13:07.54278Z	
+2025-09-17T03:13:08.598812Z	Installing project dependencies: npm clean-install --progress=false
+2025-09-17T03:13:09.518092Z	npm warn EBADENGINE Unsupported engine {
+2025-09-17T03:13:09.518733Z	npm warn EBADENGINE   package: '@neondatabase/mcp-server-neon@0.6.4',
+2025-09-17T03:13:09.518925Z	npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2025-09-17T03:13:09.519031Z	npm warn EBADENGINE   current: { node: 'v20.19.2', npm: '10.8.2' }
+2025-09-17T03:13:09.519131Z	npm warn EBADENGINE }
+2025-09-17T03:13:38.169714Z	
+2025-09-17T03:13:38.16994Z	> interactive-randombox@0.1.0 postinstall
+2025-09-17T03:13:38.170059Z	> prisma generate
+2025-09-17T03:13:38.170154Z	
+2025-09-17T03:13:39.638181Z	Prisma schema loaded from prisma/schema.prisma
+2025-09-17T03:13:39.931372Z	┌─────────────────────────────────────────────────────────┐
+2025-09-17T03:13:39.931786Z	│  Update available 6.16.1 -> 6.16.2                      │
+2025-09-17T03:13:39.931925Z	│  Run the following to update                            │
+2025-09-17T03:13:39.932096Z	│    npm i --save-dev prisma@latest                       │
+2025-09-17T03:13:39.932198Z	│    npm i @prisma/client@latest                          │
+2025-09-17T03:13:39.932323Z	└─────────────────────────────────────────────────────────┘
+2025-09-17T03:13:39.932449Z	
+2025-09-17T03:13:39.932569Z	✔ Generated Prisma Client (v6.16.1) to ./node_modules/@prisma/client in 165ms
+2025-09-17T03:13:39.932693Z	
+2025-09-17T03:13:39.932836Z	Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+2025-09-17T03:13:39.932949Z	
+2025-09-17T03:13:39.933046Z	Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+2025-09-17T03:13:39.933192Z	
+2025-09-17T03:13:39.971254Z	
+2025-09-17T03:13:39.971888Z	added 708 packages, and audited 709 packages in 31s
+2025-09-17T03:13:39.972071Z	
+2025-09-17T03:13:39.97245Z	182 packages are looking for funding
+2025-09-17T03:13:39.972584Z	  run `npm fund` for details
+2025-09-17T03:13:40.02597Z	
+2025-09-17T03:13:40.026208Z	11 vulnerabilities (2 low, 4 moderate, 5 high)
+2025-09-17T03:13:40.026409Z	
+2025-09-17T03:13:40.026477Z	To address issues that do not require attention, run:
+2025-09-17T03:13:40.026536Z	  npm audit fix
+2025-09-17T03:13:40.02677Z	
+2025-09-17T03:13:40.026915Z	To address all issues (including breaking changes), run:
+2025-09-17T03:13:40.027573Z	  npm audit fix --force
+2025-09-17T03:13:40.028026Z	
+2025-09-17T03:13:40.028199Z	Run `npm audit` for details.
+2025-09-17T03:13:40.048406Z	Executing user command: npm run build
+2025-09-17T03:13:40.468374Z	
+2025-09-17T03:13:40.46865Z	> interactive-randombox@0.1.0 build
+2025-09-17T03:13:40.468832Z	> prisma generate && next build
+2025-09-17T03:13:40.468923Z	
+2025-09-17T03:13:41.649276Z	Prisma schema loaded from prisma/schema.prisma
+2025-09-17T03:13:41.915474Z	
+2025-09-17T03:13:41.91574Z	✔ Generated Prisma Client (v6.16.1) to ./node_modules/@prisma/client in 114ms
+2025-09-17T03:13:41.915858Z	
+2025-09-17T03:13:41.91593Z	Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+2025-09-17T03:13:41.916Z	
+2025-09-17T03:13:41.916067Z	Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+2025-09-17T03:13:41.916136Z	
+2025-09-17T03:13:42.82969Z	⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+2025-09-17T03:13:42.834081Z	Attention: Next.js now collects completely anonymous telemetry regarding usage.
+2025-09-17T03:13:42.834302Z	This information is used to shape Next.js' roadmap and prioritize features.
+2025-09-17T03:13:42.834469Z	You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+2025-09-17T03:13:42.834992Z	https://nextjs.org/telemetry
+2025-09-17T03:13:42.835201Z	
+2025-09-17T03:13:42.898574Z	   ▲ Next.js 15.5.0
+2025-09-17T03:13:42.898972Z	   - Environments: .env.local
+2025-09-17T03:13:42.899122Z	
+2025-09-17T03:13:42.977114Z	   Creating an optimized production build ...
+2025-09-17T03:13:52.769713Z	 ✓ Compiled successfully in 6.9s
+2025-09-17T03:13:52.775209Z	   Linting and checking validity of types ...
+2025-09-17T03:13:55.273795Z	
+2025-09-17T03:13:55.27409Z	./src/app/page.tsx
+2025-09-17T03:13:55.274274Z	236:34  Warning: 'index' is defined but never used.  @typescript-eslint/no-unused-vars
+2025-09-17T03:13:55.274399Z	247:6  Warning: React Hook useEffect has a missing dependency: 'getResponsiveContainerSize'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+2025-09-17T03:13:55.274517Z	250:9  Warning: 'getResponsiveProductSize' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+2025-09-17T03:13:55.274663Z	270:109  Warning: 'containerSize' is defined but never used.  @typescript-eslint/no-unused-vars
+2025-09-17T03:13:55.27477Z	527:6  Warning: React Hook useEffect has a missing dependency: 'animationSegments'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+2025-09-17T03:13:55.274862Z	644:9  Warning: 'handleReset' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+2025-09-17T03:13:55.274946Z	1110:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+2025-09-17T03:13:55.275218Z	
+2025-09-17T03:13:55.275338Z	./src/lib/giftshow-client.ts
+2025-09-17T03:13:55.27542Z	1:10  Warning: 'GiftShowCrypto' is defined but never used.  @typescript-eslint/no-unused-vars
+2025-09-17T03:13:55.275501Z	212:40  Warning: 'message' is defined but never used.  @typescript-eslint/no-unused-vars
+2025-09-17T03:13:55.275605Z	
+2025-09-17T03:13:55.275745Z	info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+2025-09-17T03:13:56.823956Z	   Collecting page data ...
+2025-09-17T03:13:58.564812Z	   Generating static pages (0/6) ...
+2025-09-17T03:13:59.34373Z	   Generating static pages (1/6) 
+2025-09-17T03:13:59.344052Z	   Generating static pages (2/6) 
+2025-09-17T03:13:59.344197Z	   Generating static pages (4/6) 
+2025-09-17T03:13:59.344315Z	 ✓ Generating static pages (6/6)
+2025-09-17T03:13:59.858038Z	   Finalizing page optimization ...
+2025-09-17T03:13:59.858317Z	   Collecting build traces ...
+2025-09-17T03:14:06.618112Z	   Exporting (0/2) ...
+2025-09-17T03:14:06.955461Z	 ✓ Exporting (2/2)
+2025-09-17T03:14:06.968146Z	
+2025-09-17T03:14:06.971184Z	Route (app)                                 Size  First Load JS
+2025-09-17T03:14:06.971382Z	┌ ○ /                                     211 kB         313 kB
+2025-09-17T03:14:06.972031Z	├ ○ /_not-found                            993 B         103 kB
+2025-09-17T03:14:06.972185Z	└ ○ /admin                               1.65 kB         104 kB
+2025-09-17T03:14:06.972308Z	+ First Load JS shared by all             102 kB
+2025-09-17T03:14:06.97239Z	  ├ chunks/255-870beb50a58d68bb.js       45.8 kB
+2025-09-17T03:14:06.972465Z	  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+2025-09-17T03:14:06.972587Z	  └ other shared chunks (total)          2.02 kB
+2025-09-17T03:14:06.972685Z	
+2025-09-17T03:14:06.972931Z	
+2025-09-17T03:14:06.97312Z	○  (Static)  prerendered as static content
+2025-09-17T03:14:06.973918Z	
+2025-09-17T03:14:06.997197Z	
+2025-09-17T03:14:06.997435Z	> interactive-randombox@0.1.0 postbuild
+2025-09-17T03:14:06.997551Z	> echo Removing cache files... && (rmdir /s /q .next\cache 2>nul || echo .next cache clean) && (rmdir /s /q cache 2>nul || echo cache clean) && (rmdir /s /q node_modules\.cache 2>nul || echo node_modules cache clean) && echo Cache cleanup completed
+2025-09-17T03:14:06.997698Z	
+2025-09-17T03:14:07.002092Z	Removing cache files...
+2025-09-17T03:14:07.00558Z	.next cache clean
+2025-09-17T03:14:07.007909Z	cache clean
+2025-09-17T03:14:07.010374Z	node_modules cache clean
+2025-09-17T03:14:07.010543Z	Cache cleanup completed
+2025-09-17T03:14:07.030214Z	Finished
+2025-09-17T03:14:08.014791Z	Checking for configuration in a Wrangler configuration file (BETA)
+2025-09-17T03:14:08.015364Z	
+2025-09-17T03:14:08.016107Z	Found wrangler.toml file. Reading build configuration...
+2025-09-17T03:14:08.022783Z	pages_build_output_dir: out
+2025-09-17T03:14:08.023Z	Build environment variables: (none found)
+2025-09-17T03:14:09.117593Z	Successfully read wrangler.toml file.
+2025-09-17T03:14:09.118701Z	Found Functions directory at /functions. Uploading.
+2025-09-17T03:14:09.125587Z	 ⛅️ wrangler 3.101.0
+2025-09-17T03:14:09.125855Z	-------------------
+2025-09-17T03:14:10.227615Z	[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mBuild failed with 23 errors:[0m
+2025-09-17T03:14:10.228274Z	
+2025-09-17T03:14:10.228387Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.228482Z	  
+2025-09-17T03:14:10.228804Z	      ../node_modules/pg-cloudflare/dist/index.js:4:25:
+2025-09-17T03:14:10.228939Z	  [37m      4 │ const events_1 = require([32m"events"[37m);
+2025-09-17T03:14:10.229038Z	          ╵                          [32m~~~~~~~~[0m
+2025-09-17T03:14:10.229116Z	  
+2025-09-17T03:14:10.229217Z	    The package "events" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.229342Z	  
+2025-09-17T03:14:10.22944Z	  
+2025-09-17T03:14:10.229534Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "fs"[0m
+2025-09-17T03:14:10.229683Z	  
+2025-09-17T03:14:10.229798Z	      ../node_modules/pg-connection-string/index.js:81:77:
+2025-09-17T03:14:10.229904Z	  [37m      81 │ ...cert || config.sslkey || config.sslrootcert ? require([32m'fs'[37m) : null
+2025-09-17T03:14:10.229988Z	           ╵                                                          [32m~~~~[0m
+2025-09-17T03:14:10.230062Z	  
+2025-09-17T03:14:10.230156Z	    The package "fs" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.230243Z	  
+2025-09-17T03:14:10.230299Z	  
+2025-09-17T03:14:10.230354Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.230427Z	  
+2025-09-17T03:14:10.230488Z	      ../node_modules/pg-pool/index.js:2:29:
+2025-09-17T03:14:10.230545Z	  [37m      2 │ const EventEmitter = require([32m'events'[37m).EventEmitter
+2025-09-17T03:14:10.230645Z	          ╵                              [32m~~~~~~~~[0m
+2025-09-17T03:14:10.230725Z	  
+2025-09-17T03:14:10.230781Z	    The package "events" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.23087Z	  
+2025-09-17T03:14:10.230996Z	  
+2025-09-17T03:14:10.231098Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.231503Z	  
+2025-09-17T03:14:10.231842Z	      ../node_modules/pg/lib/client.js:3:29:
+2025-09-17T03:14:10.231954Z	  [37m      3 │ const EventEmitter = require([32m'events'[37m).EventEmitter
+2025-09-17T03:14:10.232065Z	          ╵                              [32m~~~~~~~~[0m
+2025-09-17T03:14:10.232728Z	  
+2025-09-17T03:14:10.232823Z	    The package "events" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.23297Z	  
+2025-09-17T03:14:10.233067Z	  
+2025-09-17T03:14:10.23316Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "dns"[0m
+2025-09-17T03:14:10.233271Z	  
+2025-09-17T03:14:10.233336Z	      ../node_modules/pg/lib/connection-parameters.js:3:20:
+2025-09-17T03:14:10.233392Z	  [37m      3 │ const dns = require([32m'dns'[37m)
+2025-09-17T03:14:10.233497Z	          ╵                     [32m~~~~~[0m
+2025-09-17T03:14:10.234175Z	  
+2025-09-17T03:14:10.234286Z	    The package "dns" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.234705Z	  
+2025-09-17T03:14:10.234808Z	  
+2025-09-17T03:14:10.234946Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.23507Z	  
+2025-09-17T03:14:10.235205Z	      ../node_modules/pg/lib/connection.js:3:29:
+2025-09-17T03:14:10.235317Z	  [37m      3 │ const EventEmitter = require([32m'events'[37m).EventEmitter
+2025-09-17T03:14:10.235423Z	          ╵                              [32m~~~~~~~~[0m
+2025-09-17T03:14:10.235527Z	  
+2025-09-17T03:14:10.23566Z	    The package "events" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.23578Z	  
+2025-09-17T03:14:10.235888Z	  
+2025-09-17T03:14:10.235984Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "net"[0m
+2025-09-17T03:14:10.23608Z	  
+2025-09-17T03:14:10.236169Z	      ../node_modules/pg/lib/connection.js:94:26:
+2025-09-17T03:14:10.236259Z	  [37m      94 │       const net = require([32m'net'[37m)
+2025-09-17T03:14:10.236355Z	           ╵                           [32m~~~~~[0m
+2025-09-17T03:14:10.236451Z	  
+2025-09-17T03:14:10.236543Z	    The package "net" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.236691Z	  
+2025-09-17T03:14:10.236797Z	  
+2025-09-17T03:14:10.236878Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "crypto"[0m
+2025-09-17T03:14:10.236969Z	  
+2025-09-17T03:14:10.237065Z	      ../node_modules/pg/lib/crypto/utils-legacy.js:5:27:
+2025-09-17T03:14:10.237146Z	  [37m      5 │ const nodeCrypto = require([32m'crypto'[37m)
+2025-09-17T03:14:10.23721Z	          ╵                            [32m~~~~~~~~[0m
+2025-09-17T03:14:10.237305Z	  
+2025-09-17T03:14:10.237402Z	    The package "crypto" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.237501Z	  
+2025-09-17T03:14:10.237694Z	  
+2025-09-17T03:14:10.237803Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "crypto"[0m
+2025-09-17T03:14:10.237899Z	  
+2025-09-17T03:14:10.23806Z	      ../node_modules/pg/lib/crypto/utils-webcrypto.js:1:27:
+2025-09-17T03:14:10.238182Z	  [37m      1 │ const nodeCrypto = require([32m'crypto'[37m)
+2025-09-17T03:14:10.238449Z	          ╵                            [32m~~~~~~~~[0m
+2025-09-17T03:14:10.238637Z	  
+2025-09-17T03:14:10.238747Z	    The package "crypto" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.238845Z	  
+2025-09-17T03:14:10.238982Z	  
+2025-09-17T03:14:10.239091Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.239191Z	  
+2025-09-17T03:14:10.239299Z	      ../node_modules/pg/lib/native/client.js:13:29:
+2025-09-17T03:14:10.239397Z	  [37m      13 │ const EventEmitter = require([32m'events'[37m).EventEmitter
+2025-09-17T03:14:10.239508Z	           ╵                              [32m~~~~~~~~[0m
+2025-09-17T03:14:10.239657Z	  
+2025-09-17T03:14:10.239774Z	    The package "events" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.239883Z	  
+2025-09-17T03:14:10.239948Z	  
+2025-09-17T03:14:10.240035Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "util"[0m
+2025-09-17T03:14:10.240099Z	  
+2025-09-17T03:14:10.240156Z	      ../node_modules/pg/lib/native/client.js:14:21:
+2025-09-17T03:14:10.240212Z	  [37m      14 │ const util = require([32m'util'[37m)
+2025-09-17T03:14:10.240269Z	           ╵                      [32m~~~~~~[0m
+2025-09-17T03:14:10.240324Z	  
+2025-09-17T03:14:10.24038Z	    The package "util" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.240445Z	  
+2025-09-17T03:14:10.240534Z	  
+2025-09-17T03:14:10.240689Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.240809Z	  
+2025-09-17T03:14:10.240917Z	      ../node_modules/pg/lib/native/query.js:3:29:
+2025-09-17T03:14:10.241016Z	  [37m      3 │ const EventEmitter = require([32m'events'[37m).EventEmitter
+2025-09-17T03:14:10.24113Z	          ╵                              [32m~~~~~~~~[0m
+2025-09-17T03:14:10.24124Z	  
+2025-09-17T03:14:10.241346Z	    The package "events" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.241447Z	  
+2025-09-17T03:14:10.241552Z	  
+2025-09-17T03:14:10.241697Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "util"[0m
+2025-09-17T03:14:10.241977Z	  
+2025-09-17T03:14:10.242105Z	      ../node_modules/pg/lib/native/query.js:4:21:
+2025-09-17T03:14:10.242274Z	  [37m      4 │ const util = require([32m'util'[37m)
+2025-09-17T03:14:10.24241Z	          ╵                      [32m~~~~~~[0m
+2025-09-17T03:14:10.242517Z	  
+2025-09-17T03:14:10.242693Z	    The package "util" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.242804Z	  
+2025-09-17T03:14:10.242921Z	  
+2025-09-17T03:14:10.243027Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.243138Z	  
+2025-09-17T03:14:10.243259Z	      ../node_modules/pg/lib/query.js:3:33:
+2025-09-17T03:14:10.243359Z	  [37m      3 │ const { EventEmitter } = require([32m'events'[37m)
+2025-09-17T03:14:10.243477Z	          ╵                                  [32m~~~~~~~~[0m
+2025-09-17T03:14:10.243603Z	  
+2025-09-17T03:14:10.243714Z	    The package "events" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.243813Z	  
+2025-09-17T03:14:10.243936Z	  
+2025-09-17T03:14:10.244051Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "net"[0m
+2025-09-17T03:14:10.244179Z	  
+2025-09-17T03:14:10.244284Z	      ../node_modules/pg/lib/stream.js:22:24:
+2025-09-17T03:14:10.244389Z	  [37m      22 │     const net = require([32m'net'[37m)
+2025-09-17T03:14:10.244499Z	           ╵                         [32m~~~~~[0m
+2025-09-17T03:14:10.244685Z	  
+2025-09-17T03:14:10.244784Z	    The package "net" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.244849Z	  
+2025-09-17T03:14:10.245106Z	  
+2025-09-17T03:14:10.24533Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "tls"[0m
+2025-09-17T03:14:10.245441Z	  
+2025-09-17T03:14:10.245595Z	      ../node_modules/pg/lib/stream.js:27:24:
+2025-09-17T03:14:10.245703Z	  [37m      27 │     const tls = require([32m'tls'[37m)
+2025-09-17T03:14:10.245807Z	           ╵                         [32m~~~~~[0m
+2025-09-17T03:14:10.245917Z	  
+2025-09-17T03:14:10.246032Z	    The package "tls" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.246149Z	  
+2025-09-17T03:14:10.246255Z	  
+2025-09-17T03:14:10.246367Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "util"[0m
+2025-09-17T03:14:10.246475Z	  
+2025-09-17T03:14:10.246603Z	      ../node_modules/pg/lib/utils.js:5:21:
+2025-09-17T03:14:10.246709Z	  [37m      5 │ const util = require([32m'util'[37m)
+2025-09-17T03:14:10.246812Z	          ╵                      [32m~~~~~~[0m
+2025-09-17T03:14:10.246901Z	  
+2025-09-17T03:14:10.246993Z	    The package "util" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.247098Z	  
+2025-09-17T03:14:10.247187Z	  
+2025-09-17T03:14:10.247274Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "path"[0m
+2025-09-17T03:14:10.247387Z	  
+2025-09-17T03:14:10.247489Z	      ../node_modules/pgpass/lib/helper.js:3:19:
+2025-09-17T03:14:10.247695Z	  [37m      3 │ var path = require([32m'path'[37m)
+2025-09-17T03:14:10.247873Z	          ╵                    [32m~~~~~~[0m
+2025-09-17T03:14:10.247998Z	  
+2025-09-17T03:14:10.248133Z	    The package "path" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.248233Z	  
+2025-09-17T03:14:10.248354Z	  
+2025-09-17T03:14:10.248494Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "stream"[0m
+2025-09-17T03:14:10.248686Z	  
+2025-09-17T03:14:10.248804Z	      ../node_modules/pgpass/lib/helper.js:4:21:
+2025-09-17T03:14:10.248967Z	  [37m      4 │   , Stream = require([32m'stream'[37m).Stream
+2025-09-17T03:14:10.249117Z	          ╵                      [32m~~~~~~~~[0m
+2025-09-17T03:14:10.249234Z	  
+2025-09-17T03:14:10.24934Z	    The package "stream" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.249456Z	  
+2025-09-17T03:14:10.249552Z	  
+2025-09-17T03:14:10.249662Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "util"[0m
+2025-09-17T03:14:10.24974Z	  
+2025-09-17T03:14:10.249823Z	      ../node_modules/pgpass/lib/helper.js:6:19:
+2025-09-17T03:14:10.249924Z	  [37m      6 │   , util = require([32m'util'[37m)
+2025-09-17T03:14:10.250018Z	          ╵                    [32m~~~~~~[0m
+2025-09-17T03:14:10.250088Z	  
+2025-09-17T03:14:10.250361Z	    The package "util" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.250504Z	  
+2025-09-17T03:14:10.250676Z	  
+2025-09-17T03:14:10.25076Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "path"[0m
+2025-09-17T03:14:10.250881Z	  
+2025-09-17T03:14:10.251005Z	      ../node_modules/pgpass/lib/index.js:3:19:
+2025-09-17T03:14:10.251113Z	  [37m      3 │ var path = require([32m'path'[37m)
+2025-09-17T03:14:10.251209Z	          ╵                    [32m~~~~~~[0m
+2025-09-17T03:14:10.251318Z	  
+2025-09-17T03:14:10.25142Z	    The package "path" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.251507Z	  
+2025-09-17T03:14:10.251592Z	  
+2025-09-17T03:14:10.251863Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "fs"[0m
+2025-09-17T03:14:10.252035Z	  
+2025-09-17T03:14:10.252188Z	      ../node_modules/pgpass/lib/index.js:4:17:
+2025-09-17T03:14:10.252319Z	  [37m      4 │   , fs = require([32m'fs'[37m)
+2025-09-17T03:14:10.252524Z	          ╵                  [32m~~~~[0m
+2025-09-17T03:14:10.252715Z	  
+2025-09-17T03:14:10.252902Z	    The package "fs" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.253132Z	  
+2025-09-17T03:14:10.253241Z	  
+2025-09-17T03:14:10.253349Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "stream"[0m
+2025-09-17T03:14:10.253451Z	  
+2025-09-17T03:14:10.253549Z	      ../node_modules/split2/index.js:19:30:
+2025-09-17T03:14:10.253806Z	  [37m      19 │ const { Transform } = require([32m'stream'[37m)
+2025-09-17T03:14:10.253957Z	           ╵                               [32m~~~~~~~~[0m
+2025-09-17T03:14:10.254072Z	  
+2025-09-17T03:14:10.25422Z	    The package "stream" wasn't found on the file system but is built into node. Are you trying to bundle for node? You can use "platform: 'node'" to do that, which will remove this error.
+2025-09-17T03:14:10.254327Z	  
+2025-09-17T03:14:10.254449Z	  
+2025-09-17T03:14:10.254678Z	
+2025-09-17T03:14:10.255004Z	
+2025-09-17T03:14:10.255091Z	
+2025-09-17T03:14:10.255302Z	[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mBuild failed with 23 errors:[0m
+2025-09-17T03:14:10.2554Z	
+2025-09-17T03:14:10.255507Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.255769Z	  
+2025-09-17T03:14:10.255914Z	      ../node_modules/pg-cloudflare/dist/index.js:4:25:
+2025-09-17T03:14:10.256016Z	  [37m      4 │ const events_1 = require([32m"events"[37m);
+2025-09-17T03:14:10.256084Z	          ╵                          [32m~~~~~~~~[0m
+2025-09-17T03:14:10.256166Z	  
+2025-09-17T03:14:10.256261Z	    The package "events" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.256377Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.256468Z	    
+2025-09-17T03:14:10.25657Z	  
+2025-09-17T03:14:10.256687Z	  
+2025-09-17T03:14:10.256785Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "fs"[0m
+2025-09-17T03:14:10.256876Z	  
+2025-09-17T03:14:10.256983Z	      ../node_modules/pg-connection-string/index.js:81:77:
+2025-09-17T03:14:10.257083Z	  [37m      81 │ ...cert || config.sslkey || config.sslrootcert ? require([32m'fs'[37m) : null
+2025-09-17T03:14:10.257284Z	           ╵                                                          [32m~~~~[0m
+2025-09-17T03:14:10.257385Z	  
+2025-09-17T03:14:10.257454Z	    The package "fs" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.257524Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.257632Z	    
+2025-09-17T03:14:10.257736Z	  
+2025-09-17T03:14:10.257837Z	  
+2025-09-17T03:14:10.257933Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.25803Z	  
+2025-09-17T03:14:10.25813Z	      ../node_modules/pg-pool/index.js:2:29:
+2025-09-17T03:14:10.258229Z	  [37m      2 │ const EventEmitter = require([32m'events'[37m).EventEmitter
+2025-09-17T03:14:10.258322Z	          ╵                              [32m~~~~~~~~[0m
+2025-09-17T03:14:10.258411Z	  
+2025-09-17T03:14:10.258506Z	    The package "events" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.258697Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.25881Z	    
+2025-09-17T03:14:10.258912Z	  
+2025-09-17T03:14:10.259008Z	  
+2025-09-17T03:14:10.259235Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.259367Z	  
+2025-09-17T03:14:10.259471Z	      ../node_modules/pg/lib/client.js:3:29:
+2025-09-17T03:14:10.259959Z	  [37m      3 │ const EventEmitter = require([32m'events'[37m).EventEmitter
+2025-09-17T03:14:10.260053Z	          ╵                              [32m~~~~~~~~[0m
+2025-09-17T03:14:10.260169Z	  
+2025-09-17T03:14:10.260274Z	    The package "events" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.260415Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.260501Z	    
+2025-09-17T03:14:10.260615Z	  
+2025-09-17T03:14:10.260735Z	  
+2025-09-17T03:14:10.260996Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "dns"[0m
+2025-09-17T03:14:10.261078Z	  
+2025-09-17T03:14:10.261304Z	      ../node_modules/pg/lib/connection-parameters.js:3:20:
+2025-09-17T03:14:10.261413Z	  [37m      3 │ const dns = require([32m'dns'[37m)
+2025-09-17T03:14:10.261653Z	          ╵                     [32m~~~~~[0m
+2025-09-17T03:14:10.261777Z	  
+2025-09-17T03:14:10.262022Z	    The package "dns" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.262145Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.262278Z	    
+2025-09-17T03:14:10.262376Z	  
+2025-09-17T03:14:10.262588Z	  
+2025-09-17T03:14:10.262829Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.262942Z	  
+2025-09-17T03:14:10.263222Z	      ../node_modules/pg/lib/connection.js:3:29:
+2025-09-17T03:14:10.263308Z	  [37m      3 │ const EventEmitter = require([32m'events'[37m).EventEmitter
+2025-09-17T03:14:10.263628Z	          ╵                              [32m~~~~~~~~[0m
+2025-09-17T03:14:10.263715Z	  
+2025-09-17T03:14:10.264031Z	    The package "events" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.264125Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.264278Z	    
+2025-09-17T03:14:10.264397Z	  
+2025-09-17T03:14:10.264511Z	  
+2025-09-17T03:14:10.264791Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "net"[0m
+2025-09-17T03:14:10.264946Z	  
+2025-09-17T03:14:10.265151Z	      ../node_modules/pg/lib/connection.js:94:26:
+2025-09-17T03:14:10.265254Z	  [37m      94 │       const net = require([32m'net'[37m)
+2025-09-17T03:14:10.265379Z	           ╵                           [32m~~~~~[0m
+2025-09-17T03:14:10.26548Z	  
+2025-09-17T03:14:10.265593Z	    The package "net" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.265706Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.265853Z	    
+2025-09-17T03:14:10.265988Z	  
+2025-09-17T03:14:10.266104Z	  
+2025-09-17T03:14:10.266245Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "crypto"[0m
+2025-09-17T03:14:10.266532Z	  
+2025-09-17T03:14:10.266686Z	      ../node_modules/pg/lib/crypto/utils-legacy.js:5:27:
+2025-09-17T03:14:10.266836Z	  [37m      5 │ const nodeCrypto = require([32m'crypto'[37m)
+2025-09-17T03:14:10.266917Z	          ╵                            [32m~~~~~~~~[0m
+2025-09-17T03:14:10.266981Z	  
+2025-09-17T03:14:10.267066Z	    The package "crypto" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.267716Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.267826Z	    
+2025-09-17T03:14:10.268218Z	  
+2025-09-17T03:14:10.268299Z	  
+2025-09-17T03:14:10.268676Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "crypto"[0m
+2025-09-17T03:14:10.268763Z	  
+2025-09-17T03:14:10.269137Z	      ../node_modules/pg/lib/crypto/utils-webcrypto.js:1:27:
+2025-09-17T03:14:10.269219Z	  [37m      1 │ const nodeCrypto = require([32m'crypto'[37m)
+2025-09-17T03:14:10.269281Z	          ╵                            [32m~~~~~~~~[0m
+2025-09-17T03:14:10.269771Z	  
+2025-09-17T03:14:10.269855Z	    The package "crypto" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.270072Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.270463Z	    
+2025-09-17T03:14:10.270622Z	  
+2025-09-17T03:14:10.270704Z	  
+2025-09-17T03:14:10.270765Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.270919Z	  
+2025-09-17T03:14:10.270988Z	      ../node_modules/pg/lib/native/client.js:13:29:
+2025-09-17T03:14:10.271045Z	  [37m      13 │ const EventEmitter = require([32m'events'[37m).EventEmitter
+2025-09-17T03:14:10.271232Z	           ╵                              [32m~~~~~~~~[0m
+2025-09-17T03:14:10.271355Z	  
+2025-09-17T03:14:10.271655Z	    The package "events" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.271795Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.271915Z	    
+2025-09-17T03:14:10.272022Z	  
+2025-09-17T03:14:10.272122Z	  
+2025-09-17T03:14:10.272213Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "util"[0m
+2025-09-17T03:14:10.272318Z	  
+2025-09-17T03:14:10.27239Z	      ../node_modules/pg/lib/native/client.js:14:21:
+2025-09-17T03:14:10.27248Z	  [37m      14 │ const util = require([32m'util'[37m)
+2025-09-17T03:14:10.272549Z	           ╵                      [32m~~~~~~[0m
+2025-09-17T03:14:10.272712Z	  
+2025-09-17T03:14:10.27287Z	    The package "util" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.273002Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.273126Z	    
+2025-09-17T03:14:10.273289Z	  
+2025-09-17T03:14:10.273788Z	  
+2025-09-17T03:14:10.274082Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.274324Z	  
+2025-09-17T03:14:10.274588Z	      ../node_modules/pg/lib/native/query.js:3:29:
+2025-09-17T03:14:10.27477Z	  [37m      3 │ const EventEmitter = require([32m'events'[37m).EventEmitter
+2025-09-17T03:14:10.27492Z	          ╵                              [32m~~~~~~~~[0m
+2025-09-17T03:14:10.275024Z	  
+2025-09-17T03:14:10.27516Z	    The package "events" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.275451Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.275532Z	    
+2025-09-17T03:14:10.275703Z	  
+2025-09-17T03:14:10.275836Z	  
+2025-09-17T03:14:10.276084Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "util"[0m
+2025-09-17T03:14:10.276281Z	  
+2025-09-17T03:14:10.276408Z	      ../node_modules/pg/lib/native/query.js:4:21:
+2025-09-17T03:14:10.276626Z	  [37m      4 │ const util = require([32m'util'[37m)
+2025-09-17T03:14:10.276707Z	          ╵                      [32m~~~~~~[0m
+2025-09-17T03:14:10.276823Z	  
+2025-09-17T03:14:10.276911Z	    The package "util" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.276986Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.277096Z	    
+2025-09-17T03:14:10.277356Z	  
+2025-09-17T03:14:10.277486Z	  
+2025-09-17T03:14:10.277658Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "events"[0m
+2025-09-17T03:14:10.277743Z	  
+2025-09-17T03:14:10.277803Z	      ../node_modules/pg/lib/query.js:3:33:
+2025-09-17T03:14:10.277956Z	  [37m      3 │ const { EventEmitter } = require([32m'events'[37m)
+2025-09-17T03:14:10.27802Z	          ╵                                  [32m~~~~~~~~[0m
+2025-09-17T03:14:10.278114Z	  
+2025-09-17T03:14:10.278225Z	    The package "events" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.278338Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.278445Z	    
+2025-09-17T03:14:10.278753Z	  
+2025-09-17T03:14:10.278874Z	  
+2025-09-17T03:14:10.278977Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "net"[0m
+2025-09-17T03:14:10.27909Z	  
+2025-09-17T03:14:10.279191Z	      ../node_modules/pg/lib/stream.js:22:24:
+2025-09-17T03:14:10.279284Z	  [37m      22 │     const net = require([32m'net'[37m)
+2025-09-17T03:14:10.279393Z	           ╵                         [32m~~~~~[0m
+2025-09-17T03:14:10.279566Z	  
+2025-09-17T03:14:10.279683Z	    The package "net" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.279775Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.27986Z	    
+2025-09-17T03:14:10.279969Z	  
+2025-09-17T03:14:10.280074Z	  
+2025-09-17T03:14:10.28017Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "tls"[0m
+2025-09-17T03:14:10.280277Z	  
+2025-09-17T03:14:10.280387Z	      ../node_modules/pg/lib/stream.js:27:24:
+2025-09-17T03:14:10.280498Z	  [37m      27 │     const tls = require([32m'tls'[37m)
+2025-09-17T03:14:10.280675Z	           ╵                         [32m~~~~~[0m
+2025-09-17T03:14:10.280771Z	  
+2025-09-17T03:14:10.280888Z	    The package "tls" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.280977Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.281172Z	    
+2025-09-17T03:14:10.281342Z	  
+2025-09-17T03:14:10.281477Z	  
+2025-09-17T03:14:10.281628Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "util"[0m
+2025-09-17T03:14:10.28177Z	  
+2025-09-17T03:14:10.281944Z	      ../node_modules/pg/lib/utils.js:5:21:
+2025-09-17T03:14:10.282073Z	  [37m      5 │ const util = require([32m'util'[37m)
+2025-09-17T03:14:10.282202Z	          ╵                      [32m~~~~~~[0m
+2025-09-17T03:14:10.282308Z	  
+2025-09-17T03:14:10.28241Z	    The package "util" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.282502Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.282675Z	    
+2025-09-17T03:14:10.282801Z	  
+2025-09-17T03:14:10.282897Z	  
+2025-09-17T03:14:10.283016Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "path"[0m
+2025-09-17T03:14:10.28312Z	  
+2025-09-17T03:14:10.283242Z	      ../node_modules/pgpass/lib/helper.js:3:19:
+2025-09-17T03:14:10.283358Z	  [37m      3 │ var path = require([32m'path'[37m)
+2025-09-17T03:14:10.283478Z	          ╵                    [32m~~~~~~[0m
+2025-09-17T03:14:10.283606Z	  
+2025-09-17T03:14:10.283727Z	    The package "path" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.283841Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.283959Z	    
+2025-09-17T03:14:10.284072Z	  
+2025-09-17T03:14:10.284178Z	  
+2025-09-17T03:14:10.284286Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "stream"[0m
+2025-09-17T03:14:10.284393Z	  
+2025-09-17T03:14:10.284512Z	      ../node_modules/pgpass/lib/helper.js:4:21:
+2025-09-17T03:14:10.284681Z	  [37m      4 │   , Stream = require([32m'stream'[37m).Stream
+2025-09-17T03:14:10.284818Z	          ╵                      [32m~~~~~~~~[0m
+2025-09-17T03:14:10.284944Z	  
+2025-09-17T03:14:10.28506Z	    The package "stream" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.285168Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.28529Z	    
+2025-09-17T03:14:10.285406Z	  
+2025-09-17T03:14:10.285524Z	  
+2025-09-17T03:14:10.285665Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "util"[0m
+2025-09-17T03:14:10.285794Z	  
+2025-09-17T03:14:10.285907Z	      ../node_modules/pgpass/lib/helper.js:6:19:
+2025-09-17T03:14:10.286032Z	  [37m      6 │   , util = require([32m'util'[37m)
+2025-09-17T03:14:10.286166Z	          ╵                    [32m~~~~~~[0m
+2025-09-17T03:14:10.286292Z	  
+2025-09-17T03:14:10.286468Z	    The package "util" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.286637Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.286771Z	    
+2025-09-17T03:14:10.286901Z	  
+2025-09-17T03:14:10.287218Z	  
+2025-09-17T03:14:10.2877Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "path"[0m
+2025-09-17T03:14:10.287843Z	  
+2025-09-17T03:14:10.287955Z	      ../node_modules/pgpass/lib/index.js:3:19:
+2025-09-17T03:14:10.288055Z	  [37m      3 │ var path = require([32m'path'[37m)
+2025-09-17T03:14:10.28817Z	          ╵                    [32m~~~~~~[0m
+2025-09-17T03:14:10.288277Z	  
+2025-09-17T03:14:10.288347Z	    The package "path" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.288416Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.288499Z	    
+2025-09-17T03:14:10.288633Z	  
+2025-09-17T03:14:10.288722Z	  
+2025-09-17T03:14:10.288818Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "fs"[0m
+2025-09-17T03:14:10.288958Z	  
+2025-09-17T03:14:10.289066Z	      ../node_modules/pgpass/lib/index.js:4:17:
+2025-09-17T03:14:10.289165Z	  [37m      4 │   , fs = require([32m'fs'[37m)
+2025-09-17T03:14:10.289269Z	          ╵                  [32m~~~~[0m
+2025-09-17T03:14:10.289384Z	  
+2025-09-17T03:14:10.289476Z	    The package "fs" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.28958Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.289675Z	    
+2025-09-17T03:14:10.289743Z	  
+2025-09-17T03:14:10.2898Z	  
+2025-09-17T03:14:10.289889Z	  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mCould not resolve "stream"[0m
+2025-09-17T03:14:10.290011Z	  
+2025-09-17T03:14:10.290108Z	      ../node_modules/split2/index.js:19:30:
+2025-09-17T03:14:10.290225Z	  [37m      19 │ const { Transform } = require([32m'stream'[37m)
+2025-09-17T03:14:10.290312Z	           ╵                               [32m~~~~~~~~[0m
+2025-09-17T03:14:10.290447Z	  
+2025-09-17T03:14:10.290591Z	    The package "stream" wasn't found on the file system but is built into node.
+2025-09-17T03:14:10.290677Z	    - Make sure to prefix the module name with "node:" or update your compatibility_date to 2024-09-23 or later.
+2025-09-17T03:14:10.290775Z	    
+2025-09-17T03:14:10.29113Z	  
+2025-09-17T03:14:10.2914Z	  
+2025-09-17T03:14:10.291553Z	
+2025-09-17T03:14:10.291707Z	
+2025-09-17T03:14:10.291819Z	🪵  Logs were written to "/root/.config/.wrangler/logs/wrangler-2025-09-17_03-14-09_755.log"
+2025-09-17T03:14:10.300397Z	Failed building Pages Functions.
+2025-09-17T03:14:12.059943Z	Failed: generating Pages Functions failed. Check the logs above for more information. If this continues for an unknown reason, contact support: https://cfl.re/3WgEyrH
