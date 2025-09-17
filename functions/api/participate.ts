@@ -13,26 +13,14 @@ interface Context {
   passThroughOnException(): void;
 }
 
-// 상품 정보 상수
+// 상품 정보 상수 - 메가커피만 100% 당첨
 const PRIZES = [
-  { id: 'gift_1000', name: '기프트쇼 1,000원 상품권', probability: 40 },
-  { id: 'gift_3000', name: '기프트쇼 3,000원 상품권', probability: 30 },
-  { id: 'gift_5000', name: '기프트쇼 5,000원 상품권', probability: 20 },
-  { id: 'mega_coffee', name: '메가커피 아메리카노', probability: 10 }
+  { id: 'mega_coffee', name: '메가커피 아메리카노', probability: 100 }
 ];
 
 function selectRandomPrize() {
-  const random = Math.random() * 100;
-  let cumulative = 0;
-
-  for (const prize of PRIZES) {
-    cumulative += prize.probability;
-    if (random <= cumulative) {
-      return prize;
-    }
-  }
-
-  return PRIZES[0]; // 기본값
+  // 메가커피만 100% 당첨
+  return PRIZES[0]; // 메가커피 아메리카노
 }
 
 // CUID 생성 함수 (Prisma와 동일한 방식)
