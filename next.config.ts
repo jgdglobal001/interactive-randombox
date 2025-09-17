@@ -8,6 +8,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+
+  // 폰트 최적화 설정
+  optimizeFonts: false,
 };
 
 module.exports = nextConfig;
