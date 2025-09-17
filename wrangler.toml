@@ -1,6 +1,6 @@
 name = "interactive-randombox"
 # Cloudflare Pages - Next.js Static Export
-pages_build_output_dir = "./out"
+pages_build_output_dir = "out"
 compatibility_date = "2024-09-13"
 compatibility_flags = ["nodejs_compat"]
 
