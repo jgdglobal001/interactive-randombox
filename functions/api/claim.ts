@@ -54,7 +54,7 @@ async function callGiftShowAPI(phoneNumber: string, goodsCode: string, env: Env)
       callback_no: phoneNumber.replace(/-/g, ''), // 발신번호
       phone_no: phoneNumber.replace(/-/g, ''), // 수신번호
       tr_id: trId, // 거래아이디 (Unique한 ID)
-      user_id: 'randombox_user', // 회원 ID
+      user_id: 'jsyglobal', // 실제 기프트쇼 비즈 회원 ID (인증키와 연결된 계정)
       gubun: 'N' // MMS발송 구분자 (N: MMS)
     };
 
