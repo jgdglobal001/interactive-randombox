@@ -109,44 +109,57 @@ app.post('/participate', async (c) => {
   }
 })
 
-// 실제 기프트쇼 API 연동 함수 (상용환경)
+// 실제 기프트쇼 API 연동 함수 (API 문서 규격 준수)
 async function callGiftShowAPI(phoneNumber: string, prizeCode: string) {
   console.log(`기프트쇼 API 호출: ${phoneNumber}에게 ${prizeCode} 상품 발송 시도...`)
 
-  // 실제 기프트쇼 API 설정
+  // 실제 기프트쇼 API 설정 (문서 기준)
   const authKey = 'REAL10f8dc85d32c4ff4b2594851a845c15f';
   const authToken = 'VUUiyDeKaWdeJYjlyGIuwQ==';
   const cardId = '202509120308350';
-  const baseUrl = 'https://api.giftshow.co.kr';
 
   try {
-    const response = await fetch(`${baseUrl}/card/send`, {
+    // 기프트쇼 API 문서에 따른 정확한 엔드포인트
+    const apiUrl = 'https://bizapi.giftishow.com/bizApi/send';
+
+    const requestData = {
+      custom_auth_code: authKey,
+      custom_auth_token: authToken,
+      api_code: 'send',
+      dev_flag: 'N',
+      phone_number: phoneNumber.replace(/-/g, ''),
+      goods_code: cardId,
+      callback_no: phoneNumber.replace(/-/g, ''),
+      send_message: '메가커피 교환권이 발송되었습니다.',
+      user_template_no: '',
+      supplement: ''
+    };
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'custom_auth_code': authKey,
-        'custom_auth_token': authToken,
-        'api_code': '0006',
-        'dev_flag': 'N'
+        'User-Agent': 'RandomBox/1.0'
       },
-      body: JSON.stringify({
-        phone_number: phoneNumber.replace(/-/g, ''),
-        card_id: cardId,
-        amount: 0,
-        message: '메가커피 교환권이 발송되었습니다.'
-      })
+      body: JSON.stringify(requestData)
     });
 
     if (!response.ok) {
-      throw new Error(`API 호출 실패: ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const result = await response.json();
-    return {
-      success: result.success || result.result === 'success',
-      transactionId: result.transactionId || result.transaction_id || `GS_${Date.now()}`
-    };
+    console.log('기프트쇼 API 응답:', result);
+
+    if (result.result_code === '1' || result.result_code === 1) {
+      return {
+        success: true,
+        transactionId: result.tr_id || result.transaction_id || `GS_${Date.now()}`
+      };
+    } else {
+      throw new Error(`API 오류 [${result.result_code}]: ${result.result_message}`);
+    }
   } catch (error) {
     console.error('기프트쇼 API 에러:', error);
     return { success: false, transactionId: null };
