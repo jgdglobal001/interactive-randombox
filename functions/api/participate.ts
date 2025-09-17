@@ -116,6 +116,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
       JSON.stringify({
         success: true,
         winnerId: result.winner.id,
+        participationCodeId: result.winner.id, // 프론트엔드에서 기대하는 필드 추가
         prize: {
           name: result.prize.name,
           imageUrl: '/images/megacoffee.png' // 메가커피 이미지 경로 추가

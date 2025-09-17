@@ -99,12 +99,16 @@ async function callGiftShowAPI(phoneNumber: string, goodsCode: string, env: Env)
 
 export async function onRequestPost(context: Context): Promise<Response> {
   try {
-    const body = await context.request.json() as { 
-      winnerId: string; 
-      phoneNumber: string; 
+    const body = await context.request.json() as {
+      winnerId?: string;
+      participationCodeId?: string; // 프론트엔드에서 보내는 필드
+      phoneNumber: string;
     };
 
-    if (!body.winnerId || !body.phoneNumber) {
+    // winnerId 또는 participationCodeId 중 하나 사용 (같은 값)
+    const winnerId = body.winnerId || body.participationCodeId;
+
+    if (!winnerId || !body.phoneNumber) {
       return new Response(
         JSON.stringify({ success: false, error: '당첨자 ID와 휴대폰 번호가 필요합니다.' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -132,7 +136,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
 
     // 당첨자 정보 확인
     const winner = await prisma.winner.findUnique({
-      where: { id: body.winnerId },
+      where: { id: winnerId },
       include: { prize: true }
     });
 
@@ -170,7 +174,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
 
     // 당첨자 정보 업데이트
     await prisma.winner.update({
-      where: { id: body.winnerId },
+      where: { id: winnerId },
       data: {
         userPhoneNumber: body.phoneNumber,
         giftshowTrId: giftShowResult.transactionId,
