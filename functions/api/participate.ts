@@ -42,6 +42,23 @@ function generateCuid(): string {
   return `c${timestamp}${randomPart}`;
 }
 
+// Prize 테이블에 상품 데이터 확인 및 생성
+async function ensurePrizesExist(sql: any) {
+  for (const prize of PRIZES) {
+    // 상품이 이미 존재하는지 확인
+    const existing = await sql`select id from "Prize" where id = ${prize.id}`;
+
+    if (existing.length === 0) {
+      // 상품이 없으면 생성
+      const prizeId = generateCuid();
+      await sql`
+        insert into "Prize" (id, name, description, "imageUrl")
+        values (${prize.id}, ${prize.name}, ${prize.name}, '')
+      `;
+    }
+  }
+}
+
 export async function onRequestPost(context: Context): Promise<Response> {
   try {
     const body = await context.request.json() as { code: string };
@@ -58,6 +75,9 @@ export async function onRequestPost(context: Context): Promise<Response> {
     neonConfig.webSocketConstructor = undefined;
 
     const sql = neon(context.env.DATABASE_URL!);
+
+    // Prize 테이블에 상품 데이터가 있는지 확인하고 없으면 생성
+    await ensurePrizesExist(sql);
 
     // 참여 코드 확인
     const participationCodes = await sql`
