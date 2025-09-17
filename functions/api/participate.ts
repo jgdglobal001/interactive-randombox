@@ -116,7 +116,10 @@ export async function onRequestPost(context: Context): Promise<Response> {
       JSON.stringify({
         success: true,
         winnerId: result.winner.id,
-        prize: result.prize
+        prize: {
+          name: result.prize.name,
+          imageUrl: '/images/megacoffee.png' // 메가커피 이미지 경로 추가
+        }
       }),
       { headers: { 'Content-Type': 'application/json' } }
     );
