@@ -24,15 +24,22 @@ const PRIZES = [
 function selectRandomPrize() {
   const random = Math.random() * 100;
   let cumulative = 0;
-  
+
   for (const prize of PRIZES) {
     cumulative += prize.probability;
     if (random <= cumulative) {
       return prize;
     }
   }
-  
+
   return PRIZES[0]; // 기본값
+}
+
+// CUID 생성 함수 (Prisma와 동일한 방식)
+function generateCuid(): string {
+  const timestamp = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).substring(2, 15);
+  return `c${timestamp}${randomPart}`;
 }
 
 export async function onRequestPost(context: Context): Promise<Response> {
@@ -86,9 +93,10 @@ export async function onRequestPost(context: Context): Promise<Response> {
     `;
 
     // 2. 당첨자 정보 저장
+    const winnerId = generateCuid();
     const winners = await sql`
-      insert into "Winner" ("participationCodeId", "prizeId", "userPhoneNumber", "giftshowTrId")
-      values (${participationCode.id}, ${selectedPrize.id}, '', '')
+      insert into "Winner" (id, "participationCodeId", "prizeId", "userPhoneNumber", "giftshowTrId")
+      values (${winnerId}, ${participationCode.id}, ${selectedPrize.id}, '', '')
       returning id
     `;
     const winner = winners[0];
