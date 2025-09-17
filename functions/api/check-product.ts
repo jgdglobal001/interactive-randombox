@@ -95,7 +95,7 @@ export default {
         return new Response(JSON.stringify({
           success: false,
           error: `상품 조회 실패 [${result.code}]: ${result.message || 'Unknown error'}`,
-          cardId: cardId
+          goodsCode: megaCoffeeGoodsCode
         }), {
           status: 400,
           headers: { 'Content-Type': 'application/json', ...corsHeaders }
