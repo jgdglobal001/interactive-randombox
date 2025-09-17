@@ -18,6 +18,56 @@ interface Context {
   passThroughOnException(): void;
 }
 
+// 비즈머니 잔액 확인 API
+async function checkBizMoneyBalance(env: Env) {
+  const authKey = env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f';
+  const authToken = env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==';
+
+  try {
+    const requestData = {
+      api_code: '0301',
+      custom_auth_code: authKey,
+      custom_auth_token: authToken,
+      dev_yn: 'N',
+      user_id: 'randombox_user'
+    };
+
+    const response = await fetch('https://bizapi.giftishow.com/bizApi/bizmoney', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(requestData).toString()
+    });
+
+    const result = await response.json() as {
+      code?: string;
+      message?: string;
+      balance?: string;
+    };
+
+    console.log('비즈머니 잔액 조회 결과:', result);
+
+    if (result.code === '0000') {
+      return {
+        success: true,
+        balance: parseInt(result.balance || '0')
+      };
+    } else {
+      return {
+        success: false,
+        error: `잔액 조회 실패 [${result.code}]: ${result.message}`
+      };
+    }
+  } catch (error) {
+    console.error('비즈머니 잔액 조회 에러:', error);
+    return {
+      success: false,
+      error: '잔액 조회 중 오류가 발생했습니다.'
+    };
+  }
+}
+
 // 실제 기프트쇼 API 호출 (API 문서 규격에 맞게 수정)
 async function callGiftShowAPI(phoneNumber: string, goodsCode: string, env: Env) {
   // 실제 기프트쇼 API 설정 (문서 기준)
@@ -124,10 +174,36 @@ export async function onRequestPost(context: Context): Promise<Response> {
       phoneNumber: body.phoneNumber.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
     });
 
-    // 기프트쇼 API 호출 (메가커피 교환권 발송)
+    // 1. 비즈머니 잔액 확인
+    const balanceResult = await checkBizMoneyBalance(context.env);
+    if (!balanceResult.success) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: '잔액 확인 중 오류가 발생했습니다.',
+          details: balanceResult.error
+        }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('현재 비즈머니 잔액:', balanceResult.balance + '원');
+
+    // 잔액 부족 체크 (메가커피 예상 가격: 5000원)
+    if (balanceResult.balance < 5000) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: `비즈머니 잔액이 부족합니다. (현재: ${balanceResult.balance}원)`
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // 2. 기프트쇼 API 호출 (메가커피 교환권 발송)
     const giftShowResult = await callGiftShowAPI(
       body.phoneNumber,
-      'MEGA_COFFEE_001', // 메가커피 상품 코드 고정
+      context.env.GIFTSHOW_CARD_ID || '202509120308350', // 실제 메가커피 상품 코드
       context.env
     );
 
