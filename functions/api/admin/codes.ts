@@ -76,15 +76,11 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
     
     console.log('9. DATABASE_URL 확인됨, Prisma 클라이언트 생성...');
 
-    // Cloudflare Pages에서 직접 PostgreSQL 연결
-    const { PrismaClient } = await import('@prisma/client/edge');
+    // Cloudflare Pages에서 표준 Prisma 클라이언트 사용
+    const { PrismaClient } = await import('@prisma/client');
 
     const prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: context.env.DATABASE_URL
-        }
-      }
+      datasourceUrl: context.env.DATABASE_URL
     });
     
     console.log('10. Prisma 클라이언트 생성 완료, 데이터베이스 연결 시도...');
@@ -153,14 +149,10 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
     }
     
     // Prisma 클라이언트 동적 생성
-    const { PrismaClient } = await import('@prisma/client/edge');
+    const { PrismaClient } = await import('@prisma/client');
 
     const prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: context.env.DATABASE_URL
-        }
-      }
+      datasourceUrl: context.env.DATABASE_URL
     });
 
     const newCodes: ParticipationCode[] = [];
