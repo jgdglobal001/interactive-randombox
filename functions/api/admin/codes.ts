@@ -83,13 +83,7 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
     const sql = neon(context.env.DATABASE_URL);
     console.log('10. DB 연결 준비 완료, 코드 목록 조회...');
 
-    const codes = await sql<{
-      id: string;
-      code: string;
-      isUsed: boolean;
-      createdAt: string | Date;
-      usedAt: string | Date | null;
-    }[]>`select id, code, "isUsed", "createdAt", "usedAt" from "ParticipationCode" order by "createdAt" desc`;
+    const codes = await sql`select id, code, "isUsed", "createdAt", "usedAt" from "ParticipationCode" order by "createdAt" desc`;
     
     console.log('11. 코드 조회 성공:', codes.length, '개');
 
@@ -153,13 +147,7 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
       while (attempts < 10) {
         const uniqueCode = generateUniqueCode();
         try {
-          const rows = await sql<{
-            id: string;
-            code: string;
-            isUsed: boolean;
-            createdAt: string | Date;
-            usedAt: string | Date | null;
-          }[]>`insert into "ParticipationCode" (code) values (${uniqueCode}) returning id, code, "isUsed", "createdAt", "usedAt"`;
+          const rows = await sql`insert into "ParticipationCode" (code) values (${uniqueCode}) returning id, code, "isUsed", "createdAt", "usedAt"`;
 
           const row = rows[0];
           newCodes.push({
