@@ -139,7 +139,7 @@ async function callGiftShowAPI(phoneNumber: string, prizeCode: string) {
       callback_no: phoneNumber.replace(/-/g, ''), // 발신번호
       phone_no: phoneNumber.replace(/-/g, ''), // 수신번호
       tr_id: trId, // 거래아이디 (Unique한 ID)
-      user_id: 'jsyglobal@gmail.com', // 기프트쇼 비즈 가입 이메일 (추정)
+      user_id: 'jsyglobal@giftshow.com', // 기프트쇼 비즈 실제 회원 ID
       gubun: 'N' // MMS발송 구분자 (N: MMS)
     };
 
