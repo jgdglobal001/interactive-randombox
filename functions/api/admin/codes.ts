@@ -74,31 +74,23 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
       );
     }
     
-    console.log('9. DATABASE_URL 확인됨, Prisma 클라이언트 생성...');
+    console.log('9. DATABASE_URL 확인됨, 데이터베이스 연결 생성...');
 
-    // Cloudflare Pages Edge Runtime에서 Neon Serverless Driver 사용
-    const { PrismaClient } = await import('@prisma/client');
-    const { PrismaNeon } = await import('@prisma/adapter-neon');
-    const { neonConfig } = await import('@neondatabase/serverless');
-
-    // WebSocket 비활성화 (Cloudflare Pages에서 필요)
+    // Cloudflare Pages Edge Runtime에서 Neon Serverless Driver 사용 (Prisma 미사용)
+    const { neon, neonConfig } = await import('@neondatabase/serverless');
     neonConfig.webSocketConstructor = undefined;
+    neonConfig.fetch = fetch as any;
 
-    const adapter = new PrismaNeon({ connectionString: context.env.DATABASE_URL });
-    const prisma = new PrismaClient({ adapter });
-    
-    console.log('10. Prisma 클라이언트 생성 완료, 데이터베이스 연결 시도...');
-    
-    const codes = await prisma.participationCode.findMany({
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        code: true,
-        isUsed: true,
-        createdAt: true,
-        usedAt: true,
-      },
-    });
+    const sql = neon(context.env.DATABASE_URL);
+    console.log('10. DB 연결 준비 완료, 코드 목록 조회...');
+
+    const codes = await sql<{
+      id: string;
+      code: string;
+      isUsed: boolean;
+      createdAt: string | Date;
+      usedAt: string | Date | null;
+    }[]>`select id, code, "isUsed", "createdAt", "usedAt" from "ParticipationCode" order by "createdAt" desc`;
     
     console.log('11. 코드 조회 성공:', codes.length, '개');
 
@@ -106,8 +98,8 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
     console.log('12. 날짜 포맷팅 시작...');
     const formattedCodes = codes.map((code: any) => ({
       ...code,
-      createdAt: code.createdAt.toISOString(),
-      usedAt: code.usedAt?.toISOString() || null,
+      createdAt: (code.createdAt instanceof Date ? code.createdAt : new Date(code.createdAt)).toISOString(),
+      usedAt: code.usedAt ? (code.usedAt instanceof Date ? code.usedAt : new Date(code.usedAt)).toISOString() : null,
     }));
     console.log('13. 날짜 포맷팅 완료');
 
@@ -120,10 +112,6 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
       { headers: { 'Content-Type': 'application/json' } }
     );
     console.log('15. 응답 반환 성공');
-    
-    // Prisma 연결 정리
-    await prisma.$disconnect();
-    console.log('16. Prisma 연결 해제 완료');
     
     return response;
 
@@ -152,67 +140,52 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
       );
     }
     
-    // Prisma 클라이언트 동적 생성
-    const { PrismaClient } = await import('@prisma/client');
-    const { PrismaNeon } = await import('@prisma/adapter-neon');
-    const { neonConfig } = await import('@neondatabase/serverless');
-
-    // WebSocket 비활성화 (Cloudflare Pages에서 필요)
+    // Prisma 없이 Neon Serverless SQL 사용
+    const { neon, neonConfig } = await import('@neondatabase/serverless');
     neonConfig.webSocketConstructor = undefined;
+    neonConfig.fetch = fetch as any;
 
-    const adapter = new PrismaNeon({ connectionString: context.env.DATABASE_URL });
-    const prisma = new PrismaClient({ adapter });
+    const sql = neon(context.env.DATABASE_URL!);
 
     const newCodes: ParticipationCode[] = [];
 
-    // 트랜잭션으로 여러 코드 생성
-    await prisma.$transaction(async (tx: any) => {
-      for (let i = 0; i < count; i++) {
-        let attempts = 0;
-        let uniqueCode = '';
-        
-        // 중복되지 않는 코드 생성 (최대 10번 시도)
-        while (attempts < 10) {
-          uniqueCode = generateUniqueCode();
-          
-          const existingCode = await tx.participationCode.findUnique({
-            where: { code: uniqueCode },
+    // Neon SQL로 여러 코드 생성 (고유 제약 위반 시 재시도)
+    for (let i = 0; i < count; i++) {
+      let attempts = 0;
+      while (attempts < 10) {
+        const uniqueCode = generateUniqueCode();
+        try {
+          const rows = await sql<{
+            id: string;
+            code: string;
+            isUsed: boolean;
+            createdAt: string | Date;
+            usedAt: string | Date | null;
+          }[]>`insert into "ParticipationCode" (code) values (${uniqueCode}) returning id, code, "isUsed", "createdAt", "usedAt"`;
+
+          const row = rows[0];
+          newCodes.push({
+            id: row.id,
+            code: row.code,
+            isUsed: row.isUsed,
+            createdAt: (row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt)).toISOString(),
+            usedAt: row.usedAt ? (row.usedAt instanceof Date ? row.usedAt : new Date(row.usedAt)).toISOString() : null,
           });
-          
-          if (!existingCode) {
-            break;
+          break;
+        } catch (e: any) {
+          if (e && (e.code === '23505' || (e.message && String(e.message).includes('duplicate key')))) {
+            attempts++;
+            continue;
           }
-          
-          attempts++;
+          throw e;
         }
-
-        if (attempts >= 10) {
-          throw new Error('고유한 코드 생성에 실패했습니다.');
-        }
-
-        const newCode = await tx.participationCode.create({
-          data: {
-            code: uniqueCode,
-          },
-          select: {
-            id: true,
-            code: true,
-            isUsed: true,
-            createdAt: true,
-            usedAt: true,
-          },
-        });
-
-        newCodes.push({
-          ...newCode,
-          createdAt: newCode.createdAt.toISOString(),
-          usedAt: newCode.usedAt?.toISOString() || null,
-        });
       }
-    });
+      if (attempts >= 10) {
+        throw new Error('고유한 코드 생성에 실패했습니다.');
+      }
+    }
 
-    // Prisma 연결 정리
-    await prisma.$disconnect();
+    // Neon serverless 사용 - 별도 연결 정리 불필요
 
     return new Response(
       JSON.stringify({
