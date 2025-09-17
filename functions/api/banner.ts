@@ -6,6 +6,73 @@ export async function onRequestGet({ request, env }: { request: Request; env: an
 
     console.log('Banner API 호출:', { action, url: request.url });
 
+    // 상품 리스트 조회 기능 추가 (메가커피 상품 찾기)
+    if (action === 'list-products') {
+      const authKey = env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f';
+      const authToken = env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==';
+
+      console.log('상품 리스트 조회 시작');
+
+      const requestData = {
+        api_code: '0101',
+        custom_auth_code: authKey,
+        custom_auth_token: authToken,
+        dev_yn: 'N',
+        start: '1',
+        size: '100'  // 100개씩 조회
+      };
+
+      const response = await fetch('https://bizapi.giftishow.com/bizApi/goods', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(requestData).toString()
+      });
+
+      const result = await response.json() as any;
+      console.log('기프트쇼 상품 리스트 응답:', result);
+
+      if (result.code === '0000' && result.result?.goodsList) {
+        // 메가커피 관련 상품만 필터링
+        const megaCoffeeProducts = result.result.goodsList.filter((product: any) =>
+          product.goodsName?.includes('메가커피') ||
+          product.brandName?.includes('메가커피') ||
+          product.goodsName?.includes('MEGA') ||
+          product.brandName?.includes('MEGA')
+        );
+
+        return new Response(JSON.stringify({
+          success: true,
+          totalProducts: result.result.listNum,
+          megaCoffeeProducts: megaCoffeeProducts.map((product: any) => ({
+            goodsNo: product.goodsNo,
+            goodsCode: product.goodsCode,
+            goodsName: product.goodsName,
+            brandName: product.brandName,
+            salePrice: product.salePrice,
+            discountPrice: product.discountPrice,
+            realPrice: product.realPrice,
+            limitDay: product.limitDay,
+            goodsImgS: product.goodsImgS,
+            categoryName1: product.categoryName1,
+            affiliate: product.affiliate
+          }))
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } else {
+        return new Response(JSON.stringify({
+          success: false,
+          error: `상품 리스트 조회 실패 [${result.code}]: ${result.message || 'Unknown error'}`
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
     // 상품 정보 확인 기능 추가
     if (action === 'check-product') {
       const authKey = env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f';
