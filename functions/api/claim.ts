@@ -100,94 +100,42 @@ async function callGiftShowAPI(phoneNumber: string, goodsCode: string, env: Env)
 export async function onRequestPost(context: Context): Promise<Response> {
   try {
     const body = await context.request.json() as {
-      winnerId?: string;
-      participationCodeId?: string; // 프론트엔드에서 보내는 필드
       phoneNumber: string;
     };
 
-    // winnerId 또는 participationCodeId 중 하나 사용 (같은 값)
-    const winnerId = body.winnerId || body.participationCodeId;
-
-    if (!winnerId || !body.phoneNumber) {
+    if (!body.phoneNumber) {
       return new Response(
-        JSON.stringify({ success: false, error: '당첨자 ID와 휴대폰 번호가 필요합니다.' }),
+        JSON.stringify({ success: false, error: '휴대폰 번호가 필요합니다.' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
-    
-    // Prisma Accelerate 클라이언트 생성
-    const { PrismaClient } = await import('@prisma/client/edge');
-    const { withAccelerate } = await import('@prisma/extension-accelerate');
-    
-    // Prisma Accelerate URL이 있는 경우에만 사용
-    const prismaOptions: any = {
-      datasources: {
-        db: {
-          url: context.env.DATABASE_URL
-        }
-      }
-    };
-    
-    if (context.env.PRISMA_ACCELERATE_URL) {
-      prismaOptions.datasourceUrl = context.env.PRISMA_ACCELERATE_URL;
-    }
-    
-    const prisma = new PrismaClient(prismaOptions).$extends(withAccelerate());
 
-    // 당첨자 정보 확인
-    const winner = await prisma.winner.findUnique({
-      where: { id: winnerId },
-      include: { prize: true }
+    console.log('메가커피 쿠폰 발송 시작:', {
+      phoneNumber: body.phoneNumber.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
     });
 
-    if (!winner) {
-      return new Response(
-        JSON.stringify({ success: false, error: '유효하지 않은 당첨자 정보입니다.' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (winner.userPhoneNumber && winner.giftshowTrId) {
-      return new Response(
-        JSON.stringify({ success: false, error: '이미 상품을 수령했습니다.' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // 기프트쇼 API 호출
+    // 기프트쇼 API 호출 (메가커피 교환권 발송)
     const giftShowResult = await callGiftShowAPI(
-      body.phoneNumber, 
-      winner.prize.giftshowGoodsCode,
+      body.phoneNumber,
+      'MEGA_COFFEE_001', // 메가커피 상품 코드 고정
       context.env
     );
 
     if (!giftShowResult.success) {
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: '기프트쇼 API 연동 중 오류가 발생했습니다.',
-          details: giftShowResult.error 
+        JSON.stringify({
+          success: false,
+          error: '메가커피 교환권 발송 중 오류가 발생했습니다.',
+          details: giftShowResult.error
         }),
         { status: 500, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // 당첨자 정보 업데이트
-    await prisma.winner.update({
-      where: { id: winnerId },
-      data: {
-        userPhoneNumber: body.phoneNumber,
-        giftshowTrId: giftShowResult.transactionId,
-      }
-    });
-    
-    // Prisma 연결 정리
-    await prisma.$disconnect();
-
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: '상품이 성공적으로 발송되었습니다.',
+      JSON.stringify({
+        success: true,
+        message: '메가커피 교환권이 성공적으로 발송되었습니다!',
         transactionId: giftShowResult.transactionId
       }),
       { headers: { 'Content-Type': 'application/json' } }

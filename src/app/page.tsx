@@ -608,21 +608,20 @@ export default function HomePage() {
   };
 
   const handleClaimPrize = async () => {
-    console.log('=== handleClaimPrize 시작 ===');
-    console.log('participationCodeId:', participationCodeId);
+    console.log('=== 메가커피 교환권 발송 시작 ===');
     console.log('phoneNumber:', phoneNumber);
-    
-    if (!participationCodeId || !phoneNumber) {
-      alert('참여 코드와 휴대폰 번호가 필요합니다.');
+
+    if (!phoneNumber) {
+      alert('휴대폰 번호를 입력해주세요.');
       return;
     }
 
     try {
-      console.log('API 호출 시작...');
+      console.log('기프트쇼 API 호출 시작...');
       const response = await fetch('/api/claim', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ participationCodeId, phoneNumber }),
+        body: JSON.stringify({ phoneNumber }),
       });
       console.log('API 응답 받음:', response.status);
       
