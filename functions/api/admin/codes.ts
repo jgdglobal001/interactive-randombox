@@ -79,7 +79,6 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
     // Cloudflare Pages Edge Runtime에서 Neon Serverless Driver 사용 (Prisma 미사용)
     const { neon, neonConfig } = await import('@neondatabase/serverless');
     neonConfig.webSocketConstructor = undefined;
-    neonConfig.fetch = fetch as any;
 
     const sql = neon(context.env.DATABASE_URL);
     console.log('10. DB 연결 준비 완료, 코드 목록 조회...');
@@ -143,7 +142,6 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
     // Prisma 없이 Neon Serverless SQL 사용
     const { neon, neonConfig } = await import('@neondatabase/serverless');
     neonConfig.webSocketConstructor = undefined;
-    neonConfig.fetch = fetch as any;
 
     const sql = neon(context.env.DATABASE_URL!);
 
