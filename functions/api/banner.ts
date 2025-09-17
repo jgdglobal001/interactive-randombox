@@ -1,14 +1,16 @@
 // Cloudflare Pages Function for banner API
-export async function onRequestGet(context: any): Promise<Response> {
+export async function onRequestGet({ request, env }: { request: Request; env: any }): Promise<Response> {
   try {
-    const url = new URL(context.request.url);
+    const url = new URL(request.url);
     const action = url.searchParams.get('action');
+
+    console.log('Banner API 호출:', { action, url: request.url });
 
     // 상품 정보 확인 기능 추가
     if (action === 'check-product') {
-      const authKey = context.env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f';
-      const authToken = context.env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==';
-      const cardId = context.env.GIFTSHOW_CARD_ID || '202509120308350';
+      const authKey = env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f';
+      const authToken = env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==';
+      const cardId = env.GIFTSHOW_CARD_ID || '202509120308350';
 
       console.log('상품 정보 조회 시작:', { cardId });
 
