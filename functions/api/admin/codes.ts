@@ -37,6 +37,13 @@ function generateUniqueCode(): string {
   return `EVENT-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
 }
 
+// CUID 생성 함수 (Prisma와 동일한 방식)
+function generateCuid(): string {
+  const timestamp = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).substring(2, 15);
+  return `c${timestamp}${randomPart}`;
+}
+
 // GET - 참여 코드 목록 조회
 export const onRequestGet = async (context: Context): Promise<Response> => {
   try {
@@ -147,7 +154,8 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
       while (attempts < 10) {
         const uniqueCode = generateUniqueCode();
         try {
-          const rows = await sql`insert into "ParticipationCode" (code) values (${uniqueCode}) returning id, code, "isUsed", "createdAt", "usedAt"`;
+          const cuid = generateCuid();
+          const rows = await sql`insert into "ParticipationCode" (id, code) values (${cuid}, ${uniqueCode}) returning id, code, "isUsed", "createdAt", "usedAt"`;
 
           const row = rows[0];
           newCodes.push({
