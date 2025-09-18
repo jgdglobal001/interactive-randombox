@@ -709,8 +709,9 @@ export default function HomePage() {
               isTablet: false
             };
 
-        // Hydration Error 방지: 초기에는 원래 위치 사용, 클라이언트에서 계산된 위치 사용
-        const responsivePosition = isClient && productPositions[product.id]
+        // 모바일에서는 항상 원래 위치 사용 (선물박스 중심 배치 유지)
+        const isMobileDevice = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+        const responsivePosition = (isClient && productPositions[product.id] && !isMobileDevice)
           ? productPositions[product.id]
           : product.position;
 
