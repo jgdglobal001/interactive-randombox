@@ -299,7 +299,6 @@ html, body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    transform: translate(-50%, -50%);
     transform-origin: center center; /* 모든 변환의 기준점을 정확히 중앙으로 설정 */
   }
 
