@@ -112,81 +112,39 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
 
     const createdCodes: ParticipationCode[] = [];
 
-    // 배치 INSERT를 위한 데이터 준비
-    if (newCodes.length > 0) {
-      try {
-        // 배치 크기로 나누어 처리 (한 번에 최대 25개씩 - 네온 제한 고려)
-        const batchSize = 25;
-        for (let i = 0; i < newCodes.length; i += batchSize) {
-          const batch = newCodes.slice(i, i + batchSize);
+    // 순차적 INSERT로 네온 DB 제한 우회 (동시 요청 수 제한)
+    const batchSize = 10; // 더 작은 배치로 처리
+    for (let i = 0; i < newCodes.length; i += batchSize) {
+      const batch = newCodes.slice(i, i + batchSize);
 
-          // 배치 INSERT를 위한 VALUES 구성
-          const valuesList = batch.map(code => {
-            const cuid = generateCuid();
-            return [cuid, code];
+      // 순차적으로 처리 (병렬 아님)
+      for (const code of batch) {
+        try {
+          const cuid = generateCuid();
+          const rows = await sql`
+            insert into "ParticipationCode" (id, code)
+            values (${cuid}, ${code})
+            returning id, code, "isUsed", "createdAt", "usedAt"
+          `;
+
+          const row = rows[0];
+          createdCodes.push({
+            id: row.id,
+            code: row.code,
+            isUsed: row.isUsed,
+            createdAt: (row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt)).toISOString(),
+            usedAt: row.usedAt ? (row.usedAt instanceof Date ? row.usedAt : new Date(row.usedAt)).toISOString() : null,
           });
-
-          // 진짜 배치 INSERT (1개 subrequest로 여러 레코드 삽입)
-          try {
-            // VALUES 절 구성
-            const valuesClause = valuesList.map(() => '(?, ?)').join(', ');
-            const params = valuesList.flat();
-
-            // 단일 배치 INSERT 쿼리 실행
-            const query = `
-              INSERT INTO "ParticipationCode" (id, code)
-              VALUES ${valuesClause}
-              RETURNING id, code, "isUsed", "createdAt", "usedAt"
-            `;
-
-            const rows = await sql(query, params);
-
-            // 결과 처리
-            for (const row of rows) {
-              createdCodes.push({
-                id: row.id,
-                code: row.code,
-                isUsed: row.isUsed,
-                createdAt: (row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt)).toISOString(),
-                usedAt: row.usedAt ? (row.usedAt instanceof Date ? row.usedAt : new Date(row.usedAt)).toISOString() : null,
-              });
-            }
-
-            console.log(`배치 INSERT 성공: ${rows.length}개 코드 삽입`);
-          } catch (batchError) {
-            console.error('배치 INSERT 실패, 개별 INSERT로 폴백:', batchError);
-
-            // 폴백: 개별 INSERT (에러 시에만)
-            for (const [id, code] of valuesList) {
-              try {
-                const rows = await sql`
-                  insert into "ParticipationCode" (id, code)
-                  values (${id}, ${code})
-                  returning id, code, "isUsed", "createdAt", "usedAt"
-                `;
-                const row = rows[0];
-                createdCodes.push({
-                  id: row.id,
-                  code: row.code,
-                  isUsed: row.isUsed,
-                  createdAt: (row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt)).toISOString(),
-                  usedAt: row.usedAt ? (row.usedAt instanceof Date ? row.usedAt : new Date(row.usedAt)).toISOString() : null,
-                });
-              } catch (individualError) {
-                console.error(`코드 ${code} 개별 삽입 실패:`, individualError);
-              }
-            }
-          }
-
-          console.log(`배치 ${Math.floor(i/batchSize) + 1}: ${createdCodes.length - (i > 0 ? Math.floor(i/batchSize) * batchSize : 0)}개 코드 삽입 완료`);
-
-          // 배치 간 잠시 대기 (네온 DB 부하 방지)
-          if (i + batchSize < newCodes.length) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-          }
+        } catch (error) {
+          console.error(`코드 ${code} 삽입 실패:`, error);
         }
-      } catch (error) {
-        console.error('배치 처리 실패:', error);
+      }
+
+      console.log(`배치 ${Math.floor(i/batchSize) + 1} 완료: ${Math.min(i + batchSize, newCodes.length)}/${newCodes.length}`);
+
+      // 배치 간 대기 시간 증가 (네온 DB 제한 회피)
+      if (i + batchSize < newCodes.length) {
+        await new Promise(resolve => setTimeout(resolve, 500)); // 500ms 대기
       }
     }
 
