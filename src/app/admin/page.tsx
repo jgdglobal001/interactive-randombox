@@ -27,6 +27,8 @@ export default function AdminPage() {
   const [uploadFile, setUploadFile] = useState<File | null>(null)
   const [previewCodes, setPreviewCodes] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
+  const [codeGroups, setCodeGroups] = useState<string[][]>([])
+  const [uploadStatus, setUploadStatus] = useState<('pending' | 'uploading' | 'success' | 'error')[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(50) // 페이지당 50개씩 표시
@@ -130,7 +132,7 @@ export default function AdminPage() {
     }
   }
 
-  // 파일 미리보기
+  // 파일 미리보기 및 자동 그룹 분할
   const previewFile = async (file: File) => {
     try {
       const text = await file.text()
@@ -138,14 +140,66 @@ export default function AdminPage() {
         .split('\n')
         .map(line => line.trim())
         .filter(line => line.length > 0)
+
       setPreviewCodes(codes)
+
+      // 50개씩 그룹으로 자동 분할
+      const groups: string[][] = []
+      const groupSize = 50
+
+      for (let i = 0; i < codes.length; i += groupSize) {
+        groups.push(codes.slice(i, i + groupSize))
+      }
+
+      setCodeGroups(groups)
+      setUploadStatus(new Array(groups.length).fill('pending'))
+
     } catch (error) {
       console.error('파일 읽기 오류:', error)
       alert('파일을 읽는 중 오류가 발생했습니다.')
     }
   }
 
-  // 일괄 업로드
+  // 개별 그룹 업로드
+  const handleGroupUpload = async (groupIndex: number) => {
+    if (groupIndex >= codeGroups.length) return
+
+    const group = codeGroups[groupIndex]
+
+    // 상태 업데이트
+    const newStatus = [...uploadStatus]
+    newStatus[groupIndex] = 'uploading'
+    setUploadStatus(newStatus)
+
+    try {
+      const res = await fetch('/api/admin/codes/bulk', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer admin2024!`
+        },
+        body: JSON.stringify({ codes: group }),
+      })
+      const data: ApiResponse = await res.json()
+      if (data.success) {
+        newStatus[groupIndex] = 'success'
+        setUploadStatus([...newStatus])
+        alert(`그룹 ${groupIndex + 1}: ${group.length}개의 코드가 성공적으로 업로드되었습니다.`)
+        fetchCodes() // 목록 새로고침
+      } else {
+        newStatus[groupIndex] = 'error'
+        setUploadStatus([...newStatus])
+        alert(`그룹 ${groupIndex + 1} 업로드 실패: ${data.error}`)
+      }
+    } catch (error) {
+      console.error('그룹 업로드 오류:', error)
+      newStatus[groupIndex] = 'error'
+      setUploadStatus([...newStatus])
+      alert(`그룹 ${groupIndex + 1} 업로드 중 오류가 발생했습니다.`)
+    }
+  }
+
+  // 전체 업로드 (기존 함수)
   const handleBulkUpload = async () => {
     if (!uploadFile || previewCodes.length === 0) {
       alert('업로드할 파일을 선택해주세요.')
@@ -307,13 +361,62 @@ export default function AdminPage() {
             </div>
           )}
 
-          <button
-            onClick={handleBulkUpload}
-            disabled={uploading || previewCodes.length === 0}
-            className="px-6 py-2 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            {uploading ? '업로드 중...' : `${previewCodes.length}개 코드 업로드`}
-          </button>
+          {/* 그룹별 업로드 UI */}
+          {codeGroups.length > 0 && (
+            <div className="mb-4">
+              <h4 className="font-medium mb-3">그룹별 업로드 (50개씩 자동 분할)</h4>
+              <div className="space-y-3">
+                {codeGroups.map((group, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded border">
+                    <div className="flex items-center space-x-3">
+                      <span className="font-medium">그룹 {index + 1}</span>
+                      <span className="text-sm text-gray-600">({group.length}개 코드)</span>
+                      <div className="flex items-center space-x-2">
+                        {uploadStatus[index] === 'pending' && (
+                          <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">대기중</span>
+                        )}
+                        {uploadStatus[index] === 'uploading' && (
+                          <span className="text-xs bg-blue-200 text-blue-700 px-2 py-1 rounded">업로드중...</span>
+                        )}
+                        {uploadStatus[index] === 'success' && (
+                          <span className="text-xs bg-green-200 text-green-700 px-2 py-1 rounded">✅ 완료</span>
+                        )}
+                        {uploadStatus[index] === 'error' && (
+                          <span className="text-xs bg-red-200 text-red-700 px-2 py-1 rounded">❌ 실패</span>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleGroupUpload(index)}
+                      disabled={uploadStatus[index] === 'uploading' || uploadStatus[index] === 'success'}
+                      className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    >
+                      {uploadStatus[index] === 'uploading' ? '업로드중...' :
+                       uploadStatus[index] === 'success' ? '완료됨' : '업로드'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* 진행률 표시 */}
+              <div className="mt-4 p-3 bg-blue-50 rounded">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-medium">전체 진행률</span>
+                  <span className="text-sm">
+                    {uploadStatus.filter(status => status === 'success').length} / {codeGroups.length} 그룹 완료
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${(uploadStatus.filter(status => status === 'success').length / codeGroups.length) * 100}%`
+                    }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
