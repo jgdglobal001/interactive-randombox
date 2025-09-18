@@ -465,24 +465,24 @@ html, body {
 
   /* 각 상품별 시계추처럼 위에 고정되어 적당하게 불규칙하게 흔들리는 애니메이션 키프레임 */
   @keyframes float-product-1 {
-    0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1.0); }
-    50% { transform: translate(-50%, -50%) rotate(10deg) scale(1.18); }
+    0%, 100% { transform: rotate(0deg) scale(1.0); }
+    50% { transform: rotate(10deg) scale(1.18); }
   }
   @keyframes float-product-2 {
-    0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1.0); }
-    50% { transform: translate(-50%, -50%) rotate(-12deg) scale(1.16); }
+    0%, 100% { transform: rotate(0deg) scale(1.0); }
+    50% { transform: rotate(-12deg) scale(1.16); }
   }
   @keyframes float-product-3 {
-    0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1.0); }
-    50% { transform: translate(-50%, -50%) rotate(14deg) scale(1.22); }
+    0%, 100% { transform: rotate(0deg) scale(1.0); }
+    50% { transform: rotate(14deg) scale(1.22); }
   }
   @keyframes float-product-4 {
-    0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1.0); }
-    50% { transform: translate(-50%, -50%) rotate(-16deg) scale(1.25); }
+    0%, 100% { transform: rotate(0deg) scale(1.0); }
+    50% { transform: rotate(-16deg) scale(1.25); }
   }
   @keyframes float-product-5 {
-    0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1.0); }
-    50% { transform: translate(-50%, -50%) rotate(18deg) scale(1.2); }
+    0%, 100% { transform: rotate(0deg) scale(1.0); }
+    50% { transform: rotate(18deg) scale(1.2); }
   }
   
   /* 모바일 반응형 - JavaScript에서 크기 동적 조정하므로 위치만 유지 */
