@@ -324,8 +324,10 @@ admin.post('/codes/bulk', async (c) => {
 // 참여 코드 목록 조회 API
 admin.get('/codes', async (c) => {
   try {
+    // 모든 코드를 가져오기 위해 충분히 큰 take 설정 (기본 제한 해제)
     const codes = await prisma.participationCode.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      take: 10000 // 최대 10,000개까지 가져오기
     })
     return c.json({ success: true, codes })
   } catch (error) {

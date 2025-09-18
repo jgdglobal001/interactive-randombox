@@ -90,7 +90,8 @@ export const onRequestGet = async (context: Context): Promise<Response> => {
     const sql = neon(context.env.DATABASE_URL);
     console.log('10. DB 연결 준비 완료, 코드 목록 조회...');
 
-    const codes = await sql`select id, code, "isUsed", "createdAt", "usedAt" from "ParticipationCode" order by "createdAt" desc`;
+    // 모든 코드를 가져오기 위해 충분히 큰 LIMIT 설정 (기본 50개 제한 해제)
+    const codes = await sql`select id, code, "isUsed", "createdAt", "usedAt" from "ParticipationCode" order by "createdAt" desc limit 10000`;
     
     console.log('11. 코드 조회 성공:', codes.length, '개');
 
