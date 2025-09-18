@@ -27,6 +27,7 @@ export default function AdminPage() {
   const [uploadFile, setUploadFile] = useState<File | null>(null)
   const [previewCodes, setPreviewCodes] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // 페이지 로드시 세션 확인
@@ -179,6 +180,11 @@ export default function AdminPage() {
     }
   }
 
+  // 검색 필터링된 코드 목록
+  const filteredCodes = codes.filter(code =>
+    code.code.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   useEffect(() => {
     fetchCodes()
   }, [])
@@ -299,30 +305,81 @@ export default function AdminPage() {
       )}
 
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4">참여 코드 목록</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">참여 코드 목록</h2>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              총 {codes.length}개 코드
+              {searchTerm && ` (검색 결과: ${filteredCodes.length}개)`}
+            </span>
+          </div>
+        </div>
+
+        {/* 검색 입력창 */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="코드 번호로 검색..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
         {loading ? (
           <p>로딩 중...</p>
         ) : (
-          <table className="w-full text-left">
-            <thead>
-              <tr>
-                <th className="p-2 border-b">코드</th>
-                <th className="p-2 border-b">사용 여부</th>
-                <th className="p-2 border-b">생성일</th>
-                <th className="p-2 border-b">사용일</th>
-              </tr>
-            </thead>
-            <tbody>
-              {codes.map((code) => (
-                <tr key={code.id}>
-                  <td className="p-2 border-b font-mono">{code.code}</td>
-                  <td className="p-2 border-b">{code.isUsed ? '✅ 사용됨' : '미사용'}</td>
-                  <td className="p-2 border-b">{new Date(code.createdAt).toLocaleString()}</td>
-                  <td className="p-2 border-b">{code.usedAt ? new Date(code.usedAt).toLocaleString() : '-'}</td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="p-3 border-b font-semibold text-gray-700">순번</th>
+                  <th className="p-3 border-b font-semibold text-gray-700">코드</th>
+                  <th className="p-3 border-b font-semibold text-gray-700">사용 여부</th>
+                  <th className="p-3 border-b font-semibold text-gray-700">생성일</th>
+                  <th className="p-3 border-b font-semibold text-gray-700">사용일</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredCodes.map((code, index) => (
+                  <tr key={code.id} className="hover:bg-gray-50">
+                    <td className="p-3 border-b text-gray-600 font-medium">
+                      {searchTerm ?
+                        codes.findIndex(c => c.id === code.id) + 1 :
+                        index + 1
+                      }
+                    </td>
+                    <td className="p-3 border-b font-mono text-blue-600 font-semibold">
+                      {code.code}
+                    </td>
+                    <td className="p-3 border-b">
+                      {code.isUsed ? (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          ✅ 사용됨
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          미사용
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-3 border-b text-gray-600">
+                      {new Date(code.createdAt).toLocaleString('ko-KR')}
+                    </td>
+                    <td className="p-3 border-b text-gray-600">
+                      {code.usedAt ? new Date(code.usedAt).toLocaleString('ko-KR') : '-'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {filteredCodes.length === 0 && searchTerm && (
+              <div className="text-center py-8 text-gray-500">
+                "{searchTerm}"에 대한 검색 결과가 없습니다.
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>
