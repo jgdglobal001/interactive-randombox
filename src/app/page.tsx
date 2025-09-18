@@ -289,77 +289,18 @@ export default function HomePage() {
       // 실제 모바일 감지 확인
       console.log('실제 모바일 감지됨:', browserWidth, 'px');
 
-      // 모바일에서 UI 요소 침범 방지를 위한 위치 조정
+      // 모바일에서도 원래 위치 비율 유지 (선물박스 중심 배치)
+      // 단지 크기만 축소하고 위치는 데스크톱과 동일한 균형 유지
 
-      // 제목 영역 보호 (상단 15%까지)
-      if (parseFloat(top) < 20) {
-        top = '22%'; // 제목 아래로 이동
-      }
+      // 원래 위치 그대로 사용 (브라우저/태블릿과 동일한 배치)
+      // top과 left는 원래 값 유지
 
-      // 입력창 영역 보호 (35-55% 영역)
-      const topValue = parseFloat(top);
-      const leftValue = parseFloat(left);
-
-      if (topValue >= 30 && topValue <= 60) {
-        // 입력창 근처 상품들은 좌우로 밀어내기
-        if (leftValue >= 30 && leftValue <= 70) {
-          // 중앙에 있는 상품들은 더 좌우로 밀어냄
-          if (leftValue < 50) {
-            left = '25%'; // 왼쪽으로 더 밀기
-          } else {
-            left = '75%'; // 오른쪽으로 더 밀기
-          }
-        }
-      }
-
-      // 하단 텍스트 영역 보호 (하단 텍스트 위치: 약 75-85%)
-      if (topValue > 65) {
-        // 하단 텍스트 바로 위로 이동 (충분한 간격 확보)
-        if (productId === 'megacoffee') {
-          top = '62%'; // 메가커피는 하단 텍스트 위쪽으로
-        } else if (productId === 'shinsegae-gift') {
-          top = '58%'; // 신세계는 더 위쪽으로 (층간 거리 유지)
-        } else {
-          top = '60%'; // 다른 상품들은 안전하게 배치
-        }
-      }
-
-      // 참여하기 버튼 영역 보호 (45-55%)
-      if (topValue >= 40 && topValue <= 60) {
-        // 버튼 근처 상품들은 버튼 위쪽으로 밀어내기
-        if (productId === 'megacoffee' || productId === 'shinsegae-gift') {
-          // 하단 상품들은 버튼 영역을 피해 더 아래쪽으로
-          if (productId === 'megacoffee') {
-            top = '62%';
-            left = '25%';
-          } else if (productId === 'shinsegae-gift') {
-            top = '58%';
-            left = '75%';
-          }
-        }
-      }
-
-      // 특정 상품들의 특수 조정 (하단 텍스트 우선)
-      if (productId === 'galaxy-folder') {
-        top = '12%'; // 더 위쪽으로
-        left = '48%'; // 중앙 유지
-      } else if (productId === 'canon-multifunction') {
-        // 캐논 위치 조정
-        top = '30%'; // 원래 위치 유지 또는 조정
-        left = '30%'; // 원래 위치 유지 또는 조정
-      } else if (productId === 'cuckoo-food') {
-        // 쿠쿠 위치 조정
-        top = '30%'; // 원래 위치 유지 또는 조정
-        left = '70%'; // 원래 위치 유지 또는 조정
-      } else if (productId === 'megacoffee') {
-        // 하단 텍스트 바로 위쪽에 배치
-        top = '75%';
-        left = '25%';
-      } else if (productId === 'shinsegae-gift') {
-        // 메가커피보다 위쪽에 배치 (층간 거리 유지)
-        top = '72%';
-        left = '75%';
-      }
+      console.log('모바일 위치 유지:', {
+        productId: productId,
+        originalTop: top,
+        originalLeft: left,
+        message: '원래 위치 비율 유지로 선물박스 중심 배치'
+      });
 
     } else if (actualIsTablet) {
       // 실제 태블릿에서만 실행되는지 확인
