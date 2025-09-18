@@ -143,9 +143,9 @@ export default function AdminPage() {
 
       setPreviewCodes(codes)
 
-      // 50개씩 그룹으로 자동 분할
+      // 40개씩 그룹으로 자동 분할 (네온 DB 49개 제한 고려)
       const groups: string[][] = []
-      const groupSize = 50
+      const groupSize = 40
 
       for (let i = 0; i < codes.length; i += groupSize) {
         groups.push(codes.slice(i, i + groupSize))
@@ -364,7 +364,7 @@ export default function AdminPage() {
           {/* 그룹별 업로드 UI */}
           {codeGroups.length > 0 && (
             <div className="mb-4">
-              <h4 className="font-medium mb-3">그룹별 업로드 (50개씩 자동 분할)</h4>
+              <h4 className="font-medium mb-3">그룹별 업로드 (40개씩 자동 분할)</h4>
               <div className="space-y-3">
                 {codeGroups.map((group, index) => (
                   <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded border">
