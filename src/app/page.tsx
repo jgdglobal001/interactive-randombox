@@ -34,7 +34,7 @@ const products = [
     name: '갤럭시 폴더7',
     quantity: '1명',
     imageUrl: '/images/GalaxyFolder7.png',
-    position: { top: '35%', left: '50%' }, // 모바일 중앙 상단
+    position: { top: '18%', left: '50%' }, // 모바일 중앙 상단
     containerWidth: 240, // 브라우저 벗어나지 않도록 크기 축소
     containerHeight: 280, // 브라우저 벗어나지 않도록 크기 축소
     imageSize: { width: 240, height: 240 }, // 실제 이미지 크기도 축소
@@ -47,7 +47,7 @@ const products = [
     name: '쿠쿠 음식물처리기',
     quantity: '2명',
     imageUrl: '/images/CuckooFood DisposalMachine.png',
-    position: { top: '35%', left: '75%' }, // 모바일 중앙 상단 우측
+    position: { top: '28%', left: '72%' }, // 모바일 중앙 상단 우측
     containerWidth: 220, // 크기 축소로 균형 맞춤
     containerHeight: 270, // 크기 축소로 균형 맞춤
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기도 축소
@@ -60,7 +60,7 @@ const products = [
     name: '캐논복합기',
     quantity: '3명',
     imageUrl: '/images/Canon-multifunction-device.png',
-    position: { top: '35%', left: '25%' }, // 모바일 중앙 상단 좌측
+    position: { top: '31%', left: '28%' }, // 모바일 중앙 상단 좌측
     containerWidth: 220, // 크기 축소로 균형 맞춤
     containerHeight: 270, // 크기 축소로 균형 맞춤
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기도 축소
@@ -73,7 +73,7 @@ const products = [
     name: '신세계상품권 5만원권',
     quantity: '100명',
     imageUrl: '/images/Shinsegae-gift-certificate.png',
-    position: { top: '65%', left: '65%' }, // 모바일 하단 우측
+    position: { top: '70%', left: '70%' }, // 모바일 하단 우측
     containerWidth: 220, // 상품 컨테이너의 기본 너비
     containerHeight: 290, // 상품 컨테이너의 기본 높이
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기
@@ -86,7 +86,7 @@ const products = [
     name: '메가커피 교환권',
     quantity: '100% 당첨',
     imageUrl: '/images/megacoffee.png',
-    position: { top: '65%', left: '35%' }, // 모바일 하단 좌측
+    position: { top: '80%', left: '35%' }, // 모바일 하단 좌측
     containerWidth: 200, // 상품 컨테이너의 기본 너비
     containerHeight: 270, // 상품 컨테이너의 기본 높이
     imageSize: { width: 200, height: 200 }, // 실제 이미지 크기
@@ -636,14 +636,15 @@ export default function HomePage() {
             className={`product-unit ${product.animation} visible ${enteringProductIndex === index ? 'entering' : ''}`}
             style={{
               position: 'absolute',
-              top: responsivePosition.top,
-              left: responsivePosition.left,
+              top: `calc(${responsivePosition.top} - ${finalContainerSize.height / 2}px)`,
+              left: `calc(${responsivePosition.left} - ${finalContainerSize.width / 2}px)`,
               width: `${finalContainerSize.width}px`,
               height: `${finalContainerSize.height}px`,
               display: 'flex',
               flexDirection: product.speechBubblePosition === 'top' ? 'column-reverse' : 'column',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'flex-start', // center대신 flex-start로 변경
+              gap: `${Math.max(product.imageSize.height * finalContainerSize.scaleFactor * 0.02, 3)}px`, // 간격을 gap으로 설정
               textAlign: 'center' // 텍스트 가운데 정렬
             }}
           >
@@ -675,8 +676,7 @@ export default function HomePage() {
             <div
               className={`speech-bubble ${product.textStyle}`}
               style={{
-                marginTop: product.speechBubblePosition === 'bottom' ? `${Math.max(product.imageSize.height * finalContainerSize.scaleFactor * 0.04, 5)}px` : '0', // 이미지 높이의 4% (최소 10px)
-                marginBottom: product.speechBubblePosition === 'top' ? `${Math.max(product.imageSize.height * finalContainerSize.scaleFactor * 0.04, 5)}px` : '0', // 이미지 높이의 4% (최소 10px)
+                // margin 제거 - gap으로 간격 조절
                 padding: `${Math.max(8 * finalContainerSize.scaleFactor, 6)}px ${Math.max(16 * finalContainerSize.scaleFactor, 12)}px`,
                 minWidth: product.id === 'megacoffee' ? 
                   `${Math.max(140 * finalContainerSize.scaleFactor, 100)}px !important` :
