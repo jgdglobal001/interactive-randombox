@@ -812,7 +812,7 @@ export default function HomePage() {
                 background: 'linear-gradient(135deg, #ffd700, #ffed4e, #fbbf24)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
-                color: 'transparent',
+                color: '#000080',
                 animation: 'pulse 2s infinite',
                 fontWeight: '900',
                 textShadow: '1px 1px 2px rgba(0, 0, 139, 0.9), 0 0 25px rgba(255, 215, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.4)',
@@ -842,44 +842,41 @@ export default function HomePage() {
           </div>
           <div className="flex flex-col items-center gap-8" style={{ transform: 'translateY(-5px)' }}>
             <div className="relative fade-in-place" style={{ opacity: 0 }}>
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="text-2xl animate-pulse">🎫</span>
-              </div>
               <input
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="쿠폰 번호를 붙여넣으세요"
-                className="w-full max-w-[350px] md:max-w-[320px] lg:max-w-[300px] pl-16 pr-6 py-20 text-center text-2xl font-semibold border-2 border-transparent rounded-full bg-gradient-to-r from-purple-100 via-pink-50 to-purple-100 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-purple-400 transition-all duration-500 shadow-2xl hover:shadow-purple-300/50 transform hover:scale-105 hover:shadow-3xl backdrop-blur-sm"
+                className="w-full max-w-[380px] md:max-w-[360px] lg:max-w-[340px] px-8 py-4 text-center text-2xl font-semibold border-2 border-transparent rounded-full bg-gradient-to-r from-purple-100 via-pink-50 to-purple-100 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-purple-400 transition-all duration-500 shadow-2xl hover:shadow-purple-300/50 transform hover:scale-105 hover:shadow-3xl backdrop-blur-sm"
                 style={{
-                  fontSize: 'clamp(1.1rem, 4.5vw, 1.6rem)', // 480px부터 더 빠르게 줄어듦
+                  fontSize: 'clamp(1.2rem, 5vw, 1.8rem)', // 더 큰 폰트
                   fontWeight: '700',
                   letterSpacing: '0.025em',
                   background: 'linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,250,252,0.8))',
                   boxShadow: '0 8px 32px rgba(147, 51, 234, 0.1), inset 0 1px 0 rgba(255,255,255,0.8)',
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(147, 51, 234, 0.2)'
+                  border: '1px solid rgba(147, 51, 234, 0.2)',
+                  minHeight: '25px' // 적절한 높이
                 }}
               />
-              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                <span className="text-sm text-gray-500 animate-bounce">✨</span>
-              </div>
             </div>
           </div>
 
           <div className="mt-40 fade-in-place" style={{ transform: 'translateY(-20px)', marginTop: '40px !important', opacity: 0 }}>
             <button
               onClick={handleParticipate}
-              className="px-16 py-8 text-white font-black text-2xl rounded-full transform hover:scale-110 transition-all duration-300 shadow-2xl animate-pulse scale-pulse"
+              className="px-20 py-3 text-white font-black text-2xl rounded-full transform hover:scale-110 transition-all duration-300 shadow-2xl animate-pulse scale-pulse"
               style={{
-                fontSize: 'clamp(1rem, 4vw, 1.5rem)', // 480px부터 더 빠르게 줄어듦
+                fontSize: 'clamp(1.2rem, 5vw, 1.8rem)', // 더 큰 폰트
                 fontWeight: '900',
                 textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
                 letterSpacing: '0.05em',
                 color: '#ffffff',
                 background: 'linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%) !important',
                 border: 'none !important',
-                boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3) !important'
+                boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3) !important',
+                minHeight: '25px', // 높이 줄임
+                minWidth: '200px' // 최소 너비 보장
               }}
             >
               🎉 참여하기 🎉
@@ -1063,13 +1060,14 @@ export default function HomePage() {
                 value={phoneNumber}
                 onChange={(e: any) => setPhoneNumber(e.target.value)}
                 placeholder="휴대폰 번호를 입력하세요"
-                className="px-4 py-3 md:py-4 rounded-full w-64 md:w-80 lg:w-96 text-center text-base md:text-lg font-semibold border-2 bg-gradient-to-r from-blue-50 to-indigo-50 focus:outline-none focus:ring-4 transition-all duration-300"
+                className="px-4 py-4 rounded-full w-64 md:w-80 lg:w-96 text-center text-base md:text-lg font-semibold border-2 bg-gradient-to-r from-blue-50 to-indigo-50 focus:outline-none focus:ring-4 transition-all duration-300"
                 style={{
                   fontFamily: '"Nunito", "Poppins", "Inter", sans-serif',
                   fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
                   fontWeight: '600',
                   color: '#1e40af',
-                  borderColor: '#FF00FF'
+                  borderColor: '#FF00FF',
+                  minHeight: '25px' // 높이 맞춤
                 }}
               />
             </div>
@@ -1077,7 +1075,7 @@ export default function HomePage() {
             <div style={{ marginTop: '20px' }}>
               <button
                 onClick={handleClaimPrize}
-                className="px-6 md:px-8 lg:px-10 py-2 md:py-3 lg:py-4 text-white font-black text-base md:text-lg lg:text-xl rounded-full transform hover:scale-110 transition-all duration-300 shadow-2xl animate-pulse scale-pulse"
+                className="px-6 md:px-8 lg:px-10 py-4 text-white font-black text-base md:text-lg lg:text-xl rounded-full transform hover:scale-110 transition-all duration-300 shadow-2xl animate-pulse scale-pulse"
                 style={{
                   fontSize: 'clamp(0.9rem, 4vw, 1.2rem)',
                   fontWeight: '900',
@@ -1086,7 +1084,8 @@ export default function HomePage() {
                   color: '#ffffff',
                   backgroundColor: '#2563eb',
                   border: 'none',
-                  boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)'
+                  boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)',
+                  minHeight: '25px' // 높이 맞춤
                 }}
               >
                 🎉 당첨상품 받기! 🎉
