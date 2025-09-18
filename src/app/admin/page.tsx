@@ -376,7 +376,7 @@ export default function AdminPage() {
 
             {filteredCodes.length === 0 && searchTerm && (
               <div className="text-center py-8 text-gray-500">
-                "{searchTerm}"에 대한 검색 결과가 없습니다.
+                &ldquo;{searchTerm}&rdquo;에 대한 검색 결과가 없습니다.
               </div>
             )}
           </div>
