@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 // API 응답 타입 정의
 interface ApiResponse {
@@ -23,6 +23,11 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [authenticated, setAuthenticated] = useState(false)
   const [password, setPassword] = useState('')
+  const [activeTab, setActiveTab] = useState<'individual' | 'bulk'>('individual')
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [previewCodes, setPreviewCodes] = useState<string[]>([])
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // 페이지 로드시 세션 확인
   useEffect(() => {
@@ -94,7 +99,7 @@ export default function AdminPage() {
     try {
       const res = await fetch('/api/admin/codes', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer admin2024!`
         },
@@ -108,6 +113,69 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Failed to generate code:', error)
       alert('코드 생성에 실패했습니다.')
+    }
+  }
+
+  // 파일 선택 처리
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file && file.type === 'text/plain') {
+      setUploadFile(file)
+      previewFile(file)
+    } else {
+      alert('텍스트 파일(.txt)만 업로드 가능합니다.')
+    }
+  }
+
+  // 파일 미리보기
+  const previewFile = async (file: File) => {
+    try {
+      const text = await file.text()
+      const codes = text
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+      setPreviewCodes(codes)
+    } catch (error) {
+      console.error('파일 읽기 오류:', error)
+      alert('파일을 읽는 중 오류가 발생했습니다.')
+    }
+  }
+
+  // 일괄 업로드
+  const handleBulkUpload = async () => {
+    if (!uploadFile || previewCodes.length === 0) {
+      alert('업로드할 파일을 선택해주세요.')
+      return
+    }
+
+    setUploading(true)
+    try {
+      const res = await fetch('/api/admin/codes/bulk', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer admin2024!`
+        },
+        body: JSON.stringify({ codes: previewCodes }),
+      })
+      const data: ApiResponse = await res.json()
+      if (data.success) {
+        alert(`${previewCodes.length}개의 코드가 성공적으로 업로드되었습니다.`)
+        setUploadFile(null)
+        setPreviewCodes([])
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+        fetchCodes() // 목록 새로고침
+      } else {
+        alert(`업로드 실패: ${data.error}`)
+      }
+    } catch (error) {
+      console.error('일괄 업로드 오류:', error)
+      alert('일괄 업로드 중 오류가 발생했습니다.')
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -151,15 +219,84 @@ export default function AdminPage() {
           로그아웃
         </button>
       </div>
-      
+
+      {/* 탭 메뉴 */}
       <div className="mb-6">
-        <button
-          onClick={generateCode}
-          className="px-6 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600"
-        >
-          참여 코드 1개 생성
-        </button>
+        <div className="flex border-b border-gray-200">
+          <button
+            onClick={() => setActiveTab('individual')}
+            className={`px-6 py-3 font-medium ${
+              activeTab === 'individual'
+                ? 'border-b-2 border-blue-500 text-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            개별 생성
+          </button>
+          <button
+            onClick={() => setActiveTab('bulk')}
+            className={`px-6 py-3 font-medium ${
+              activeTab === 'bulk'
+                ? 'border-b-2 border-blue-500 text-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            파일 업로드
+          </button>
+        </div>
       </div>
+
+      {/* 개별 생성 탭 */}
+      {activeTab === 'individual' && (
+        <div className="mb-6">
+          <button
+            onClick={generateCode}
+            className="px-6 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600"
+          >
+            참여 코드 1개 생성
+          </button>
+        </div>
+      )}
+
+      {/* 파일 업로드 탭 */}
+      {activeTab === 'bulk' && (
+        <div className="mb-6 p-6 border border-gray-200 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4">텍스트 파일 업로드</h3>
+          <p className="text-gray-600 mb-4">
+            .txt 파일에 한 줄에 하나씩 참여코드를 입력해주세요.
+          </p>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".txt"
+            onChange={handleFileSelect}
+            className="mb-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          />
+
+          {previewCodes.length > 0 && (
+            <div className="mb-4">
+              <h4 className="font-medium mb-2">미리보기 ({previewCodes.length}개 코드)</h4>
+              <div className="max-h-40 overflow-y-auto bg-gray-50 p-3 rounded border text-sm">
+                {previewCodes.slice(0, 10).map((code, index) => (
+                  <div key={index} className="py-1">{code}</div>
+                ))}
+                {previewCodes.length > 10 && (
+                  <div className="py-1 text-gray-500">... 외 {previewCodes.length - 10}개</div>
+                )}
+              </div>
+            </div>
+          )}
+
+          <button
+            onClick={handleBulkUpload}
+            disabled={uploading || previewCodes.length === 0}
+            className="px-6 py-2 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {uploading ? '업로드 중...' : `${previewCodes.length}개 코드 업로드`}
+          </button>
+        </div>
+      )}
 
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4">참여 코드 목록</h2>

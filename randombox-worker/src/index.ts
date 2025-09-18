@@ -255,6 +255,72 @@ admin.post('/codes', async (c) => {
   }
 })
 
+// 일괄 참여 코드 업로드 API
+admin.post('/codes/bulk', async (c) => {
+  try {
+    const { codes } = await c.req.json<{ codes: string[] }>()
+
+    if (!codes || !Array.isArray(codes) || codes.length === 0) {
+      return c.json({ error: '업로드할 코드가 없습니다.' }, 400)
+    }
+
+    // 코드 수 제한 (최대 1000개)
+    if (codes.length > 1000) {
+      return c.json({ error: '한 번에 최대 1000개까지만 업로드 가능합니다.' }, 400)
+    }
+
+    // 코드 유효성 검사 및 정리
+    const cleanCodes = codes
+      .map(code => code.trim())
+      .filter(code => code.length > 0)
+      .filter((code, index, arr) => arr.indexOf(code) === index) // 중복 제거
+
+    if (cleanCodes.length === 0) {
+      return c.json({ error: '유효한 코드가 없습니다.' }, 400)
+    }
+
+    // 기존 코드와 중복 체크
+    const existingCodes = await prisma.participationCode.findMany({
+      where: { code: { in: cleanCodes } },
+      select: { code: true }
+    })
+
+    const existingCodeSet = new Set(existingCodes.map(c => c.code))
+    const duplicates = cleanCodes.filter(code => existingCodeSet.has(code))
+    const newCodes = cleanCodes.filter(code => !existingCodeSet.has(code))
+
+    // 신규 코드들을 DB에 삽입
+    const createdCodes = []
+    for (const code of newCodes) {
+      try {
+        const newCode = await prisma.participationCode.create({
+          data: { code }
+        })
+        createdCodes.push(newCode)
+      } catch (error) {
+        console.error(`코드 ${code} 삽입 실패:`, error)
+      }
+    }
+
+    // 결과 메시지 생성
+    let message = `${createdCodes.length}개의 코드가 성공적으로 업로드되었습니다.`
+    if (duplicates.length > 0) {
+      message += ` (${duplicates.length}개 중복 코드 제외)`
+    }
+
+    return c.json({
+      success: true,
+      codes: createdCodes,
+      message,
+      duplicates,
+      created: createdCodes.length
+    })
+  } catch (error) {
+    console.error('일괄 코드 업로드 실패:', error)
+    return c.json({ error: '일괄 업로드에 실패했습니다.' }, 500)
+  }
+})
+
 // 참여 코드 목록 조회 API
 admin.get('/codes', async (c) => {
   try {
