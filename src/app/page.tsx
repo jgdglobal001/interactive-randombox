@@ -229,101 +229,18 @@ export default function HomePage() {
     };
   }, []);
 
-  // 상품 위치 계산 useEffect (Hydration Error 방지)
+  // 상품 위치 설정 (원래 위치 그대로 사용)
   useEffect(() => {
     if (isClient) {
       const newPositions: any = {};
       products.forEach((product) => {
-        const containerSize = getResponsiveContainerSize(product.containerWidth, product.containerHeight, product.id);
-        const finalContainerSize = {
-          ...containerSize,
-          isMobile: typeof window !== 'undefined' ? window.innerWidth < 768 : false,
-          isTablet: typeof window !== 'undefined' ? window.innerWidth >= 768 && window.innerWidth < 1024 : false
-        };
-        newPositions[product.id] = getSmartProductPosition(product.position, product.id, finalContainerSize, products);
+        newPositions[product.id] = product.position; // 원래 위치 그대로 사용
       });
       setProductPositions(newPositions);
     }
-  }, [isClient, containerSize]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isClient]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 상품 크기를 컨테이너 크기에 따라 동적으로 계산하는 함수
-  const getResponsiveProductSize = (baseWidth: number, baseHeight: number) => { // eslint-disable-line @typescript-eslint/no-unused-vars
-    // 기본 컨테이너 크기 (데스크톱 기준) - 1000px로 조정
-    const baseContainerWidth = 1000; // 1000px로 조정
-    const baseContainerHeight = 1000;
 
-    // 현재 컨테이너 크기 (초기 렌더링 시 기본값 사용)
-    const currentWidth = containerSize.width || baseContainerWidth;
-    const currentHeight = containerSize.height || baseContainerHeight;
-
-    // 컨테이너 크기에 따라 상품 크기 조정 (비율 유지)
-    const scaleFactor = Math.min(currentWidth / baseContainerWidth, currentHeight / baseContainerHeight);
-
-    return {
-      width: Math.max(baseWidth * scaleFactor, 120), // 1000px에 맞춰 최소 크기 조정
-      height: Math.max(baseHeight * scaleFactor, 120),
-      scaleFactor
-    };
-  };
-
-  // 상품의 반응형 위치 조정 함수 - 화면 밖으로 나가지 않도록 제한
-  const getSmartProductPosition = (originalPosition: { top: string; left: string }, productId: string, containerSize: { width: number; height: number; isMobile: boolean; isTablet: boolean }, allProducts: any[]) => { // eslint-disable-line @typescript-eslint/no-unused-vars
-    // 원래 위치에서 시작
-    let topValue = parseFloat(originalPosition.top);
-    let leftValue = parseFloat(originalPosition.left);
-
-    // 실제 브라우저 창 너비로 디바이스 타입 재판단
-    const browserWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
-    const actualIsMobile = browserWidth < 768;
-    const actualIsTablet = browserWidth >= 768 && browserWidth < 1024;
-
-    // 화면 밖으로 나가지 않도록 강제 제한 (스크롤 방지)
-    const SAFE_MARGIN = 5; // 화면 가장자리에서 5% 여백
-
-    // 좌우 제한: 5% ~ 95% 범위 내
-    leftValue = Math.max(SAFE_MARGIN, Math.min(leftValue, 100 - SAFE_MARGIN));
-
-    // 상하 제한: 모바일에서는 더 아래로, 다른 디바이스는 기존대로
-    const minTop = actualIsMobile ? 30 : 10;
-    topValue = Math.max(minTop, Math.min(topValue, 90));
-
-    // 모바일에서 갤럭시 폴더만 위로 올리기
-    if (actualIsMobile && productId === 'galaxy-folder') {
-      topValue = topValue - 20; // 20% 위로 올리기
-      topValue = Math.max(15, topValue); // 최소 15% 이상 유지
-    }
-
-    // 모바일에서 메가커피와 신세계상품권 아래로 내리기
-    if (actualIsMobile && (productId === 'megacoffee' || productId === 'shinsegae-gift')) {
-      topValue = topValue + 10; // 15% 아래로 내리기
-      topValue = Math.min(85, topValue); // 최대 85% 이하 유지
-    }
-
-    // 태블릿에서만 약간의 조정 (기존 로직 유지하되 안전 범위 내에서)
-    if (actualIsTablet) {
-      if (productId === 'megacoffee') {
-        leftValue = Math.max(SAFE_MARGIN, 15);
-      } else if (productId === 'shinsegae-gift') {
-        leftValue = Math.min(85, 100 - SAFE_MARGIN);
-      }
-    }
-
-    const finalPosition = {
-      top: `${topValue}%`,
-      left: `${leftValue}%`
-    };
-
-    console.log('안전 배치 시스템:', {
-      productId: productId,
-      browserWidth: browserWidth,
-      deviceType: actualIsMobile ? 'mobile' : actualIsTablet ? 'tablet' : 'desktop',
-      originalPosition: originalPosition,
-      finalPosition: finalPosition,
-      message: '화면 밖으로 나가지 않도록 제한 완료'
-    });
-
-    return finalPosition;
-  };
 
   // 상품 컨테이너의 반응형 크기 계산 (상품 단위 컨테이너용)
   const getResponsiveContainerSize = (containerWidth: number, containerHeight: number, productId: string) => {
