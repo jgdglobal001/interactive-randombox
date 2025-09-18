@@ -126,28 +126,23 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
             return [cuid, code];
           });
 
-          // 네온 드라이버의 배치 INSERT 방식
-          const insertPromises = valuesList.map(async ([id, code]) => {
-            try {
-              const rows = await sql`
-                insert into "ParticipationCode" (id, code)
-                values (${id}, ${code})
-                returning id, code, "isUsed", "createdAt", "usedAt"
-              `;
-              return rows[0];
-            } catch (error) {
-              console.error(`코드 ${code} 삽입 실패:`, error);
-              return null;
-            }
-          });
+          // 진짜 배치 INSERT (1개 subrequest로 여러 레코드 삽입)
+          try {
+            // VALUES 절 구성
+            const valuesClause = valuesList.map(() => '(?, ?)').join(', ');
+            const params = valuesList.flat();
 
-          // 배치 실행 (병렬 처리하되 제한된 수로)
-          const batchResults = await Promise.allSettled(insertPromises);
+            // 단일 배치 INSERT 쿼리 실행
+            const query = `
+              INSERT INTO "ParticipationCode" (id, code)
+              VALUES ${valuesClause}
+              RETURNING id, code, "isUsed", "createdAt", "usedAt"
+            `;
 
-          // 성공한 결과만 처리
-          for (const result of batchResults) {
-            if (result.status === 'fulfilled' && result.value) {
-              const row = result.value;
+            const rows = await sql(query, params);
+
+            // 결과 처리
+            for (const row of rows) {
               createdCodes.push({
                 id: row.id,
                 code: row.code,
@@ -155,6 +150,31 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
                 createdAt: (row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt)).toISOString(),
                 usedAt: row.usedAt ? (row.usedAt instanceof Date ? row.usedAt : new Date(row.usedAt)).toISOString() : null,
               });
+            }
+
+            console.log(`배치 INSERT 성공: ${rows.length}개 코드 삽입`);
+          } catch (batchError) {
+            console.error('배치 INSERT 실패, 개별 INSERT로 폴백:', batchError);
+
+            // 폴백: 개별 INSERT (에러 시에만)
+            for (const [id, code] of valuesList) {
+              try {
+                const rows = await sql`
+                  insert into "ParticipationCode" (id, code)
+                  values (${id}, ${code})
+                  returning id, code, "isUsed", "createdAt", "usedAt"
+                `;
+                const row = rows[0];
+                createdCodes.push({
+                  id: row.id,
+                  code: row.code,
+                  isUsed: row.isUsed,
+                  createdAt: (row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt)).toISOString(),
+                  usedAt: row.usedAt ? (row.usedAt instanceof Date ? row.usedAt : new Date(row.usedAt)).toISOString() : null,
+                });
+              } catch (individualError) {
+                console.error(`코드 ${code} 개별 삽입 실패:`, individualError);
+              }
             }
           }
 
