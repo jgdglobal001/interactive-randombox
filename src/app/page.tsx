@@ -34,7 +34,11 @@ const products = [
     name: '갤럭시 폴더7',
     quantity: '1명',
     imageUrl: '/images/GalaxyFolder7.png',
-    position: { top: '18%', left: '50%' }, // 모바일 중앙 상단
+    position: {
+      desktop: { top: '20%', left: '50%' }, // 데스크톱용
+      tablet: { top: '15%', left: '50%' },  // 태블릿용
+      mobile: { top: '12%', left: '50%' }   // 모바일용 (기존값 유지)
+    },
     containerWidth: 240, // 브라우저 벗어나지 않도록 크기 축소
     containerHeight: 280, // 브라우저 벗어나지 않도록 크기 축소
     imageSize: { width: 240, height: 240 }, // 실제 이미지 크기도 축소
@@ -47,7 +51,11 @@ const products = [
     name: '쿠쿠 음식물처리기',
     quantity: '2명',
     imageUrl: '/images/CuckooFood DisposalMachine.png',
-    position: { top: '28%', left: '72%' }, // 모바일 중앙 상단 우측
+    position: {
+      desktop: { top: '28%', left: '72%' }, // 데스크톱용
+      tablet: { top: '16%', left: '72%' },  // 태블릿용
+      mobile: { top: '22%', left: '72%' }   // 모바일용 (기존값 유지)
+    },
     containerWidth: 220, // 크기 축소로 균형 맞춤
     containerHeight: 270, // 크기 축소로 균형 맞춤
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기도 축소
@@ -60,7 +68,11 @@ const products = [
     name: '캐논복합기',
     quantity: '3명',
     imageUrl: '/images/Canon-multifunction-device.png',
-    position: { top: '31%', left: '28%' }, // 모바일 중앙 상단 좌측
+    position: {
+      desktop: { top: '31%', left: '28%' }, // 데스크톱용
+      tablet: { top: '18%', left: '25%' },  // 태블릿용
+      mobile: { top: '26.5%', left: '28%' }   // 모바일용 (기존값 유지)
+    },
     containerWidth: 220, // 크기 축소로 균형 맞춤
     containerHeight: 270, // 크기 축소로 균형 맞춤
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기도 축소
@@ -73,7 +85,11 @@ const products = [
     name: '신세계상품권 5만원권',
     quantity: '100명',
     imageUrl: '/images/Shinsegae-gift-certificate.png',
-    position: { top: '70%', left: '70%' }, // 모바일 하단 우측
+    position: {
+      desktop: { top: '70%', left: '70%' }, // 데스크톱용
+      tablet: { top: '65%', left: '80%' },  // 태블릿용
+      mobile: { top: '74%', left: '70%' }   // 모바일용 (기존값 유지)
+    },
     containerWidth: 220, // 상품 컨테이너의 기본 너비
     containerHeight: 290, // 상품 컨테이너의 기본 높이
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기
@@ -86,7 +102,11 @@ const products = [
     name: '메가커피 교환권',
     quantity: '100% 당첨',
     imageUrl: '/images/megacoffee.png',
-    position: { top: '80%', left: '35%' }, // 모바일 하단 좌측
+    position: {
+      desktop: { top: '75%', left: '32%' }, // 데스크톱용
+      tablet: { top: '75%', left: '20%' },  // 태블릿용
+      mobile: { top: '86%', left: '35%' }   // 모바일용 (기존값 유지)
+    },
     containerWidth: 200, // 상품 컨테이너의 기본 너비
     containerHeight: 270, // 상품 컨테이너의 기본 높이
     imageSize: { width: 200, height: 200 }, // 실제 이미지 크기
@@ -208,6 +228,28 @@ export default function HomePage() {
     if (container) {
       const rect = container.getBoundingClientRect();
       setContainerSize({ width: rect.width, height: rect.height });
+      
+      // 컨테이너 크기 변경 시 상품 위치도 다시 계산
+      const newPositions: any = {};
+      products.forEach((product) => {
+        // 실제 브라우저 너비로 디바이스 감지
+        const browserWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+        const isMobile = browserWidth < 768;
+        const isTablet = browserWidth >= 768 && browserWidth < 1024;
+        
+        // 화면 크기에 따라 위치 선택
+        let selectedPosition;
+        if (isMobile) {
+          selectedPosition = product.position.mobile;
+        } else if (isTablet) {
+          selectedPosition = product.position.tablet;
+        } else {
+          selectedPosition = product.position.desktop;
+        }
+        
+        newPositions[product.id] = selectedPosition;
+      });
+      setProductPositions(newPositions);
     }
   };
 
@@ -229,12 +271,27 @@ export default function HomePage() {
     };
   }, []);
 
-  // 상품 위치 설정 (원래 위치 그대로 사용)
+  // 상품 위치 설정 (화면 크기별 위치 선택)
   useEffect(() => {
     if (isClient) {
       const newPositions: any = {};
       products.forEach((product) => {
-        newPositions[product.id] = product.position; // 원래 위치 그대로 사용
+        // 실제 브라우저 너비로 디바이스 감지
+        const browserWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+        const isMobile = browserWidth < 768;
+        const isTablet = browserWidth >= 768 && browserWidth < 1024;
+        
+        // 화면 크기에 따라 위치 선택
+        let selectedPosition;
+        if (isMobile) {
+          selectedPosition = product.position.mobile;
+        } else if (isTablet) {
+          selectedPosition = product.position.tablet;
+        } else {
+          selectedPosition = product.position.desktop;
+        }
+        
+        newPositions[product.id] = selectedPosition;
       });
       setProductPositions(newPositions);
     }
@@ -265,7 +322,7 @@ export default function HomePage() {
 
     if (isMobile) {
       // 모바일에서는 텍스트 보호를 위해 더 많이 축소
-      scaleFactor *= 0.6; // 더 많이 축소
+      scaleFactor *= 0.5; // 50%로 변경 (기존 0.6에서)
 
       // 특정 상품들 개별 조정
       if (['galaxy-folder', 'canon-multifunction', 'cuckoo-food'].includes(productId)) {
