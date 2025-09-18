@@ -640,7 +640,6 @@ export default function HomePage() {
               left: responsivePosition.left,
               width: `${finalContainerSize.width}px`,
               height: `${finalContainerSize.height}px`,
-              transform: 'translate(-50%, -50%)',
               display: 'flex',
               flexDirection: product.speechBubblePosition === 'top' ? 'column-reverse' : 'column',
               alignItems: 'center',
