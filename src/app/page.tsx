@@ -34,7 +34,7 @@ const products = [
     name: '갤럭시 폴더7',
     quantity: '1명',
     imageUrl: '/images/GalaxyFolder7.png',
-    position: { top: '18%', left: '50%' }, // 1.5층: 캐논보다 위쪽 중앙에 배치
+    position: { top: '35%', left: '50%' }, // 모바일 중앙 상단
     containerWidth: 240, // 브라우저 벗어나지 않도록 크기 축소
     containerHeight: 280, // 브라우저 벗어나지 않도록 크기 축소
     imageSize: { width: 240, height: 240 }, // 실제 이미지 크기도 축소
@@ -47,7 +47,7 @@ const products = [
     name: '쿠쿠 음식물처리기',
     quantity: '2명',
     imageUrl: '/images/CuckooFood DisposalMachine.png',
-    position: { top: '22%', left: '70%' }, // 1.25층: 캐논보다 위, 갤럭시보다 아래 우측에 배치
+    position: { top: '35%', left: '75%' }, // 모바일 중앙 상단 우측
     containerWidth: 220, // 크기 축소로 균형 맞춤
     containerHeight: 270, // 크기 축소로 균형 맞춤
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기도 축소
@@ -60,7 +60,7 @@ const products = [
     name: '캐논복합기',
     quantity: '3명',
     imageUrl: '/images/Canon-multifunction-device.png',
-    position: { top: '25%', left: '30%' }, // 1층: 제목 아래 좌측에 배치
+    position: { top: '35%', left: '25%' }, // 모바일 중앙 상단 좌측
     containerWidth: 220, // 크기 축소로 균형 맞춤
     containerHeight: 270, // 크기 축소로 균형 맞춤
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기도 축소
@@ -73,7 +73,7 @@ const products = [
     name: '신세계상품권 5만원권',
     quantity: '100명',
     imageUrl: '/images/Shinsegae-gift-certificate.png',
-    position: { top: '60%', left: '68%' }, // UI 요소들과 가깝게 중앙으로 모이도록 배치
+    position: { top: '65%', left: '65%' }, // 모바일 하단 우측
     containerWidth: 220, // 상품 컨테이너의 기본 너비
     containerHeight: 290, // 상품 컨테이너의 기본 높이
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기
@@ -86,7 +86,7 @@ const products = [
     name: '메가커피 교환권',
     quantity: '100% 당첨',
     imageUrl: '/images/megacoffee.png',
-    position: { top: '65%', left: '35%' }, // UI 요소들과 가깝게 중앙으로 모이도록 배치
+    position: { top: '65%', left: '35%' }, // 모바일 하단 좌측
     containerWidth: 200, // 상품 컨테이너의 기본 너비
     containerHeight: 270, // 상품 컨테이너의 기본 높이
     imageSize: { width: 200, height: 200 }, // 실제 이미지 크기
