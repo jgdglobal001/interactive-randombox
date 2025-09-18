@@ -319,11 +319,13 @@ html, body {
     justify-content: center;
   }
 
-  /* Lottie 컨테이너 반응형 스타일 - JavaScript에서 동적 제어 */
+  /* Lottie 컨테이너 반응형 스타일 - 1000px로 조정 */
   .lottie-container {
     position: relative;
     width: 100%;
     height: 100%;
+    max-width: 1000px;
+    max-height: 1000px;
     margin: 0 auto;
   }
 

@@ -642,22 +642,13 @@ export default function HomePage() {
 
       {/* 기존 선물상자 Lottie 애니메이션 */}
       <div className="absolute inset-0 flex items-center justify-center lottie-container z-10" style={{ transform: 'translateY(80px)' }}>
-        <div className="w-full h-full" style={{
-          maxWidth: '1000px',
-          maxHeight: '1000px'
-        }}>
+        <div className="w-full h-full max-w-[1000px] max-h-[1000px]">
           <Lottie
             animationData={introLottie}
             loop={false}
             autoplay={false}
             onComplete={handleIntroComplete}
-            style={{ 
-              height: '100%', 
-              width: '100%',
-              ...(isClient && typeof window !== 'undefined' && window.innerWidth < 768 && {
-                transform: 'scale(1.5)' // Lottie 애니메이션만 1.5배!
-              })
-            }}
+            style={{ height: '100%', width: '100%' }}
             lottieRef={lottieRef}
           />
         </div>
