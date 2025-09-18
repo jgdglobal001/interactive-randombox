@@ -44,8 +44,8 @@ async function testCouponAPI(userId) {
     goods_code: 'G00001621744',
     mms_msg: '테스트 메시지',
     mms_title: '테스트',
-    callback_no: '01012345678',
-    phone_no: '01012345678',
+    callback_no: '15886474', // 회사 대표번호 (발신번호)
+    phone_no: '01012345678', // 테스트용 수신번호
     tr_id: `test_${Date.now()}`,
     user_id: userId,
     gubun: 'N'

@@ -136,8 +136,8 @@ async function callGiftShowAPI(phoneNumber: string, prizeCode: string) {
       goods_code: megaCoffeeGoodsCode, // 메가커피 아메리카노 상품코드
       mms_msg: '메가커피 교환권이 발송되었습니다.', // MMS메시지
       mms_title: '메가커피', // MMS제목 (10자 이하)
-      callback_no: phoneNumber.replace(/-/g, ''), // 발신번호
-      phone_no: phoneNumber.replace(/-/g, ''), // 수신번호
+      callback_no: '15886474', // 회사 대표번호 (발신번호)
+      phone_no: phoneNumber.replace(/-/g, ''), // 참여자 번호 (수신번호)
       tr_id: trId, // 거래아이디 (Unique한 ID)
       user_id: 'jgdglobal@kakao.com', // 기프트쇼 비즈 로그인 아이디
       gubun: 'N' // MMS발송 구분자 (N: MMS)
