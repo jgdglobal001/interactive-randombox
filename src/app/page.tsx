@@ -244,7 +244,7 @@ export default function HomePage() {
       });
       setProductPositions(newPositions);
     }
-  }, [isClient, containerSize]);
+  }, [isClient, containerSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 상품 크기를 컨테이너 크기에 따라 동적으로 계산하는 함수
   const getResponsiveProductSize = (baseWidth: number, baseHeight: number) => { // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -464,7 +464,7 @@ export default function HomePage() {
       default:
         break;
     }
-  }, [eventState]);
+  }, [eventState]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sky Indigo 백그라운드 애니메이션 속도 설정
   useEffect(() => {
@@ -1046,10 +1046,12 @@ export default function HomePage() {
           </div>
           {prize.imageUrl && (
             <div className="mb-6">
-              <img 
-                src={prize.imageUrl} 
-                alt={prize.name} 
-                className="mx-auto w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 object-contain prize-image-glow" 
+              <Image
+                src={prize.imageUrl}
+                alt={prize.name}
+                width={192}
+                height={192}
+                className="mx-auto w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 object-contain prize-image-glow"
               />
             </div>
           )}

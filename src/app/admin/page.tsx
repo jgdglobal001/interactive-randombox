@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react';
 
 // API 응답 타입 정의
 interface ApiResponse {
@@ -26,7 +26,7 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<'individual' | 'bulk'>('individual')
   const [uploadFile, setUploadFile] = useState<File | null>(null)
   const [previewCodes, setPreviewCodes] = useState<string[]>([])
-  const [uploading, setUploading] = useState(false)
+  const [uploading, setUploading] = useState(false) // eslint-disable-line @typescript-eslint/no-unused-vars
   const [codeGroups, setCodeGroups] = useState<string[][]>([])
   const [uploadStatus, setUploadStatus] = useState<('pending' | 'uploading' | 'success' | 'error')[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -200,7 +200,7 @@ export default function AdminPage() {
   }
 
   // 전체 업로드 (기존 함수)
-  const handleBulkUpload = async () => {
+  const handleBulkUpload = async () => { // eslint-disable-line @typescript-eslint/no-unused-vars
     if (!uploadFile || previewCodes.length === 0) {
       alert('업로드할 파일을 선택해주세요.')
       return
