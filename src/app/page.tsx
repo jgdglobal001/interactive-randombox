@@ -34,11 +34,11 @@ const products = [
     name: '갤럭시 폴더7',
     quantity: '1명',
     imageUrl: '/images/GalaxyFolder7.png',
-    position: { top: '25%', left: '50%' }, // 선물박스 중심 기준으로 상단 중앙
+    position: { top: '18%', left: '50%' }, // 1.5층: 캐논보다 위쪽 중앙에 배치
     containerWidth: 240, // 브라우저 벗어나지 않도록 크기 축소
     containerHeight: 280, // 브라우저 벗어나지 않도록 크기 축소
     imageSize: { width: 240, height: 240 }, // 실제 이미지 크기도 축소
-    speechBubblePosition: 'bottom', // 말풍선 위치: bottom/top
+    speechBubblePosition: 'top', // 말풍선 위치: 상단으로 변경
     animation: 'floating-product-1',
     textStyle: 'galaxy-text'
   },
@@ -47,11 +47,11 @@ const products = [
     name: '쿠쿠 음식물처리기',
     quantity: '2명',
     imageUrl: '/images/CuckooFood DisposalMachine.png',
-    position: { top: '20%', left: '75%' }, // 선물박스 중심 기준으로 우상단
+    position: { top: '22%', left: '70%' }, // 1.25층: 캐논보다 위, 갤럭시보다 아래 우측에 배치
     containerWidth: 220, // 크기 축소로 균형 맞춤
     containerHeight: 270, // 크기 축소로 균형 맞춤
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기도 축소
-    speechBubblePosition: 'top', // 말풍선 위치: 위쪽
+    speechBubblePosition: 'bottom', // 말풍선 위치: 원래대로 아래쪽
     animation: 'floating-product-2',
     textStyle: 'cuckoo-text'
   },
@@ -60,11 +60,11 @@ const products = [
     name: '캐논복합기',
     quantity: '3명',
     imageUrl: '/images/Canon-multifunction-device.png',
-    position: { top: '35%', left: '25%' }, // 선물박스 중심 기준으로 좌측
+    position: { top: '25%', left: '30%' }, // 1층: 제목 아래 좌측에 배치
     containerWidth: 220, // 크기 축소로 균형 맞춤
     containerHeight: 270, // 크기 축소로 균형 맞춤
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기도 축소
-    speechBubblePosition: 'top', // 박스 방향 고려하여 말풍선 위쪽
+    speechBubblePosition: 'bottom', // 말풍선 위치: 원래대로 아래쪽
     animation: 'floating-product-3',
     textStyle: 'canon-text'
   },
@@ -73,7 +73,7 @@ const products = [
     name: '신세계상품권 5만원권',
     quantity: '100명',
     imageUrl: '/images/Shinsegae-gift-certificate.png',
-    position: { top: '70%', left: '70%' }, // 선물박스 중심 기준으로 우하단
+    position: { top: '60%', left: '68%' }, // UI 요소들과 가깝게 중앙으로 모이도록 배치
     containerWidth: 220, // 상품 컨테이너의 기본 너비
     containerHeight: 290, // 상품 컨테이너의 기본 높이
     imageSize: { width: 220, height: 220 }, // 실제 이미지 크기
@@ -86,7 +86,7 @@ const products = [
     name: '메가커피 교환권',
     quantity: '100% 당첨',
     imageUrl: '/images/megacoffee.png',
-    position: { top: '75%', left: '30%' }, // 선물박스 중심 기준으로 좌하단
+    position: { top: '65%', left: '35%' }, // UI 요소들과 가깝게 중앙으로 모이도록 배치
     containerWidth: 200, // 상품 컨테이너의 기본 너비
     containerHeight: 270, // 상품 컨테이너의 기본 높이
     imageSize: { width: 200, height: 200 }, // 실제 이미지 크기
@@ -240,7 +240,7 @@ export default function HomePage() {
           isMobile: typeof window !== 'undefined' ? window.innerWidth < 768 : false,
           isTablet: typeof window !== 'undefined' ? window.innerWidth >= 768 && window.innerWidth < 1024 : false
         };
-        newPositions[product.id] = getResponsiveProductPosition(product.position, product.id, finalContainerSize);
+        newPositions[product.id] = getSmartProductPosition(product.position, product.id, finalContainerSize, products);
       });
       setProductPositions(newPositions);
     }
@@ -267,65 +267,149 @@ export default function HomePage() {
   };
 
   // 상품의 반응형 위치 조정 함수 (UI 요소 침범 방지)
-  const getResponsiveProductPosition = (originalPosition: { top: string; left: string }, productId: string, containerSize: { width: number; height: number; isMobile: boolean; isTablet: boolean }) => {
+  // 스마트 배치 시스템: 겹침 방지 + 텍스트 영역 보호 + 최소 크기 보장
+  const getSmartProductPosition = (originalPosition: { top: string; left: string }, productId: string, containerSize: { width: number; height: number; isMobile: boolean; isTablet: boolean }, allProducts: any[]) => {
     let top = originalPosition.top;
     let left = originalPosition.left;
 
     // 실제 브라우저 창 너비로 디바이스 타입 재판단
     const browserWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const browserHeight = typeof window !== 'undefined' ? window.innerHeight : 768;
     const actualIsMobile = browserWidth < 768;
     const actualIsTablet = browserWidth >= 768 && browserWidth < 1024;
 
-    // 디버깅: 실제 브라우저 너비로 확인
-    console.log('실제 디바이스 감지:', {
-      browserWidth: browserWidth,
-      actualIsMobile: actualIsMobile,
-      actualIsTablet: actualIsTablet,
-      product: productId,
-      originalPosition: originalPosition
-    });
+    // 최소 크기 보장 설정
+    const MIN_PRODUCT_SIZE = 180; // 최소 180px 보장
+    const SAFE_DISTANCE = 25; // 상품 간 최소 거리 25px
+
+    // 금지 구역 정의 (핵심 텍스트만 보호)
+    const forbiddenZones = [
+      // 상단 제목 영역 ("리뷰 이벤트에 참여하세요" 완전 보호)
+      { top: 0, left: 0, right: 100, bottom: 10 },
+      // 중앙 입력창 + 버튼 영역 (핵심만)
+      {
+        top: actualIsMobile ? 35 : 40,
+        left: actualIsMobile ? 10 : 20,
+        right: actualIsMobile ? 90 : 80,
+        bottom: actualIsMobile ? 65 : 60
+      },
+      // 하단 텍스트 영역 ("지금바로 참여하여" 완전 보호)
+      {
+        top: actualIsMobile ? 82 : 78,
+        left: 0,
+        right: 100,
+        bottom: 94
+      }
+    ];
 
     if (actualIsMobile) {
-      // 실제 모바일 감지 확인
-      console.log('실제 모바일 감지됨:', browserWidth, 'px');
-
-      // 모바일에서도 원래 위치 비율 유지 (선물박스 중심 배치)
-      // 단지 크기만 축소하고 위치는 데스크톱과 동일한 균형 유지
-
-      // 원래 위치 그대로 사용 (브라우저/태블릿과 동일한 배치)
-      // top과 left는 원래 값 유지
-
-      console.log('모바일 위치 유지:', {
+      console.log('스마트 배치 시작:', {
         productId: productId,
-        originalTop: top,
-        originalLeft: left,
-        message: '원래 위치 비율 유지로 선물박스 중심 배치'
+        browserWidth: browserWidth,
+        browserHeight: browserHeight,
+        originalPosition: originalPosition
       });
 
-    } else if (actualIsTablet) {
-      // 실제 태블릿에서만 실행되는지 확인
-      console.log('실제 태블릿 감지됨:', browserWidth, 'px');
+      // 모바일에서 상품별 개별 위치 지정 (텍스트 영역 완전 회피)
+      let adjustedTop: number;
+      let adjustedLeft: number;
 
-      // 태블릿에서 메가커피와 신세계 상품권 위치 조정
-      const topValue = parseFloat(top);
-      if (topValue < 18) {
-        top = '20%';
-      }
-      if (topValue > 75) {
-        top = '70%';
+      // 상품별 고정 위치 (이등변 삼각형 + 텍스트 완전 보호)
+      switch (productId) {
+        case 'galaxy-folder':
+          adjustedTop = 12; adjustedLeft = 50; // 삼각형 꼭지점 (더 위로!)
+          break;
+        case 'canon-multifunction':
+          adjustedTop = 25; adjustedLeft = 25; // 삼각형 왼쪽 아래 (더 위로!)
+          break;
+        case 'cuckoo-food':
+          adjustedTop = 25; adjustedLeft = 75; // 삼각형 오른쪽 아래 (더 위로!)
+          break;
+        case 'shinsegae-gift':
+          adjustedTop = 88; adjustedLeft = 70; // 우하단 (텍스트 피해서)
+          break;
+        case 'megacoffee':
+          adjustedTop = 95; adjustedLeft = 25; // 완전히 밑으로 내리기!
+          break;
+        default:
+          // 기본값
+          const topValue = parseFloat(top);
+          const leftValue = parseFloat(left);
+          adjustedTop = topValue + 8;
+          adjustedLeft = leftValue;
       }
 
-      // 메가커피와 신세계 상품권만 태블릿에서 조정 (좌우로만 이동)
-      if (productId === 'megacoffee') {
-        console.log('태블릿 메가커피 위치 조정:', top, left, '→ 75%, 15%');
-        // top은 유지, left만 좌측으로 10 이동
-        left = '15%'; // 좌측으로 10 이동
-      } else if (productId === 'shinsegae-gift') {
-        console.log('태블릿 신세계 위치 조정:', top, left, '→ 72%, 85%');
-        // top은 유지, left만 우측으로 10 이동
-        left = '85%'; // 우측으로 10 이동
+      // 금지 구역 체크 및 회피
+      const isInForbiddenZone = (t: number, l: number) => {
+        return forbiddenZones.some(zone =>
+          t >= zone.top && t <= zone.bottom &&
+          l >= zone.left && l <= zone.right
+        );
+      };
+
+      // 금지 구역에 있으면 안전한 위치로 이동
+      if (isInForbiddenZone(adjustedTop, adjustedLeft)) {
+        // 선물박스 주변의 균형잡힌 안전한 위치들
+        const safePositions = [
+          { top: 22, left: 25 }, // 좌상단
+          { top: 22, left: 50 }, // 상단 중앙
+          { top: 22, left: 75 }, // 우상단
+          { top: 30, left: 15 }, // 좌측
+          { top: 30, left: 85 }, // 우측
+          { top: 70, left: 15 }, // 좌측 하단
+          { top: 70, left: 85 }, // 우측 하단
+          { top: 78, left: 25 }, // 좌하단
+          { top: 78, left: 50 }, // 하단 중앙
+          { top: 78, left: 75 }  // 우하단
+        ];
+
+        // 가장 가까운 안전한 위치 찾기
+        let bestPosition = safePositions[0];
+        let minDistance = Infinity;
+
+        for (const pos of safePositions) {
+          if (!isInForbiddenZone(pos.top, pos.left)) {
+            const distance = Math.sqrt(
+              Math.pow(pos.top - adjustedTop, 2) +
+              Math.pow(pos.left - adjustedLeft, 2)
+            );
+            if (distance < minDistance) {
+              minDistance = distance;
+              bestPosition = pos;
+            }
+          }
+        }
+
+        adjustedTop = bestPosition.top;
+        adjustedLeft = bestPosition.left;
       }
-      // 다른 상품들은 태블릿에서도 원래 위치 유지
+
+      top = `${Math.min(Math.max(adjustedTop, 15), 85)}%`; // 15-85% 범위 내
+      left = `${Math.min(Math.max(adjustedLeft, 10), 90)}%`; // 10-90% 범위 내
+
+      console.log('스마트 배치 완료:', {
+        productId: productId,
+        finalTop: top,
+        finalLeft: left,
+        message: '겹침 방지 + 텍스트 보호 완료'
+      });
+
+    } else {
+      // 데스크톱/태블릿에서는 기본 위치 유지 (원래 잘 작동하던 로직)
+      console.log('데스크톱/태블릿 기본 배치:', {
+        productId: productId,
+        browserWidth: browserWidth,
+        position: { top, left }
+      });
+
+      // 태블릿에서만 특별 조정 (기존 로직 유지)
+      if (actualIsTablet) {
+        if (productId === 'megacoffee') {
+          left = '15%';
+        } else if (productId === 'shinsegae-gift') {
+          left = '85%';
+        }
+      }
     }
 
     return { top, left };
@@ -349,33 +433,39 @@ export default function HomePage() {
     const isMobile = browserWidth < 768;
     const isTablet = browserWidth >= 768 && browserWidth < 1024;
 
-    if (isMobile) {
-      // 모바일에서는 더 적극적인 크기 축소
-      scaleFactor *= 0.8;
+    // 모바일에서 적절한 크기 축소 (텍스트 보호 우선)
+    const MIN_PRODUCT_SIZE = 120; // 최소 120px로 조정 (텍스트 보호 우선)
 
-      // 특정 상품들은 더 많이 축소하여 UI 보호
+    if (isMobile) {
+      // 모바일에서는 텍스트 보호를 위해 더 많이 축소
+      scaleFactor *= 0.6; // 더 많이 축소
+
+      // 특정 상품들 개별 조정
       if (['galaxy-folder', 'canon-multifunction', 'cuckoo-food'].includes(productId)) {
-        scaleFactor *= 0.85;
+        scaleFactor *= 0.8; // 조금 더 축소
       }
-      
-      // 메가커피도 모바일에서 축소
-      if (productId === 'megacoffee') {
+
+      // 메가커피와 신세계는 더 많이 축소
+      if (['megacoffee', 'shinsegae-gift'].includes(productId)) {
         scaleFactor *= 0.7;
       }
     } else if (isTablet) {
-      // 태블릿에서는 중간 정도 축소
+      // 태블릿에서는 약간만 축소
       scaleFactor *= 0.9;
-      
-      // 메가커피도 태블릿에서 축소
+
       if (productId === 'megacoffee') {
-        scaleFactor *= 0.8;
+        scaleFactor *= 0.85;
       }
     }
 
+    // 최종 크기 계산 (최소 크기 보장하되 텍스트 보호 우선)
+    const finalWidth = Math.max(containerWidth * scaleFactor, MIN_PRODUCT_SIZE);
+    const finalHeight = Math.max(containerHeight * scaleFactor, MIN_PRODUCT_SIZE);
+
     return {
-      width: Math.max(containerWidth * scaleFactor, 100), // 최소 크기 더 축소
-      height: Math.max(containerHeight * scaleFactor, 110),
-      scaleFactor,
+      width: finalWidth,
+      height: finalHeight,
+      scaleFactor: Math.max(scaleFactor, MIN_PRODUCT_SIZE / Math.max(containerWidth, containerHeight)),
       isMobile,
       isTablet
     };
@@ -667,8 +757,8 @@ export default function HomePage() {
         </>
       )}
 
-      {/* 기존 선물상자 Lottie 애니메이션 - 중앙 정렬 */}
-      <div className="absolute inset-0 flex items-center justify-center lottie-container z-10">
+      {/* 기존 선물상자 Lottie 애니메이션 */}
+      <div className="absolute inset-0 flex items-center justify-center lottie-container z-10" style={{ transform: 'translateY(80px)' }}>
         <div className="w-full h-full max-w-[1000px] max-h-[1000px]">
           <Lottie
             animationData={introLottie}
@@ -709,9 +799,8 @@ export default function HomePage() {
               isTablet: false
             };
 
-        // 모바일에서는 항상 원래 위치 사용 (선물박스 중심 배치 유지)
-        const isMobileDevice = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
-        const responsivePosition = (isClient && productPositions[product.id] && !isMobileDevice)
+        // Hydration Error 방지: 초기에는 원래 위치 사용, 클라이언트에서 계산된 위치 사용
+        const responsivePosition = isClient && productPositions[product.id]
           ? productPositions[product.id]
           : product.position;
 
@@ -878,7 +967,7 @@ export default function HomePage() {
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                placeholder="참여 코드를 입력하세요"
+                placeholder="쿠폰 번호를 붙여넣으세요"
                 className="w-full max-w-[350px] md:max-w-[320px] lg:max-w-[300px] pl-16 pr-6 py-20 text-center text-2xl font-semibold border-2 border-transparent rounded-full bg-gradient-to-r from-purple-100 via-pink-50 to-purple-100 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-purple-400 transition-all duration-500 shadow-2xl hover:shadow-purple-300/50 transform hover:scale-105 hover:shadow-3xl backdrop-blur-sm"
                 style={{
                   fontSize: 'clamp(1.1rem, 4.5vw, 1.6rem)', // 480px부터 더 빠르게 줄어듦
