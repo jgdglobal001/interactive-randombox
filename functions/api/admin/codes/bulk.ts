@@ -112,16 +112,20 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
 
     const createdCodes: ParticipationCode[] = [];
 
-    // 순차적 INSERT로 네온 DB 제한 우회 (동시 요청 수 제한)
-    const batchSize = 10; // 더 작은 배치로 처리
+    // 네온 DB subrequest 제한 우회를 위한 연결 재생성 방식
+    const batchSize = 40; // 40개씩 처리 후 연결 재생성
+
     for (let i = 0; i < newCodes.length; i += batchSize) {
       const batch = newCodes.slice(i, i + batchSize);
 
-      // 순차적으로 처리 (병렬 아님)
+      // 새로운 연결 생성 (subrequest 카운터 리셋)
+      const freshSql = neon(context.env.DATABASE_URL!);
+
+      // 배치 내에서는 순차적 처리
       for (const code of batch) {
         try {
           const cuid = generateCuid();
-          const rows = await sql`
+          const rows = await freshSql`
             insert into "ParticipationCode" (id, code)
             values (${cuid}, ${code})
             returning id, code, "isUsed", "createdAt", "usedAt"
@@ -142,9 +146,9 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
 
       console.log(`배치 ${Math.floor(i/batchSize) + 1} 완료: ${Math.min(i + batchSize, newCodes.length)}/${newCodes.length}`);
 
-      // 배치 간 대기 시간 증가 (네온 DB 제한 회피)
+      // 배치 간 대기 (연결 정리 시간)
       if (i + batchSize < newCodes.length) {
-        await new Promise(resolve => setTimeout(resolve, 500)); // 500ms 대기
+        await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
       }
     }
 
