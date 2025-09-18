@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
+import { useCallback, useEffect, useRef, useState } from 'react'
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
 
 // API 응답 타입 정의
@@ -21,11 +22,10 @@ interface ClaimResponse {
 type EventState = 'idle' | 'playing-entering' | 'playing-closing' | 'playing-shaking' | 'playing-reveal' | 'finished' | 'claiming';
 
 // Lottie 애니메이션 데이터 임포트 (public 폴더에 있다고 가정)
-import introLottie from '../../public/lottie/intro.json';
-import skyIndigoLottie from '../../public/lottie/Sky Indigo.json';
-import confettiLottie from '../../public/lottie/confetti.json';
-import confetti2Lottie from '../../public/lottie/Confetti 2.json';
-import Image from 'next/image'; // Image 컴포넌트 임포트
+import confetti2Lottie from '../../public/lottie/Confetti 2.json'
+import confettiLottie from '../../public/lottie/confetti.json'
+import introLottie from '../../public/lottie/intro.json'
+import skyIndigoLottie from '../../public/lottie/Sky Indigo.json'
 
 // 상품 데이터 정의 - 상품 단위 컨테이너 구조로 변경
 const products = [
@@ -124,7 +124,7 @@ export default function HomePage() {
     // lottieRef.current?.setCurrentFrame(showRibbonAndText ? 270 : 190);
   }, [showRibbonAndText]);
   const [prize, setPrize] = useState<{ name: string; imageUrl: string } | null>(null);
-  const [participationCodeId, setParticipationCodeId] = useState<string | null>(null);
+  const [participationCodeId, setParticipationCodeId] = useState<string | null>(null); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [phoneNumber, setPhoneNumber] = useState('');
   const [containerSize, setContainerSize] = useState({ width: 1000, height: 1000 }); // 초기값 설정으로 hydration 에러 방지
   const [isClient, setIsClient] = useState(false); // 클라이언트 사이드인지 확인
@@ -233,7 +233,7 @@ export default function HomePage() {
   useEffect(() => {
     if (isClient) {
       const newPositions: any = {};
-      products.forEach((product, index) => {
+      products.forEach((product) => {
         const containerSize = getResponsiveContainerSize(product.containerWidth, product.containerHeight, product.id);
         const finalContainerSize = {
           ...containerSize,
@@ -247,7 +247,7 @@ export default function HomePage() {
   }, [isClient, containerSize]);
 
   // 상품 크기를 컨테이너 크기에 따라 동적으로 계산하는 함수
-  const getResponsiveProductSize = (baseWidth: number, baseHeight: number) => {
+  const getResponsiveProductSize = (baseWidth: number, baseHeight: number) => { // eslint-disable-line @typescript-eslint/no-unused-vars
     // 기본 컨테이너 크기 (데스크톱 기준) - 1000px로 조정
     const baseContainerWidth = 1000; // 1000px로 조정
     const baseContainerHeight = 1000;
@@ -266,153 +266,63 @@ export default function HomePage() {
     };
   };
 
-  // 상품의 반응형 위치 조정 함수 (UI 요소 침범 방지)
-  // 스마트 배치 시스템: 겹침 방지 + 텍스트 영역 보호 + 최소 크기 보장
-  const getSmartProductPosition = (originalPosition: { top: string; left: string }, productId: string, containerSize: { width: number; height: number; isMobile: boolean; isTablet: boolean }, allProducts: any[]) => {
-    let top = originalPosition.top;
-    let left = originalPosition.left;
+  // 상품의 반응형 위치 조정 함수 - 화면 밖으로 나가지 않도록 제한
+  const getSmartProductPosition = (originalPosition: { top: string; left: string }, productId: string, containerSize: { width: number; height: number; isMobile: boolean; isTablet: boolean }, allProducts: any[]) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+    // 원래 위치에서 시작
+    let topValue = parseFloat(originalPosition.top);
+    let leftValue = parseFloat(originalPosition.left);
 
     // 실제 브라우저 창 너비로 디바이스 타입 재판단
     const browserWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
-    const browserHeight = typeof window !== 'undefined' ? window.innerHeight : 768;
     const actualIsMobile = browserWidth < 768;
     const actualIsTablet = browserWidth >= 768 && browserWidth < 1024;
 
-    // 최소 크기 보장 설정
-    const MIN_PRODUCT_SIZE = 180; // 최소 180px 보장
-    const SAFE_DISTANCE = 25; // 상품 간 최소 거리 25px
+    // 화면 밖으로 나가지 않도록 강제 제한 (스크롤 방지)
+    const SAFE_MARGIN = 5; // 화면 가장자리에서 5% 여백
 
-    // 금지 구역 정의 (핵심 텍스트만 보호)
-    const forbiddenZones = [
-      // 상단 제목 영역 ("리뷰 이벤트에 참여하세요" 완전 보호)
-      { top: 0, left: 0, right: 100, bottom: 10 },
-      // 중앙 입력창 + 버튼 영역 (핵심만)
-      {
-        top: actualIsMobile ? 35 : 40,
-        left: actualIsMobile ? 10 : 20,
-        right: actualIsMobile ? 90 : 80,
-        bottom: actualIsMobile ? 65 : 60
-      },
-      // 하단 텍스트 영역 ("지금바로 참여하여" 완전 보호)
-      {
-        top: actualIsMobile ? 82 : 78,
-        left: 0,
-        right: 100,
-        bottom: 94
-      }
-    ];
+    // 좌우 제한: 5% ~ 95% 범위 내
+    leftValue = Math.max(SAFE_MARGIN, Math.min(leftValue, 100 - SAFE_MARGIN));
 
-    if (actualIsMobile) {
-      console.log('스마트 배치 시작:', {
-        productId: productId,
-        browserWidth: browserWidth,
-        browserHeight: browserHeight,
-        originalPosition: originalPosition
-      });
+    // 상하 제한: 모바일에서는 더 아래로, 다른 디바이스는 기존대로
+    const minTop = actualIsMobile ? 30 : 10;
+    topValue = Math.max(minTop, Math.min(topValue, 90));
 
-      // 모바일에서 상품별 개별 위치 지정 (텍스트 영역 완전 회피)
-      let adjustedTop: number;
-      let adjustedLeft: number;
+    // 모바일에서 갤럭시 폴더만 위로 올리기
+    if (actualIsMobile && productId === 'galaxy-folder') {
+      topValue = topValue - 20; // 20% 위로 올리기
+      topValue = Math.max(15, topValue); // 최소 15% 이상 유지
+    }
 
-      // 상품별 고정 위치 (이등변 삼각형 + 텍스트 완전 보호)
-      switch (productId) {
-        case 'galaxy-folder':
-          adjustedTop = 12; adjustedLeft = 50; // 삼각형 꼭지점 (더 위로!)
-          break;
-        case 'canon-multifunction':
-          adjustedTop = 25; adjustedLeft = 25; // 삼각형 왼쪽 아래 (더 위로!)
-          break;
-        case 'cuckoo-food':
-          adjustedTop = 25; adjustedLeft = 75; // 삼각형 오른쪽 아래 (더 위로!)
-          break;
-        case 'shinsegae-gift':
-          adjustedTop = 88; adjustedLeft = 70; // 우하단 (텍스트 피해서)
-          break;
-        case 'megacoffee':
-          adjustedTop = 95; adjustedLeft = 25; // 완전히 밑으로 내리기!
-          break;
-        default:
-          // 기본값
-          const topValue = parseFloat(top);
-          const leftValue = parseFloat(left);
-          adjustedTop = topValue + 8;
-          adjustedLeft = leftValue;
-      }
+    // 모바일에서 메가커피와 신세계상품권 아래로 내리기
+    if (actualIsMobile && (productId === 'megacoffee' || productId === 'shinsegae-gift')) {
+      topValue = topValue + 10; // 15% 아래로 내리기
+      topValue = Math.min(85, topValue); // 최대 85% 이하 유지
+    }
 
-      // 금지 구역 체크 및 회피
-      const isInForbiddenZone = (t: number, l: number) => {
-        return forbiddenZones.some(zone =>
-          t >= zone.top && t <= zone.bottom &&
-          l >= zone.left && l <= zone.right
-        );
-      };
-
-      // 금지 구역에 있으면 안전한 위치로 이동
-      if (isInForbiddenZone(adjustedTop, adjustedLeft)) {
-        // 선물박스 주변의 균형잡힌 안전한 위치들
-        const safePositions = [
-          { top: 22, left: 25 }, // 좌상단
-          { top: 22, left: 50 }, // 상단 중앙
-          { top: 22, left: 75 }, // 우상단
-          { top: 30, left: 15 }, // 좌측
-          { top: 30, left: 85 }, // 우측
-          { top: 70, left: 15 }, // 좌측 하단
-          { top: 70, left: 85 }, // 우측 하단
-          { top: 78, left: 25 }, // 좌하단
-          { top: 78, left: 50 }, // 하단 중앙
-          { top: 78, left: 75 }  // 우하단
-        ];
-
-        // 가장 가까운 안전한 위치 찾기
-        let bestPosition = safePositions[0];
-        let minDistance = Infinity;
-
-        for (const pos of safePositions) {
-          if (!isInForbiddenZone(pos.top, pos.left)) {
-            const distance = Math.sqrt(
-              Math.pow(pos.top - adjustedTop, 2) +
-              Math.pow(pos.left - adjustedLeft, 2)
-            );
-            if (distance < minDistance) {
-              minDistance = distance;
-              bestPosition = pos;
-            }
-          }
-        }
-
-        adjustedTop = bestPosition.top;
-        adjustedLeft = bestPosition.left;
-      }
-
-      top = `${Math.min(Math.max(adjustedTop, 15), 85)}%`; // 15-85% 범위 내
-      left = `${Math.min(Math.max(adjustedLeft, 10), 90)}%`; // 10-90% 범위 내
-
-      console.log('스마트 배치 완료:', {
-        productId: productId,
-        finalTop: top,
-        finalLeft: left,
-        message: '겹침 방지 + 텍스트 보호 완료'
-      });
-
-    } else {
-      // 데스크톱/태블릿에서는 기본 위치 유지 (원래 잘 작동하던 로직)
-      console.log('데스크톱/태블릿 기본 배치:', {
-        productId: productId,
-        browserWidth: browserWidth,
-        position: { top, left }
-      });
-
-      // 태블릿에서만 특별 조정 (기존 로직 유지)
-      if (actualIsTablet) {
-        if (productId === 'megacoffee') {
-          left = '15%';
-        } else if (productId === 'shinsegae-gift') {
-          left = '85%';
-        }
+    // 태블릿에서만 약간의 조정 (기존 로직 유지하되 안전 범위 내에서)
+    if (actualIsTablet) {
+      if (productId === 'megacoffee') {
+        leftValue = Math.max(SAFE_MARGIN, 15);
+      } else if (productId === 'shinsegae-gift') {
+        leftValue = Math.min(85, 100 - SAFE_MARGIN);
       }
     }
 
-    return { top, left };
+    const finalPosition = {
+      top: `${topValue}%`,
+      left: `${leftValue}%`
+    };
+
+    console.log('안전 배치 시스템:', {
+      productId: productId,
+      browserWidth: browserWidth,
+      deviceType: actualIsMobile ? 'mobile' : actualIsTablet ? 'tablet' : 'desktop',
+      originalPosition: originalPosition,
+      finalPosition: finalPosition,
+      message: '화면 밖으로 나가지 않도록 제한 완료'
+    });
+
+    return finalPosition;
   };
 
   // 상품 컨테이너의 반응형 크기 계산 (상품 단위 컨테이너용)
@@ -551,7 +461,6 @@ export default function HomePage() {
         }, ((190 - 127) * (1000 / 24) / 1.5));
         
         return () => clearTimeout(revealTimer);
-        break;
       default:
         break;
     }
@@ -671,7 +580,7 @@ export default function HomePage() {
     }
   };
 
-  const handleReset = () => {
+  const handleReset = () => { // eslint-disable-line @typescript-eslint/no-unused-vars
     setEventState('idle');
     setCode('');
     setPrize(null);
@@ -1177,7 +1086,7 @@ export default function HomePage() {
               <input
                 type="tel"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e: any) => setPhoneNumber(e.target.value)}
                 placeholder="휴대폰 번호를 입력하세요"
                 className="px-4 py-3 md:py-4 rounded-full w-64 md:w-80 lg:w-96 text-center text-base md:text-lg font-semibold border-2 bg-gradient-to-r from-blue-50 to-indigo-50 focus:outline-none focus:ring-4 transition-all duration-300"
                 style={{

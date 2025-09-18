@@ -2,7 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+/* 스크롤 완전 제거 - 전체화면 고정 */
+html, body {
+  overflow: hidden !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -10,6 +19,30 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+
+/* 모바일에서 추가 스크롤 방지 */
+@media (max-width: 768px) {
+  html, body {
+    touch-action: none !important; /* 터치 스크롤 방지 */
+    -webkit-overflow-scrolling: none !important;
+    overscroll-behavior: none !important;
+  }
+
+  /* 모바일 브라우저 주소창 등으로 인한 높이 변화 대응 */
+  body {
+    height: 100dvh !important; /* dynamic viewport height */
+  }
+}
+
+/* 메인 컨테이너도 고정 */
+#__next {
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
 }
 
 @layer utilities {
@@ -267,6 +300,7 @@ body {
     justify-content: center;
     text-align: center;
     transform: translate(-50%, -50%);
+    transform-origin: center center; /* 모든 변환의 기준점을 정확히 중앙으로 설정 */
   }
 
   /* 상품 단위 컨테이너 - 말풍선 아래쪽 배치 */
@@ -411,18 +445,23 @@ body {
     /* 각 상품별 애니메이션 정의 - 페이드인 + 적당한 불규칙한 움직임 효과 */
   .floating-product-1 {
     animation: fadeIn 0.5s ease-in-out forwards 1.0s, float-product-1 2.2s ease-in-out infinite alternate 1.5s, scale-product-1 2.0s ease-in-out infinite alternate 1.5s;
+    transform-origin: center center; /* 중앙 기준 애니메이션 */
   }
   .floating-product-2 {
     animation: fadeIn 0.5s ease-in-out forwards 1.1s, float-product-2 2.8s ease-in-out infinite alternate 1.6s, scale-product-2 2.5s ease-in-out infinite alternate 1.6s;
+    transform-origin: center center; /* 중앙 기준 애니메이션 */
   }
   .floating-product-3 {
     animation: fadeIn 0.5s ease-in-out forwards 1.2s, float-product-3 2.0s ease-in-out infinite alternate 1.7s, scale-product-3 1.8s ease-in-out infinite alternate 1.7s;
+    transform-origin: center center; /* 중앙 기준 애니메이션 */
   }
   .floating-product-4 {
     animation: fadeIn 0.5s ease-in-out forwards 1.3s, float-product-4 3.2s ease-in-out infinite alternate 1.8s, scale-product-4 2.8s ease-in-out infinite alternate 1.8s;
+    transform-origin: center center; /* 중앙 기준 애니메이션 */
   }
   .floating-product-5 {
     animation: fadeIn 0.5s ease-in-out forwards 1.4s, float-product-5 1.8s ease-in-out infinite alternate 1.9s, scale-product-5 1.6s ease-in-out infinite alternate 1.9s;
+    transform-origin: center center; /* 중앙 기준 애니메이션 */
   }
 
   /* 각 상품별 시계추처럼 위에 고정되어 적당하게 불규칙하게 흔들리는 애니메이션 키프레임 */
