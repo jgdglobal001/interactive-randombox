@@ -112,26 +112,61 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
 
     const createdCodes: ParticipationCode[] = [];
 
-    // 신규 코드들을 DB에 삽입
-    for (const code of newCodes) {
+    // 배치 INSERT를 위한 데이터 준비
+    if (newCodes.length > 0) {
       try {
-        const cuid = generateCuid();
-        const rows = await sql`
-          insert into "ParticipationCode" (id, code) 
-          values (${cuid}, ${code}) 
-          returning id, code, "isUsed", "createdAt", "usedAt"
-        `;
+        // 배치 크기로 나누어 처리 (한 번에 최대 25개씩 - 네온 제한 고려)
+        const batchSize = 25;
+        for (let i = 0; i < newCodes.length; i += batchSize) {
+          const batch = newCodes.slice(i, i + batchSize);
 
-        const row = rows[0];
-        createdCodes.push({
-          id: row.id,
-          code: row.code,
-          isUsed: row.isUsed,
-          createdAt: (row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt)).toISOString(),
-          usedAt: row.usedAt ? (row.usedAt instanceof Date ? row.usedAt : new Date(row.usedAt)).toISOString() : null,
-        });
+          // 배치 INSERT를 위한 VALUES 구성
+          const valuesList = batch.map(code => {
+            const cuid = generateCuid();
+            return [cuid, code];
+          });
+
+          // 네온 드라이버의 배치 INSERT 방식
+          const insertPromises = valuesList.map(async ([id, code]) => {
+            try {
+              const rows = await sql`
+                insert into "ParticipationCode" (id, code)
+                values (${id}, ${code})
+                returning id, code, "isUsed", "createdAt", "usedAt"
+              `;
+              return rows[0];
+            } catch (error) {
+              console.error(`코드 ${code} 삽입 실패:`, error);
+              return null;
+            }
+          });
+
+          // 배치 실행 (병렬 처리하되 제한된 수로)
+          const batchResults = await Promise.allSettled(insertPromises);
+
+          // 성공한 결과만 처리
+          for (const result of batchResults) {
+            if (result.status === 'fulfilled' && result.value) {
+              const row = result.value;
+              createdCodes.push({
+                id: row.id,
+                code: row.code,
+                isUsed: row.isUsed,
+                createdAt: (row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt)).toISOString(),
+                usedAt: row.usedAt ? (row.usedAt instanceof Date ? row.usedAt : new Date(row.usedAt)).toISOString() : null,
+              });
+            }
+          }
+
+          console.log(`배치 ${Math.floor(i/batchSize) + 1}: ${createdCodes.length - (i > 0 ? Math.floor(i/batchSize) * batchSize : 0)}개 코드 삽입 완료`);
+
+          // 배치 간 잠시 대기 (네온 DB 부하 방지)
+          if (i + batchSize < newCodes.length) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
       } catch (error) {
-        console.error(`코드 ${code} 삽입 실패:`, error);
+        console.error('배치 처리 실패:', error);
       }
     }
 
