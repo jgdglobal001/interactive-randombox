@@ -19,7 +19,7 @@ export default {
     try {
       const authKey = env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f';
       const authToken = env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==';
-      const megaCoffeeGoodsCode = env.GIFTSHOW_GOODS_CODE || 'G00001621744'; // 메가커피 아메리카노 상품 코드
+      const megaCoffeeGoodsCode = env.GIFTSHOW_GOODS_CODE || 'G00005791059'; // 메가MGC커피 (ICE)아메리카노 상품 코드
 
       console.log('상품 정보 조회 시작:', { goodsCode: megaCoffeeGoodsCode });
 

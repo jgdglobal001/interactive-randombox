@@ -25,7 +25,7 @@ async function callGiftShowAPI(phoneNumber: string, goodsCode: string, env: Env)
   const authKey = env.GIFTSHOW_AUTH_KEY || 'REAL10f8dc85d32c4ff4b2594851a845c15f';
   const authToken = env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==';
   // 메가커피 아메리카노 상품 코드 (환경변수 우선, 없으면 기본값 사용)
-  const megaCoffeeGoodsCode = 'G00001621744'; // 메가커피 아메리카노 상품 코드 고정
+  const megaCoffeeGoodsCode = 'G00005791059'; // 메가MGC커피 (ICE)아메리카노 상품 코드 고정
 
   console.log('기프트쇼 API 호출 시작:', {
     phoneNumber: phoneNumber.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2'),
@@ -131,7 +131,7 @@ export async function onRequestPost(context: Context): Promise<Response> {
     // 기프트쇼 API 호출 (메가커피 교환권 발송)
     const giftShowResult = await callGiftShowAPI(
       body.phoneNumber,
-      'G00001621744', // 메가커피 아메리카노 상품 코드 고정
+      'G00005791059', // 메가MGC커피 (ICE)아메리카노 상품 코드 고정
       context.env
     );
 

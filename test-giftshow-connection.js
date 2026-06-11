@@ -41,7 +41,7 @@ async function testCouponAPI(userId) {
     custom_auth_code: authKey,
     custom_auth_token: authToken,
     dev_yn: 'N',
-    goods_code: 'G00001621744',
+    goods_code: 'G00005791059',
     mms_msg: '테스트 메시지',
     mms_title: '테스트',
     callback_no: '15886474', // 회사 대표번호 (발신번호)

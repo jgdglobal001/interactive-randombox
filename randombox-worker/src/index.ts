@@ -1,6 +1,6 @@
-import { Hono } from 'hono'
-import { PrismaClient } from '@prisma/client/edge'
-import { withAccelerate } from '@prisma/extension-accelerate'
+import { PrismaClient } from '@prisma/client/edge';
+import { withAccelerate } from '@prisma/extension-accelerate';
+import { Hono } from 'hono';
 
 // Prize 타입 정의
 interface Prize {
@@ -116,7 +116,7 @@ async function callGiftShowAPI(phoneNumber: string, prizeCode: string) {
   // 실제 기프트쇼 API 설정 (문서 기준)
   const authKey = 'REAL10f8dc85d32c4ff4b2594851a845c15f';
   const authToken = 'VUUiyDeKaWdeJYjlyGIuwQ==';
-  const megaCoffeeGoodsCode = 'G00001621744'; // 메가커피 아메리카노 상품 코드
+  const megaCoffeeGoodsCode = 'G00005791059'; // 메가MGC커피 (ICE)아메리카노 상품 코드
 
   try {
     // 기프트쇼 API 문서에 따른 정확한 엔드포인트

@@ -180,7 +180,7 @@ export const GIFTSHOW_CONFIG = {
   AUTH_TOKEN: process.env.GIFTSHOW_AUTH_TOKEN || 'VUUiyDeKaWdeJYjlyGIuwQ==',
   BANNER_ID: process.env.GIFTSHOW_BANNER_ID || '202509110360567',
   CARD_ID: process.env.GIFTSHOW_CARD_ID || '202509120308350',
-  GOODS_CODE: process.env.GIFTSHOW_GOODS_CODE || 'G00001621744', // 메가커피 아메리카노 상품 코드
+  GOODS_CODE: process.env.GIFTSHOW_GOODS_CODE || 'G00005791059', // 메가MGC커피 (ICE)아메리카노 상품 코드
   IS_DEV: false, // 상용환경으로 고정
   USE_MOCK_API: false // Mock API 사용 안함
 };
